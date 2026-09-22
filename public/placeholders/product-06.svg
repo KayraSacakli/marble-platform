@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#E5DDD5"/>
+  <path d="M0 300 Q200 260 400 320 Q600 380 800 280" stroke="#C4B5A5" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M0 200 Q200 180 400 220 Q600 260 800 190" stroke="#D4C5B5" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <text x="400" y="300" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" fill="#8B7355" opacity="0.5">DEV PLACEHOLDER</text>
+</svg>

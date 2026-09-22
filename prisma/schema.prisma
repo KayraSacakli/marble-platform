@@ -1,0 +1,485 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum ContentType {
+  PRODUCT
+  COLLECTION
+  APPLICATION
+  PROJECT
+  JOURNAL_ARTICLE
+  COMPANY_CONTENT
+}
+
+enum ContentAggregateState {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  REMOVED
+}
+
+enum VariantLifecycle {
+  DRAFT
+  APPROVED
+  PUBLISHED
+  UNPUBLISHED
+  ARCHIVED
+  REMOVED
+}
+
+enum CompanyContentKind {
+  ABOUT
+  QUARRY
+  FACTORY
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  LOGO
+}
+
+enum MediaRightsState {
+  UNVERIFIED
+  VERIFIED
+  RESTRICTED
+}
+
+enum MediaRole {
+  PRIMARY
+  GALLERY
+  HERO
+  PREVIEW
+  THUMBNAIL
+  POSTER
+}
+
+enum ApprovalOutcome {
+  APPROVED
+  REJECTED
+}
+
+enum QuoteRequestState {
+  PENDING
+  IN_REVIEW
+  RESPONDED
+  CLOSED
+}
+
+enum QuoteRequestContextKind {
+  PRODUCT
+  PROJECT
+  APPLICATION
+}
+
+enum SeoRobots {
+  INDEX
+  NOINDEX
+  FOLLOW
+  NOFOLLOW
+}
+
+// ============================================================
+// CORE CONTENT MODEL
+// ============================================================
+
+model ContentItem {
+  id             String                @id @default(uuid()) @db.Uuid
+  type           ContentType
+  aggregateState ContentAggregateState @default(DRAFT)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  variants       ContentVariant[]
+  product        Product?
+  collection     Collection?
+  application    Application?
+  project        Project?
+  journalArticle JournalArticle?
+  companyContent CompanyContent?
+
+  auditEvents AuditEvent[]
+
+  @@index([type, aggregateState])
+}
+
+model ContentVariant {
+  id             String           @id @default(uuid()) @db.Uuid
+  contentItemId  String           @db.Uuid
+  locale         String           @db.VarChar(5)
+  lifecycleState VariantLifecycle @default(DRAFT)
+  slug           String           @db.VarChar(500)
+
+  name        String? @db.VarChar(500)
+  description String? @db.Text
+  tagline     String? @db.VarChar(500)
+
+  seoTitle       String?    @db.VarChar(500)
+  seoDescription String?    @db.VarChar(500)
+  seoCanonical   String?    @db.VarChar(1000)
+  seoRobots      SeoRobots?
+
+  displayOrder  Int?
+  isFeatured    Boolean @default(false)
+  featuredOrder Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contentItem ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+
+  revisions          ContentRevision[]
+  mediaPresentations ContentMedia[]
+
+  @@unique([contentItemId, locale])
+  @@index([locale, lifecycleState])
+  @@index([locale, slug])
+  @@index([contentItemId, locale])
+}
+
+model ContentRevision {
+  id               String   @id @default(uuid()) @db.Uuid
+  contentVariantId String   @db.Uuid
+  authorId         String?  @db.Uuid
+  revisionNumber   Int
+  materialSnapshot String?  @db.Text
+  createdAt        DateTime @default(now())
+
+  contentVariant ContentVariant @relation(fields: [contentVariantId], references: [id], onDelete: Cascade)
+  author         InternalUser?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  approvals      Approval[]
+
+  @@index([contentVariantId, revisionNumber])
+}
+
+model Approval {
+  id                String          @id @default(uuid()) @db.Uuid
+  contentRevisionId String          @db.Uuid
+  approverId        String          @db.Uuid
+  outcome           ApprovalOutcome
+  notes             String?         @db.Text
+  coveredLocale     String          @db.VarChar(5)
+  coveredAssets     String?         @db.Text
+  createdAt         DateTime        @default(now())
+
+  contentRevision ContentRevision @relation(fields: [contentRevisionId], references: [id], onDelete: Cascade)
+  approver        InternalUser    @relation(fields: [approverId], references: [id], onDelete: Cascade)
+
+  @@index([contentRevisionId, outcome])
+  @@index([approverId, createdAt])
+}
+
+// ============================================================
+// TYPE-SPECIFIC EXTENSIONS
+// ============================================================
+
+model Product {
+  contentItemId      String  @id @db.Uuid
+  internalIdentifier String? @db.VarChar(100)
+
+  surfaceFinish       String? @db.VarChar(500)
+  dimensions          String? @db.VarChar(500)
+  format              String? @db.VarChar(500)
+  origin              String? @db.VarChar(500)
+  applicableStandards String? @db.VarChar(500)
+
+  contentItem ContentItem @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+
+  collections       ProductCollection[]
+  applications      ProductApplication[]
+  projectProducts   ProjectProduct[]
+  relatedProducts   RelatedProduct[]          @relation("SourceProduct")
+  relatedToProducts RelatedProduct[]          @relation("TargetProduct")
+  journalRefs       JournalContentReference[]
+  companyRefs       CompanyContentReference[]
+  quoteContexts     QuoteRequestContext[]
+}
+
+model Collection {
+  contentItemId String @id @db.Uuid
+
+  contentItem ContentItem         @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  products    ProductCollection[]
+}
+
+model Application {
+  contentItemId String @id @db.Uuid
+
+  contentItem         ContentItem               @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  products            ProductApplication[]
+  projectApplications ProjectApplication[]
+  journalRefs         JournalContentReference[]
+  quoteContexts       QuoteRequestContext[]
+}
+
+model Project {
+  contentItemId String  @id @db.Uuid
+  location      String? @db.VarChar(500)
+  projectType   String? @db.VarChar(200)
+
+  contentItem         ContentItem               @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  products            ProjectProduct[]
+  projectApplications ProjectApplication[]
+  journalRefs         JournalContentReference[]
+  quoteContexts       QuoteRequestContext[]
+}
+
+model JournalArticle {
+  contentItemId   String   @id @db.Uuid
+  publicationDate DateTime
+  authorName      String?  @db.VarChar(300)
+
+  contentItem ContentItem               @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  journalRefs JournalContentReference[]
+  companyRefs CompanyContentReference[]
+}
+
+model CompanyContent {
+  contentItemId String             @id @db.Uuid
+  kind          CompanyContentKind
+
+  contentItem ContentItem               @relation(fields: [contentItemId], references: [id], onDelete: Cascade)
+  companyRefs CompanyContentReference[]
+}
+
+// ============================================================
+// JUNCTION TABLES (Typed Relationships)
+// ============================================================
+
+model ProductCollection {
+  productId    String   @db.Uuid
+  collectionId String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  product    Product    @relation(fields: [productId], references: [contentItemId], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [contentItemId], onDelete: Cascade)
+
+  @@id([productId, collectionId])
+}
+
+model ProductApplication {
+  productId     String   @db.Uuid
+  applicationId String   @db.Uuid
+  createdAt     DateTime @default(now())
+
+  product     Product     @relation(fields: [productId], references: [contentItemId], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [contentItemId], onDelete: Cascade)
+
+  @@id([productId, applicationId])
+}
+
+model ProjectProduct {
+  projectId String   @db.Uuid
+  productId String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [contentItemId], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [contentItemId], onDelete: Cascade)
+
+  @@id([projectId, productId])
+}
+
+model ProjectApplication {
+  projectId     String   @db.Uuid
+  applicationId String   @db.Uuid
+  createdAt     DateTime @default(now())
+
+  project     Project     @relation(fields: [projectId], references: [contentItemId], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [contentItemId], onDelete: Cascade)
+
+  @@id([projectId, applicationId])
+}
+
+model RelatedProduct {
+  sourceProductId String   @db.Uuid
+  targetProductId String   @db.Uuid
+  createdAt       DateTime @default(now())
+
+  sourceProduct Product @relation("SourceProduct", fields: [sourceProductId], references: [contentItemId], onDelete: Cascade)
+  targetProduct Product @relation("TargetProduct", fields: [targetProductId], references: [contentItemId], onDelete: Cascade)
+
+  @@id([sourceProductId, targetProductId])
+  @@index([targetProductId])
+}
+
+model JournalContentReference {
+  id               String   @id @default(uuid()) @db.Uuid
+  journalArticleId String   @db.Uuid
+  productProductId String?  @db.Uuid
+  applicationId    String?  @db.Uuid
+  projectId        String?  @db.Uuid
+  createdAt        DateTime @default(now())
+
+  journalArticle JournalArticle @relation(fields: [journalArticleId], references: [contentItemId], onDelete: Cascade)
+  product        Product?       @relation(fields: [productProductId], references: [contentItemId], onDelete: Cascade)
+  application    Application?   @relation(fields: [applicationId], references: [contentItemId], onDelete: Cascade)
+  project        Project?       @relation(fields: [projectId], references: [contentItemId], onDelete: Cascade)
+
+  @@index([productProductId])
+  @@index([applicationId])
+  @@index([projectId])
+}
+
+model CompanyContentReference {
+  id               String   @id @default(uuid()) @db.Uuid
+  companyContentId String   @db.Uuid
+  productProductId String?  @db.Uuid
+  journalArticleId String?  @db.Uuid
+  createdAt        DateTime @default(now())
+
+  companyContent CompanyContent  @relation(fields: [companyContentId], references: [contentItemId], onDelete: Cascade)
+  product        Product?        @relation(fields: [productProductId], references: [contentItemId], onDelete: Cascade)
+  journalArticle JournalArticle? @relation(fields: [journalArticleId], references: [contentItemId], onDelete: Cascade)
+
+  @@index([productProductId])
+  @@index([journalArticleId])
+}
+
+// ============================================================
+// MEDIA MODEL
+// ============================================================
+
+model MediaAsset {
+  id              String           @id @default(uuid()) @db.Uuid
+  mediaType       MediaType
+  sourceReference String           @db.VarChar(1000)
+  originalAssetId String?          @db.Uuid
+  rightsState     MediaRightsState @default(UNVERIFIED)
+  rightsEvidence  String?          @db.VarChar(1000)
+  width           Int?
+  height          Int?
+  aspectRatio     String?          @db.VarChar(20)
+  fileType        String           @db.VarChar(100)
+  fileSize        Int?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  originalAsset MediaAsset?    @relation("DerivedAssets", fields: [originalAssetId], references: [id], onDelete: SetNull)
+  derivedAssets MediaAsset[]   @relation("DerivedAssets")
+  presentations ContentMedia[]
+
+  @@index([rightsState])
+}
+
+model ContentMedia {
+  id               String    @id @default(uuid()) @db.Uuid
+  contentVariantId String    @db.Uuid
+  mediaAssetId     String    @db.Uuid
+  role             MediaRole
+  displayOrder     Int       @default(0)
+  altText          String?   @db.VarChar(500)
+  caption          String?   @db.VarChar(500)
+  focalPointX      Float?
+  focalPointY      Float?
+
+  contentVariant ContentVariant @relation(fields: [contentVariantId], references: [id], onDelete: Cascade)
+  mediaAsset     MediaAsset     @relation(fields: [mediaAssetId], references: [id], onDelete: Cascade)
+
+  @@index([contentVariantId, role, displayOrder])
+  @@index([mediaAssetId])
+}
+
+// ============================================================
+// GOVERNANCE & AUDIT
+// ============================================================
+
+model InternalUser {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique @db.VarChar(300)
+  name      String?  @db.VarChar(300)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roles             UserRole[]
+  approvals         Approval[]
+  authoredRevisions ContentRevision[]
+  processedRequests QuoteRequest[]
+  auditEvents       AuditEvent[]
+}
+
+model Role {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @unique @db.VarChar(100)
+
+  users UserRole[]
+}
+
+model UserRole {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  roleId     String   @db.Uuid
+  assignedAt DateTime @default(now())
+
+  user InternalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role         @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+}
+
+model AuditEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  actorId       String?  @db.Uuid
+  action        String   @db.VarChar(100)
+  contentItemId String?  @db.Uuid
+  variantId     String?  @db.Uuid
+  revisionId    String?  @db.Uuid
+  details       String?  @db.Text
+  createdAt     DateTime @default(now())
+
+  actor       InternalUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  contentItem ContentItem?  @relation(fields: [contentItemId], references: [id], onDelete: SetNull)
+
+  @@index([contentItemId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+// ============================================================
+// QUOTE REQUEST
+// ============================================================
+
+model QuoteRequest {
+  id            String            @id @default(uuid()) @db.Uuid
+  contactName   String            @db.VarChar(300)
+  contactEmail  String            @db.VarChar(300)
+  contactPhone  String?           @db.VarChar(50)
+  company       String?           @db.VarChar(300)
+  message       String            @db.Text
+  locale        String            @db.VarChar(5)
+  state         QuoteRequestState @default(PENDING)
+  processedById String?           @db.Uuid
+  submittedAt   DateTime          @default(now())
+  processedAt   DateTime?
+
+  context   QuoteRequestContext?
+  processor InternalUser?        @relation(fields: [processedById], references: [id], onDelete: SetNull)
+
+  @@index([state, submittedAt])
+}
+
+model QuoteRequestContext {
+  id             String                  @id @default(uuid()) @db.Uuid
+  quoteRequestId String                  @unique @db.Uuid
+  contextKind    QuoteRequestContextKind
+  productId      String?                 @db.Uuid
+  projectId      String?                 @db.Uuid
+  applicationId  String?                 @db.Uuid
+
+  quoteRequest QuoteRequest @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+  product      Product?     @relation(fields: [productId], references: [contentItemId], onDelete: SetNull)
+  project      Project?     @relation(fields: [projectId], references: [contentItemId], onDelete: SetNull)
+  application  Application? @relation(fields: [applicationId], references: [contentItemId], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([projectId])
+  @@index([applicationId])
+}

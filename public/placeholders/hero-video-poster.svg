@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#2C2C2C"/>
+  <path d="M0 540 Q480 400 960 560 Q1440 720 1920 500" stroke="#8B7355" stroke-width="3" fill="none" opacity="0.3"/>
+  <path d="M0 360 Q480 300 960 400 Q1440 500 1920 340" stroke="#A59585" stroke-width="2" fill="none" opacity="0.2"/>
+  <text x="960" y="540" text-anchor="middle" font-family="Inter, sans-serif" font-size="24" fill="#8B7355" opacity="0.4">DEV PLACEHOLDER — HERO</text>
+</svg>

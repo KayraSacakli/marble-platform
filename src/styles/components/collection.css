@@ -1,0 +1,293 @@
+/* ============================================================
+   Collection — Marble Platform
+   Material catalogue / stone family editorial
+   ============================================================ */
+
+/* ---- Collection Listing Page ---- */
+.collection-page {
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .collection-page {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+}
+
+.collection-page__header {
+  margin-bottom: var(--space-7);
+}
+
+@media (min-width: 768px) {
+  .collection-page__header {
+    margin-bottom: var(--space-8);
+  }
+}
+
+.collection-page__intro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+  max-width: var(--text-measure);
+  margin-top: var(--space-4);
+}
+
+/* ---- Collection Grid ---- */
+.collection-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .collection-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1200px) {
+  .collection-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+/* ---- Collection Card ---- */
+.collection-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--duration-fast) var(--easing-default);
+}
+
+.collection-card:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collection-card:hover {
+    transform: none;
+  }
+}
+
+.collection-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.collection-card__image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--easing-default);
+}
+
+.collection-card:hover .collection-card__image-wrap img {
+  transform: scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collection-card__image-wrap img {
+    transition: none;
+  }
+  .collection-card:hover .collection-card__image-wrap img {
+    transform: none;
+  }
+}
+
+.collection-card__body {
+  padding: var(--space-4) 0;
+}
+
+.collection-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.collection-card__description {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* ============================================================
+   Collection Detail
+   ============================================================ */
+
+.collection-detail {
+  padding-top: var(--space-7);
+  padding-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .collection-detail {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-10);
+  }
+}
+
+/* ---- Collection Hero ---- */
+.collection-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .collection-hero {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--grid-gutter);
+    align-items: start;
+  }
+}
+
+@media (min-width: 1200px) {
+  .collection-hero {
+    grid-template-columns: 5fr 7fr;
+    gap: calc(var(--grid-gutter) * 1.5);
+  }
+}
+
+.collection-hero__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.collection-hero__name {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 767px) {
+  .collection-hero__name {
+    font-size: var(--text-h2);
+  }
+}
+
+.collection-hero__description {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  max-width: var(--text-measure);
+}
+
+.collection-hero__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.collection-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Collection Description Section ---- */
+.collection-description {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.collection-description__content {
+  max-width: var(--text-measure);
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-primary);
+}
+
+.collection-description__content p {
+  margin-bottom: var(--space-4);
+}
+
+.collection-description__content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Collection Products Section ---- */
+.collection-products {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.collection-products__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+}
+
+/* ---- Collection Relationships ---- */
+.collection-relationships {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.collection-relationships__heading {
+  font-family: var(--font-body);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-5);
+}
+
+.collection-relationships__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .collection-relationships__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+/* ---- Collection CTA ---- */
+.collection-cta {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+  text-align: center;
+}
+
+.collection-cta__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.collection-cta__message {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  color: var(--color-text-secondary);
+  max-width: 48ch;
+  margin: 0 auto var(--space-6);
+}

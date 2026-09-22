@@ -1,0 +1,869 @@
+/* ============================================================
+   Homepage — Marble Platform
+   Hero, sections, editorial grids, CTA
+   ============================================================ */
+
+/* ---- Header overlay on hero ---- */
+.header--transparent {
+  background-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+.header--transparent .header__brand,
+.header--transparent .header__nav,
+.header--transparent .header__utility {
+  color: var(--color-text-inverse);
+}
+
+.header--transparent .header__cta {
+  color: var(--color-text-inverse);
+  border-color: var(--color-text-inverse);
+}
+
+.header--transparent .header__hamburger span {
+  background-color: var(--color-text-inverse);
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: var(--hero-height-mobile);
+  min-height: var(--hero-min-height-mobile);
+  overflow: hidden;
+  background-color: var(--color-bg-darker);
+}
+
+@media (min-width: 768px) {
+  .hero {
+    height: var(--hero-height-tablet);
+    min-height: var(--hero-min-height-tablet);
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero {
+    height: var(--hero-height-desktop);
+    min-height: var(--hero-min-height-desktop);
+  }
+}
+
+/* ---- Sticky scroll stage (desktop only) ---- */
+.hero__scroll-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 1200px) {
+  .hero__scroll-stage {
+    height: 300vh;
+  }
+}
+
+.hero__sticky-visual {
+  position: relative;
+  width: 100%;
+  height: var(--hero-height-mobile);
+  min-height: var(--hero-min-height-mobile);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .hero__sticky-visual {
+    height: var(--hero-height-tablet);
+    min-height: var(--hero-min-height-tablet);
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero__sticky-visual {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: var(--hero-min-height-desktop);
+  }
+}
+
+/* ---- Video / Poster layers ---- */
+.hero__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.hero__poster--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- Overlay for text legibility ---- */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}
+
+/* ---- Hero content ---- */
+.hero__content {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-8) var(--grid-margin);
+  color: var(--color-text-inverse);
+}
+
+@media (min-width: 768px) {
+  .hero__content {
+    padding: var(--space-10) var(--grid-margin);
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero__content {
+    padding: var(--space-10) calc(var(--grid-margin) * 2);
+    max-width: var(--container-lg);
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+}
+
+.hero__heading {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-inverse);
+  max-width: 20ch;
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .hero__heading {
+    font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero__heading {
+    font-size: var(--text-display);
+    max-width: 24ch;
+  }
+}
+
+.hero__subheading {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-text-inverse);
+  opacity: 0.85;
+  max-width: 40ch;
+  margin-bottom: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .hero__subheading {
+    font-size: var(--text-h4);
+  }
+}
+
+.hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* ---- Hero fallback (no video, no image) ---- */
+.hero__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-8) var(--grid-margin);
+  background-color: var(--color-bg-darker);
+  color: var(--color-text-inverse);
+  z-index: 1;
+}
+
+.hero__fallback-heading {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-inverse);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .hero__fallback-heading {
+    font-size: 3.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero__fallback-heading {
+    font-size: var(--text-display);
+  }
+}
+
+.hero__fallback-sub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-normal);
+  color: var(--color-text-on-dark);
+  max-width: 36ch;
+  margin-bottom: var(--space-6);
+}
+
+/* ---- Scroll progress (desktop) ---- */
+.hero__scroll-progress {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .hero__scroll-progress {
+    display: block;
+    position: absolute;
+    bottom: var(--space-6);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    color: var(--color-text-inverse);
+    opacity: 0.6;
+    animation: hero-scroll-bounce 2s var(--easing-in-out) infinite;
+  }
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ============================================================
+   Homepage Sections
+   ============================================================ */
+
+.homepage-section {
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .homepage-section {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+}
+
+.homepage-section + .homepage-section {
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* ---- Section header ---- */
+.homepage-section__header {
+  margin-bottom: var(--space-7);
+}
+
+@media (min-width: 768px) {
+  .homepage-section__header {
+    margin-bottom: var(--space-8);
+  }
+}
+
+/* ============================================================
+   Featured Products — Editorial Grid
+   ============================================================ */
+
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1200px) {
+  .products-grid {
+    grid-template-columns: 7fr 5fr;
+    gap: var(--grid-gutter);
+  }
+}
+
+/* ---- Product Card ---- */
+.product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  overflow: hidden;
+}
+
+.product-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.product-card__image-wrap--large {
+  aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 768px) {
+  .product-card__image-wrap--large {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+.product-card__body {
+  padding: var(--space-4) 0;
+}
+
+.product-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.product-card__tagline {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* ---- Product card nested grid (desktop) ---- */
+@media (min-width: 1200px) {
+  .products-grid--editorial {
+    grid-template-columns: 7fr 5fr;
+  }
+
+  .products-grid--editorial .product-card--featured {
+    grid-row: 1 / 3;
+  }
+}
+
+/* ============================================================
+   Collections — Horizontal scroll / editorial
+   ============================================================ */
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .collections-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1200px) {
+  .collections-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+.collection-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.collection-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.collection-card__body {
+  padding: var(--space-4) 0;
+}
+
+.collection-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.collection-card__desc {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* ============================================================
+   Applications — Asymmetric grid
+   ============================================================ */
+
+.applications-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .applications-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1200px) {
+  .applications-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+.application-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.application-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+@media (min-width: 768px) {
+  .application-card__image-wrap {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+.application-card__body {
+  padding: var(--space-3) 0;
+}
+
+.application-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-body-large);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.application-card__desc {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* ============================================================
+   Projects — Asymmetric editorial grid
+   ============================================================ */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1200px) {
+  .projects-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--grid-gutter);
+  }
+
+  .projects-grid--editorial {
+    grid-template-columns: 7fr 5fr;
+  }
+
+  .projects-grid--editorial .project-card--featured {
+    grid-row: 1 / 3;
+  }
+}
+
+.project-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.project-card--featured .project-card__image-wrap {
+  aspect-ratio: 3 / 4;
+}
+
+@media (min-width: 768px) {
+  .project-card--featured .project-card__image-wrap {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+.project-card__body {
+  padding: var(--space-3) 0;
+}
+
+.project-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-body-large);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.project-card__desc {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* ============================================================
+   Journal — Featured + secondary layout
+   ============================================================ */
+
+.journal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 768px) {
+  .journal-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gutter);
+  }
+}
+
+@media (min-width: 1200px) {
+  .journal-grid {
+    grid-template-columns: 7fr 5fr;
+    gap: var(--grid-gutter);
+  }
+}
+
+.journal-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.journal-card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.journal-card--featured .journal-card__image-wrap {
+  aspect-ratio: 3 / 2;
+}
+
+@media (min-width: 768px) {
+  .journal-card--featured .journal-card__image-wrap {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+.journal-card__body {
+  padding: var(--space-3) 0;
+}
+
+.journal-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.journal-card__date {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--color-text-tertiary);
+  letter-spacing: var(--tracking-wide);
+}
+
+.journal-card__author {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--color-text-tertiary);
+}
+
+.journal-card__title {
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.journal-card--featured .journal-card__title {
+  font-size: var(--text-h3);
+}
+
+.journal-card__summary {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Final CTA
+   ============================================================ */
+
+.homepage-cta {
+  text-align: center;
+  padding: var(--space-9) var(--grid-margin);
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-inverse);
+}
+
+@media (min-width: 768px) {
+  .homepage-cta {
+    padding: var(--space-10) var(--grid-margin);
+  }
+}
+
+.homepage-cta__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-text-inverse);
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .homepage-cta__heading {
+    font-size: var(--text-h1);
+  }
+}
+
+.homepage-cta__message {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-normal);
+  color: var(--color-text-on-dark);
+  max-width: 48ch;
+  margin: 0 auto var(--space-6);
+}
+
+.homepage-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: center;
+  align-items: center;
+}
+
+/* ============================================================
+   Homepage Skeleton
+   ============================================================ */
+
+.homepage-skeleton {
+  padding: var(--space-9) var(--grid-margin);
+}
+
+.skeleton-hero {
+  width: 100%;
+  height: var(--hero-height-mobile);
+  min-height: var(--hero-min-height-mobile);
+  background-color: var(--color-bg-secondary);
+}
+
+@media (min-width: 768px) {
+  .skeleton-hero {
+    height: var(--hero-height-tablet);
+    min-height: var(--hero-min-height-tablet);
+  }
+}
+
+@media (min-width: 1200px) {
+  .skeleton-hero {
+    height: var(--hero-height-desktop);
+    min-height: var(--hero-min-height-desktop);
+  }
+}
+
+.skeleton-section {
+  max-width: var(--container-lg);
+  margin: 0 auto;
+  padding: var(--space-9) 0;
+}
+
+.skeleton-section__header {
+  width: 40%;
+  height: var(--text-h2);
+  background-color: var(--color-bg-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.skeleton-section__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--grid-gutter);
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeleton-card__image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: var(--color-bg-secondary);
+}
+
+.skeleton-card__line {
+  height: var(--text-body);
+  background-color: var(--color-bg-secondary);
+}
+
+.skeleton-card__line--short {
+  width: 60%;
+}
+
+/* ============================================================
+   Scroll-driven video progress bar
+   ============================================================ */
+
+.hero__progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--color-accent);
+  z-index: 5;
+  transition: width 50ms linear;
+}
+
+/* ============================================================
+   Reduced motion — static hero
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll-stage {
+    height: auto !important;
+  }
+
+  .hero__sticky-visual {
+    position: relative !important;
+    height: var(--hero-height-mobile) !important;
+    min-height: var(--hero-min-height-mobile) !important;
+  }
+
+  @media (min-width: 768px) {
+    .hero__sticky-visual {
+      height: var(--hero-height-tablet) !important;
+      min-height: var(--hero-min-height-tablet) !important;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .hero__sticky-visual {
+      height: 100vh !important;
+      min-height: var(--hero-min-height-desktop) !important;
+    }
+  }
+
+  .hero__scroll-progress {
+    display: none !important;
+  }
+
+  .hero__progress-bar {
+    display: none !important;
+  }
+}
+
+/* ============================================================
+   Link overlay for cards
+   ============================================================ */
+
+.card-link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+}
+
+.card-link-overlay:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

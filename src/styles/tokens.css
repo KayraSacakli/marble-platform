@@ -1,0 +1,173 @@
+/* ============================================================
+   Design Tokens — Marble Platform
+   Source of truth: docs/10_DESIGN_SYSTEM.md
+   ============================================================ */
+
+:root {
+  /* ---- Colors: Backgrounds ---- */
+  --color-bg-primary: #F5F0EB;
+  --color-bg-secondary: #EDE7DF;
+  --color-bg-tertiary: #E5DDD3;
+  --color-bg-dark: #2C2C2C;
+  --color-bg-darker: #1A1A1A;
+  --color-bg-white: #FFFFFF;
+
+  /* ---- Colors: Text ---- */
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #5A5A5A;
+  --color-text-tertiary: #8A8078;
+  --color-text-inverse: #F5F0EB;
+  --color-text-on-dark: #D4CFC9;
+
+  /* ---- Colors: Borders ---- */
+  --color-border-subtle: #D9D2CA;
+  --color-border-medium: #C4BAA9;
+
+  /* ---- Colors: Accent ---- */
+  --color-accent: #8B7355;
+  --color-accent-hover: #6B5740;
+  --color-accent-subtle: #C4B49A;
+
+  /* ---- Colors: State ---- */
+  --color-error: #B44A4A;
+  --color-success: #4A7A4A;
+  --color-warning: #8B7355;
+
+  /* ---- Colors: Overlay ---- */
+  --color-surface-overlay: rgba(0, 0, 0, 0.6);
+  --color-surface-overlay-light: rgba(0, 0, 0, 0.4);
+
+  /* ---- Typography: Font Families ---- */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* ---- Typography: Font Sizes (desktop) ---- */
+  --text-display: 4.5rem;
+  --text-h1: 3rem;
+  --text-h2: 2.25rem;
+  --text-h3: 1.5rem;
+  --text-h4: 1.25rem;
+  --text-body-large: 1.125rem;
+  --text-body: 1rem;
+  --text-body-small: 0.875rem;
+  --text-caption: 0.75rem;
+
+  /* ---- Typography: Line Heights ---- */
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.6;
+
+  /* ---- Typography: Font Weights ---- */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Typography: Letter Spacing ---- */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.04em;
+
+  /* ---- Spacing (8px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* ---- Layout ---- */
+  --container-sm: 42.5rem;
+  --container-md: 60rem;
+  --container-lg: 75rem;
+  --container-xl: 90rem;
+
+  --grid-columns: 12;
+  --grid-gutter: 1.5rem;
+  --grid-margin: 3rem;
+
+  --text-measure: 42.5rem;
+
+  /* ---- Breakpoints (for reference, used in media queries) ---- */
+  --breakpoint-mobile: 0px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1200px;
+
+  /* ---- Borders ---- */
+  --border-subtle: 1px solid var(--color-border-subtle);
+  --border-medium: 1px solid var(--color-border-medium);
+  --border-strong: 2px solid var(--color-border-medium);
+
+  /* ---- Radius ---- */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* ---- Shadows ---- */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* ---- Motion ---- */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 800ms;
+
+  --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --distance-sm: 8px;
+  --distance-md: 16px;
+  --distance-lg: 32px;
+
+  /* ---- Z-Index ---- */
+  --z-index-base: 0;
+  --z-index-dropdown: 10;
+  --z-index-sticky: 50;
+  --z-index-header: 100;
+  --z-index-overlay: 200;
+  --z-index-modal: 300;
+  --z-index-toast: 400;
+
+  /* ---- Component Tokens ---- */
+  --header-height-desktop: 4.5rem;
+  --header-height-tablet: 4rem;
+  --header-height-mobile: 3.75rem;
+
+  --card-bg: var(--color-bg-white);
+  --card-border: 1px solid var(--color-border-subtle);
+  --card-radius: var(--radius-none);
+  --card-shadow: var(--shadow-none);
+  --card-padding: var(--space-5);
+
+  --hero-height-desktop: 100vh;
+  --hero-height-tablet: 80vh;
+  --hero-height-mobile: 70vh;
+  --hero-min-height-desktop: 600px;
+  --hero-min-height-tablet: 480px;
+  --hero-min-height-mobile: 400px;
+
+  --input-height: 2.75rem;
+  --input-padding: 0.75rem;
+  --input-border: 1px solid var(--color-border-medium);
+  --input-radius: var(--radius-sm);
+
+  --button-height-lg: 3.25rem;
+  --button-height-md: 2.75rem;
+  --button-height-sm: 2.25rem;
+  --button-padding-lg: 2rem;
+  --button-padding-md: 1.5rem;
+  --button-padding-sm: 1rem;
+}
