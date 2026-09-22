@@ -12,6 +12,8 @@
 @import '../../styles/components/product.css';
 @import '../../styles/components/collection.css';
 @import '../../styles/components/application.css';
+@import '../../styles/components/project.css';
+@import '../../styles/components/journal.css';
 
 /* ---- Box Sizing ---- */
 *,
