@@ -1,0 +1,154 @@
+/* ============================================================
+   Company Pages — Marble Platform
+   About / Quarry / Factory — editorial corporate
+   ============================================================ */
+
+/* ---- Shared Company Page ---- */
+.company-page {
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .company-page {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+}
+
+.company-page__header {
+  margin-bottom: var(--space-7);
+}
+
+@media (min-width: 768px) {
+  .company-page__header {
+    margin-bottom: var(--space-8);
+  }
+}
+
+.company-page__intro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+  max-width: var(--text-measure);
+  margin-top: var(--space-4);
+}
+
+/* ---- Company Hero (shared) ---- */
+.company-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .company-hero {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--grid-gutter);
+    align-items: start;
+  }
+}
+
+@media (min-width: 1200px) {
+  .company-hero {
+    grid-template-columns: 7fr 5fr;
+    gap: calc(var(--grid-gutter) * 1.5);
+  }
+}
+
+.company-hero__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.company-hero__name {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 767px) {
+  .company-hero__name {
+    font-size: var(--text-h2);
+  }
+}
+
+.company-hero__description {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  max-width: var(--text-measure);
+}
+
+.company-hero__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+@media (min-width: 768px) {
+  .company-hero__media {
+    aspect-ratio: 3 / 2;
+  }
+}
+
+.company-hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- Company Content Section ---- */
+.company-content {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.company-content__body {
+  max-width: var(--text-measure);
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-primary);
+}
+
+.company-content__body p {
+  margin-bottom: var(--space-4);
+}
+
+.company-content__body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Company CTA ---- */
+.company-cta {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+  text-align: center;
+}
+
+.company-cta__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.company-cta__message {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  color: var(--color-text-secondary);
+  max-width: 48ch;
+  margin: 0 auto var(--space-6);
+}

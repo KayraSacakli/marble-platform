@@ -1,14 +1,13 @@
 import type { Locale } from '@/types/locale';
 import { apiClient } from '@/lib/api/client';
-import type { MediaPresentation, SEOData } from '@/types/api';
+import type { MediaPresentation } from '@/types/api';
 
-interface CompanyContent {
+export interface CompanyContent {
   id: string;
   name: string;
   slug: string;
-  content: string;
-  media: MediaPresentation[];
-  seo: SEOData;
+  description: string;
+  coverImage?: MediaPresentation;
 }
 
 export async function getAbout(locale: Locale): Promise<CompanyContent> {
