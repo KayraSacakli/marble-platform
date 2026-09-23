@@ -1,0 +1,138 @@
+/* ============================================================
+   Contact Page — Marble Platform
+   Premium architectural materials company contact
+   ============================================================ */
+
+.contact-page {
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .contact-page {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+}
+
+.contact-page__header {
+  margin-bottom: var(--space-7);
+}
+
+@media (min-width: 768px) {
+  .contact-page__header {
+    margin-bottom: var(--space-8);
+  }
+}
+
+.contact-page__intro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+  max-width: var(--text-measure);
+  margin-top: var(--space-4);
+}
+
+/* ---- Contact Layout ---- */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .contact-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: calc(var(--grid-gutter) * 1.5);
+    align-items: start;
+  }
+}
+
+/* ---- Contact Information ---- */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.contact-info__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-info__label {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.contact-info__value {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  color: var(--color-text-primary);
+  line-height: var(--leading-normal);
+}
+
+.contact-info__value a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: border-color var(--duration-fast) var(--easing-default);
+}
+
+.contact-info__value a:hover {
+  border-color: var(--color-accent);
+}
+
+/* ---- Contact CTA ---- */
+.contact-cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-7);
+  background-color: var(--color-bg-secondary);
+}
+
+.contact-cta__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-text-primary);
+}
+
+.contact-cta__message {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* ---- Contact Footer ---- */
+.contact-footer {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--color-border-subtle);
+  text-align: center;
+}
+
+.contact-footer__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.contact-footer__message {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  color: var(--color-text-secondary);
+  max-width: 48ch;
+  margin: 0 auto var(--space-6);
+}
