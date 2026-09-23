@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { isLocale, SUPPORTED_LOCALES, getLocaleDirection, getLocaleMetadata } from '@/types/locale';
+import { isLocale, SUPPORTED_LOCALES, getLocaleDirection } from '@/types/locale';
 import { inter, playfairDisplay } from '@/lib/fonts';
 import { SkipNavigation } from '@/components/navigation/SkipNavigation';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
+import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
+import { SITE_URL, getOGLocale } from '@/lib/seo/constants';
 import './globals.css';
 
 type LayoutProps = {
@@ -23,29 +25,40 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return {};
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
-  const metadata = getLocaleMetadata(locale);
   const siteName = locale === 'tr' ? 'Mermer Platformu' : 'Marble Platform';
+  const title = locale === 'tr' ? 'Mermer Platformu' : 'Marble Platform';
+  const description =
+    locale === 'tr'
+      ? 'Premium Mermer Üretici ve İhracatçısı'
+      : 'Premium Marble Manufacturer & Exporter';
 
   return {
+    metadataBase: new URL(SITE_URL),
     title: {
-      default: locale === 'tr' ? 'Mermer Platformu' : 'Marble Platform',
-      template: `%s | ${locale === 'tr' ? 'Mermer Platformu' : 'Marble Platform'}`,
+      default: title,
+      template: `%s | ${siteName}`,
     },
-    description:
-      locale === 'tr'
-        ? 'Premium Mermer Üretici ve İhracatçısı'
-        : 'Premium Marble Manufacturer & Exporter',
+    description,
     alternates: {
-      canonical: `${baseUrl}/${locale}`,
-      languages: Object.fromEntries(
-        SUPPORTED_LOCALES.map((l) => [l, `${baseUrl}/${l}`])
-      ),
+      canonical: `${SITE_URL}/${locale}`,
+      languages: {
+        ...Object.fromEntries(
+          SUPPORTED_LOCALES.map((l) => [l, `${SITE_URL}/${l}`])
+        ),
+        'x-default': `${SITE_URL}/tr`,
+      },
     },
     openGraph: {
       type: 'website',
-      locale: metadata.code === 'tr' ? 'tr_TR' : metadata.code === 'en' ? 'en_US' : `${metadata.code}_${metadata.code.toUpperCase()}`,
+      locale: getOGLocale(locale),
       siteName,
+      title,
+      description,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
     },
   };
 }
@@ -61,6 +74,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale} dir={direction} className={`${playfairDisplay.variable} ${inter.variable}`}>
+      <head>
+        <OrganizationJsonLd />
+        <WebSiteJsonLd locale={locale} />
+      </head>
       <body>
         <SkipNavigation />
         <Header locale={locale} currentPath={`/${locale}`} />

@@ -4,6 +4,8 @@ import { isLocale } from '@/types/locale';
 import { getFactory } from '@/lib/data/company';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -15,16 +17,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const factory = await getFactory(locale);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = factory.name;
+    const description = factory.description;
 
     return {
-      title: factory.name,
-      description: factory.description,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/factory`,
+        type: 'website',
+        images: factory.coverImage ? [{ url: factory.coverImage.src, alt: factory.coverImage.alt, width: factory.coverImage.width, height: factory.coverImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/factory`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/factory`])
-        ),
+        canonical: `${SITE_URL}/${locale}/factory`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/factory`])
+          ),
+          'x-default': `${SITE_URL}/tr/factory`,
+        },
       },
     };
   } catch {
@@ -49,6 +63,12 @@ export default async function FactoryPage({ params }: PageProps) {
   return (
     <main className="company-page">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: factory.name },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

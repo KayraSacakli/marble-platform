@@ -14,19 +14,30 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+  const title = locale === 'tr' ? 'Projeler' : 'Projects';
+  const description =
+    locale === 'tr'
+      ? 'Tamamlanmış ve devam eden projelerimizi keşfedin.'
+      : 'Explore our completed and ongoing projects.';
 
   return {
-    title: locale === 'tr' ? 'Projeler' : 'Projects',
-    description:
-      locale === 'tr'
-        ? 'Tamamlanmış ve devam eden projelerimizi keşfedin.'
-        : 'Explore our completed and ongoing projects.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/projects`,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
     alternates: {
-      canonical: `${baseUrl}/${locale}/projects`,
-      languages: Object.fromEntries(
-        ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/projects`])
-      ),
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/projects`,
+      languages: {
+        ...Object.fromEntries(
+          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${l}/projects`])
+        ),
+        'x-default': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/tr/projects`,
+      },
     },
   };
 }

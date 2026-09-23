@@ -16,19 +16,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+  const title = locale === 'tr' ? 'Mermer Kataloğu' : 'Marble Catalogue';
+  const description =
+    locale === 'tr'
+      ? 'Premium mermer ürünlerimizi keşfedin.'
+      : 'Explore our premium marble products.';
 
   return {
-    title: locale === 'tr' ? 'Mermer Kataloğu' : 'Marble Catalogue',
-    description:
-      locale === 'tr'
-        ? 'Premium mermer ürünlerimizi keşfedin.'
-        : 'Explore our premium marble products.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/products`,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
     alternates: {
-      canonical: `${baseUrl}/${locale}/products`,
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/products`,
       languages: {
-        tr: `${baseUrl}/tr/products`,
-        en: `${baseUrl}/en/products`,
+        ...Object.fromEntries(
+          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${l}/products`])
+        ),
+        'x-default': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/tr/products`,
       },
     },
   };

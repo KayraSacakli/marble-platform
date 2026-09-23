@@ -5,6 +5,8 @@ import { getCollection } from '@/lib/data/collections';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -16,16 +18,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const collection = await getCollection(locale, slug);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = collection.name;
+    const description = collection.description || collection.seo?.metaDescription;
 
     return {
-      title: collection.name,
-      description: collection.description || collection.seo?.metaDescription,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/collections/${collection.slug}`,
+        type: 'website',
+        images: collection.coverImage ? [{ url: collection.coverImage.src, alt: collection.coverImage.alt, width: collection.coverImage.width, height: collection.coverImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/collections/${collection.slug}`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/collections/${collection.slug}`])
-        ),
+        canonical: `${SITE_URL}/${locale}/collections/${collection.slug}`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/collections/${collection.slug}`])
+          ),
+          'x-default': `${SITE_URL}/tr/collections/${collection.slug}`,
+        },
       },
     };
   } catch {
@@ -50,6 +64,13 @@ export default async function CollectionDetailPage({ params }: PageProps) {
   return (
     <main className="collection-detail">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'Koleksiyonlar' : 'Collections', href: `/${locale}/collections` },
+            { name: collection.name },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

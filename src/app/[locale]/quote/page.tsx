@@ -4,6 +4,8 @@ import { isLocale, type Locale } from '@/types/locale';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { QuoteForm } from '@/components/quote/QuoteForm';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 import { getProject } from '@/lib/data/projects';
 import { getProduct } from '@/lib/data/products';
 import { getApplication } from '@/lib/data/applications';
@@ -16,19 +18,30 @@ type PageProps = {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+  const title = locale === 'tr' ? 'Teklif Talebi' : 'Request a Quote';
+  const description =
+    locale === 'tr'
+      ? 'Projeniz için doğal taş teklifi alın. Uzman ekibimiz size yardımcı olmaya hazır.'
+      : 'Get a quote for natural stone for your project. Our expert team is ready to help.';
 
   return {
-    title: locale === 'tr' ? 'Teklif Talebi' : 'Request a Quote',
-    description:
-      locale === 'tr'
-        ? 'Projeniz için doğal taş teklifi alın. Uzman ekibimiz size yardımcı olmaya hazır.'
-        : 'Get a quote for natural stone for your project. Our expert team is ready to help.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/quote`,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
     alternates: {
-      canonical: `${baseUrl}/${locale}/quote`,
-      languages: Object.fromEntries(
-        ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/quote`])
-      ),
+      canonical: `${SITE_URL}/${locale}/quote`,
+      languages: {
+        ...Object.fromEntries(
+          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/quote`])
+        ),
+        'x-default': `${SITE_URL}/tr/quote`,
+      },
     },
   };
 }
@@ -74,6 +87,12 @@ export default async function QuotePage({ params, searchParams }: PageProps) {
   return (
     <main className="quote-page">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'Teklif Talebi' : 'Request a Quote' },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

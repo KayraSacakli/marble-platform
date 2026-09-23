@@ -5,6 +5,8 @@ import { getApplication } from '@/lib/data/applications';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -16,16 +18,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const application = await getApplication(locale, slug);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = application.name;
+    const description = application.description || application.seo?.metaDescription;
 
     return {
-      title: application.name,
-      description: application.description || application.seo?.metaDescription,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/applications/${application.slug}`,
+        type: 'website',
+        images: application.coverImage ? [{ url: application.coverImage.src, alt: application.coverImage.alt, width: application.coverImage.width, height: application.coverImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/applications/${application.slug}`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/applications/${application.slug}`])
-        ),
+        canonical: `${SITE_URL}/${locale}/applications/${application.slug}`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/applications/${application.slug}`])
+          ),
+          'x-default': `${SITE_URL}/tr/applications/${application.slug}`,
+        },
       },
     };
   } catch {
@@ -50,6 +64,13 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
   return (
     <main className="application-detail">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'Uygulamalar' : 'Applications', href: `/${locale}/applications` },
+            { name: application.name },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

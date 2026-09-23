@@ -7,6 +7,8 @@ import { RelatedContent } from '@/components/product/RelatedContent';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd, ProductJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -18,16 +20,27 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const product = await getProduct(locale, slug);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = product.name;
+    const description = product.tagline || product.seo?.metaDescription;
 
     return {
-      title: product.name,
-      description: product.tagline || product.seo?.metaDescription,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/products/${product.slug}`,
+        type: 'website',
+        images: product.primaryImage ? [{ url: product.primaryImage.src, alt: product.primaryImage.alt, width: product.primaryImage.width, height: product.primaryImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/products/${product.slug}`,
+        canonical: `${SITE_URL}/${locale}/products/${product.slug}`,
         languages: {
-          tr: `${baseUrl}/tr/products/${product.slug}`,
-          en: `${baseUrl}/en/products/${product.slug}`,
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/products/${product.slug}`])
+          ),
+          'x-default': `${SITE_URL}/tr/products/${product.slug}`,
         },
       },
     };
@@ -53,6 +66,19 @@ export default async function ProductDetailPage({ params }: PageProps) {
   return (
     <main className="product-detail">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'Mermerler' : 'Marbles', href: `/${locale}/products` },
+            { name: product.name },
+          ]}
+        />
+        <ProductJsonLd
+          name={product.name}
+          description={product.tagline || undefined}
+          image={product.primaryImage?.src}
+          url={`/${locale}/products/${product.slug}`}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

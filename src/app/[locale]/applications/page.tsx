@@ -14,19 +14,30 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+  const title = locale === 'tr' ? 'Uygulamalar' : 'Applications';
+  const description =
+    locale === 'tr'
+      ? 'Mermerin mimarideki kullanım alanlarını keşfedin.'
+      : 'Explore how marble is used in architecture.';
 
   return {
-    title: locale === 'tr' ? 'Uygulamalar' : 'Applications',
-    description:
-      locale === 'tr'
-        ? 'Mermerin mimarideki kullanım alanlarını keşfedin.'
-        : 'Explore how marble is used in architecture.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/applications`,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
     alternates: {
-      canonical: `${baseUrl}/${locale}/applications`,
-      languages: Object.fromEntries(
-        ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/applications`])
-      ),
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/applications`,
+      languages: {
+        ...Object.fromEntries(
+          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${l}/applications`])
+        ),
+        'x-default': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/tr/applications`,
+      },
     },
   };
 }

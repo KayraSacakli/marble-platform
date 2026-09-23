@@ -5,6 +5,8 @@ import { getProject } from '@/lib/data/projects';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -16,16 +18,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const project = await getProject(locale, slug);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = project.name;
+    const description = project.description || project.seo?.metaDescription;
 
     return {
-      title: project.name,
-      description: project.description || project.seo?.metaDescription,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/projects/${project.slug}`,
+        type: 'website',
+        images: project.heroImage ? [{ url: project.heroImage.src, alt: project.heroImage.alt, width: project.heroImage.width, height: project.heroImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/projects/${project.slug}`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/projects/${project.slug}`])
-        ),
+        canonical: `${SITE_URL}/${locale}/projects/${project.slug}`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/projects/${project.slug}`])
+          ),
+          'x-default': `${SITE_URL}/tr/projects/${project.slug}`,
+        },
       },
     };
   } catch {
@@ -50,6 +64,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   return (
     <main className="project-detail">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'Projeler' : 'Projects', href: `/${locale}/projects` },
+            { name: project.name },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

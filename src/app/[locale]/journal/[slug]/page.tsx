@@ -5,6 +5,8 @@ import { getJournalArticle } from '@/lib/data/journal';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd, ArticleJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -16,16 +18,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const article = await getJournalArticle(locale, slug);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = article.title;
+    const description = article.summary || article.seo?.metaDescription;
 
     return {
-      title: article.title,
-      description: article.summary || article.seo?.metaDescription,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/journal/${article.slug}`,
+        type: 'article',
+        publishedTime: article.publicationDate,
+        images: article.coverImage ? [{ url: article.coverImage.src, alt: article.coverImage.alt, width: article.coverImage.width, height: article.coverImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/journal/${article.slug}`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/journal/${article.slug}`])
-        ),
+        canonical: `${SITE_URL}/${locale}/journal/${article.slug}`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/journal/${article.slug}`])
+          ),
+          'x-default': `${SITE_URL}/tr/journal/${article.slug}`,
+        },
       },
     };
   } catch {
@@ -50,6 +65,21 @@ export default async function JournalDetailPage({ params }: PageProps) {
   return (
     <main className="journal-detail">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'Dergi' : 'Journal', href: `/${locale}/journal` },
+            { name: article.title },
+          ]}
+        />
+        <ArticleJsonLd
+          headline={article.title}
+          description={article.summary || undefined}
+          image={article.coverImage?.src}
+          url={`/${locale}/journal/${article.slug}`}
+          datePublished={article.publicationDate}
+          authorName={article.author || undefined}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

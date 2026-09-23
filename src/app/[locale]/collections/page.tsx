@@ -14,19 +14,30 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+  const title = locale === 'tr' ? 'Koleksiyonlar' : 'Collections';
+  const description =
+    locale === 'tr'
+      ? 'Doğal taş koleksiyonlarımızı keşfedin.'
+      : 'Explore our natural stone collections.';
 
   return {
-    title: locale === 'tr' ? 'Koleksiyonlar' : 'Collections',
-    description:
-      locale === 'tr'
-        ? 'Doğal taş koleksiyonlarımızı keşfedin.'
-        : 'Explore our natural stone collections.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/collections`,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
     alternates: {
-      canonical: `${baseUrl}/${locale}/collections`,
-      languages: Object.fromEntries(
-        ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/collections`])
-      ),
+      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/collections`,
+      languages: {
+        ...Object.fromEntries(
+          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${l}/collections`])
+        ),
+        'x-default': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/tr/collections`,
+      },
     },
   };
 }

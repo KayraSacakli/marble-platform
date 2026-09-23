@@ -4,6 +4,8 @@ import { isLocale } from '@/types/locale';
 import { getQuarry } from '@/lib/data/company';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -15,16 +17,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const quarry = await getQuarry(locale);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = quarry.name;
+    const description = quarry.description;
 
     return {
-      title: quarry.name,
-      description: quarry.description,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/quarry`,
+        type: 'website',
+        images: quarry.coverImage ? [{ url: quarry.coverImage.src, alt: quarry.coverImage.alt, width: quarry.coverImage.width, height: quarry.coverImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/quarry`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/quarry`])
-        ),
+        canonical: `${SITE_URL}/${locale}/quarry`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/quarry`])
+          ),
+          'x-default': `${SITE_URL}/tr/quarry`,
+        },
       },
     };
   } catch {
@@ -49,6 +63,12 @@ export default async function QuarryPage({ params }: PageProps) {
   return (
     <main className="company-page">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: quarry.name },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

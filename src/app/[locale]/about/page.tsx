@@ -4,6 +4,8 @@ import { isLocale } from '@/types/locale';
 import { getAbout } from '@/lib/data/company';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -15,16 +17,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   try {
     const about = await getAbout(locale);
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+    const title = about.name;
+    const description = about.description;
 
     return {
-      title: about.name,
-      description: about.description,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        url: `${SITE_URL}/${locale}/about`,
+        type: 'website',
+        images: about.coverImage ? [{ url: about.coverImage.src, alt: about.coverImage.alt, width: about.coverImage.width, height: about.coverImage.height }] : [],
+      },
+      twitter: { card: 'summary_large_image', title, description },
       alternates: {
-        canonical: `${baseUrl}/${locale}/about`,
-        languages: Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/about`])
-        ),
+        canonical: `${SITE_URL}/${locale}/about`,
+        languages: {
+          ...Object.fromEntries(
+            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/about`])
+          ),
+          'x-default': `${SITE_URL}/tr/about`,
+        },
       },
     };
   } catch {
@@ -49,6 +63,12 @@ export default async function AboutPage({ params }: PageProps) {
   return (
     <main className="company-page">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: about.name },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },

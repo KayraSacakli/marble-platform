@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { BreadcrumbJsonLd } from '@/components/seo';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -9,19 +11,30 @@ type PageProps = {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+  const title = locale === 'tr' ? 'İletişim' : 'Contact';
+  const description =
+    locale === 'tr'
+      ? 'Projeleriniz için doğal taş çözümleri hakkında bizimle iletişime geçin.'
+      : 'Contact us for natural stone solutions for your projects.';
 
   return {
-    title: locale === 'tr' ? 'İletişim' : 'Contact',
-    description:
-      locale === 'tr'
-        ? 'Projeleriniz için doğal taş çözümleri hakkında bizimle iletişime geçin.'
-        : 'Contact us for natural stone solutions for your projects.',
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/contact`,
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
     alternates: {
-      canonical: `${baseUrl}/${locale}/contact`,
-      languages: Object.fromEntries(
-        ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${baseUrl}/${l}/contact`])
-      ),
+      canonical: `${SITE_URL}/${locale}/contact`,
+      languages: {
+        ...Object.fromEntries(
+          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/contact`])
+        ),
+        'x-default': `${SITE_URL}/tr/contact`,
+      },
     },
   };
 }
@@ -32,6 +45,12 @@ export default async function ContactPage({ params }: PageProps) {
   return (
     <main className="contact-page">
       <Container size="lg">
+        <BreadcrumbJsonLd
+          items={[
+            { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
+            { name: locale === 'tr' ? 'İletişim' : 'Contact' },
+          ]}
+        />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
