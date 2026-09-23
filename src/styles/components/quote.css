@@ -1,0 +1,212 @@
+/* ============================================================
+   Quote Request — Marble Platform
+   Premium B2B inquiry form
+   ============================================================ */
+
+.quote-page {
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-9);
+}
+
+@media (min-width: 768px) {
+  .quote-page {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+}
+
+.quote-page__header {
+  margin-bottom: var(--space-7);
+}
+
+@media (min-width: 768px) {
+  .quote-page__header {
+    margin-bottom: var(--space-8);
+  }
+}
+
+.quote-page__intro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-large);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+  max-width: var(--text-measure);
+  margin-top: var(--space-4);
+}
+
+/* ---- Quote Layout ---- */
+.quote-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .quote-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: calc(var(--grid-gutter) * 1.5);
+    align-items: start;
+  }
+}
+
+/* ---- Form ---- */
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.quote-form__context {
+  padding: var(--space-5);
+  background-color: var(--color-bg-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.quote-form__context-label {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+.quote-form__context-value {
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.quote-form__section {
+  margin-bottom: var(--space-6);
+}
+
+.quote-form__section-title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.quote-form__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .quote-form__row--two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.quote-form__submit {
+  margin-top: var(--space-4);
+}
+
+/* ---- Status Messages ---- */
+.quote-status {
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.quote-status--success {
+  background-color: var(--color-bg-secondary);
+}
+
+.quote-status--error {
+  background-color: var(--color-bg-secondary);
+  border-left: 3px solid var(--color-error);
+  text-align: left;
+}
+
+.quote-status__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.quote-status__message {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  max-width: 40ch;
+  margin: 0 auto var(--space-6);
+}
+
+.quote-status__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: center;
+}
+
+/* ---- Aside / Process ---- */
+.quote-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.quote-aside__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.quote-aside__label {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.quote-aside__value {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--color-text-primary);
+  line-height: var(--leading-normal);
+}
+
+/* ---- Error List ---- */
+.quote-errors {
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background-color: var(--color-bg-secondary);
+  border-left: 3px solid var(--color-error);
+}
+
+.quote-errors__title {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  font-weight: var(--weight-semibold);
+  color: var(--color-error);
+  margin-bottom: var(--space-2);
+}
+
+.quote-errors__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.quote-errors__item {
+  font-family: var(--font-body);
+  font-size: var(--text-body-small);
+  color: var(--color-text-secondary);
+  padding: var(--space-1) 0;
+}
