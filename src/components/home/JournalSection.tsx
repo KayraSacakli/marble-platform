@@ -5,9 +5,10 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 interface JournalSectionProps {
   heading?: string;
   articles: JournalSummary[];
+  locale: string;
 }
 
-export function JournalSection({ heading, articles }: JournalSectionProps) {
+export function JournalSection({ heading, articles, locale }: JournalSectionProps) {
   if (articles.length === 0) return null;
 
   const displayHeading = heading || 'Journal';
@@ -21,7 +22,7 @@ export function JournalSection({ heading, articles }: JournalSectionProps) {
         />
         <div className="journal-grid">
           {articles.map((article, index) => (
-            <JournalCard key={article.id} article={article} featured={index === 0} />
+            <JournalCard key={article.id} article={article} featured={index === 0} locale={locale} />
           ))}
         </div>
       </Container>
@@ -29,10 +30,12 @@ export function JournalSection({ heading, articles }: JournalSectionProps) {
   );
 }
 
-function JournalCard({ article, featured }: { article: JournalSummary; featured: boolean }) {
+function JournalCard({ article, featured, locale }: { article: JournalSummary; featured: boolean; locale: string }) {
+  const href = locale ? `/${locale}/journal/${article.slug}` : `/journal/${article.slug}`;
+
   return (
     <article className={`journal-card ${featured ? 'journal-card--featured' : ''}`}>
-      <a href={`/journal/${article.slug}`} className="card-link-overlay" aria-label={article.title}>
+      <a href={href} className="card-link-overlay" aria-label={article.title}>
         <span className="sr-only">{article.title}</span>
       </a>
       <div className="journal-card__image-wrap">

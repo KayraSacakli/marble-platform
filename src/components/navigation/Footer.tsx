@@ -120,7 +120,7 @@ export async function Footer({ locale }: FooterProps) {
                     <Link
                       href={lang.href}
                       className={`footer__lang-link ${lang.active ? 'footer__lang-link--active' : ''}`}
-                      aria-current={lang.active ? 'true' : undefined}
+                      aria-current={lang.active ? 'page' : undefined}
                     >
                       {lang.label}
                     </Link>

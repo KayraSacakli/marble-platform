@@ -1,6 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/tr/products',
+}));
+
 import { MobileMenu } from '@/components/navigation/MobileMenu';
 
 const mockPrimaryItems = [

@@ -5,9 +5,10 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 interface FeaturedProductsSectionProps {
   heading?: string;
   products: ProductSummary[];
+  locale: string;
 }
 
-export function FeaturedProductsSection({ heading, products }: FeaturedProductsSectionProps) {
+export function FeaturedProductsSection({ heading, products, locale }: FeaturedProductsSectionProps) {
   if (products.length === 0) return null;
 
   const displayHeading = heading || 'Featured Products';
@@ -21,7 +22,7 @@ export function FeaturedProductsSection({ heading, products }: FeaturedProductsS
         />
         <div className="products-grid products-grid--editorial">
           {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} featured={index === 0} />
+            <ProductCard key={product.id} product={product} featured={index === 0} locale={locale} />
           ))}
         </div>
       </Container>
@@ -29,10 +30,12 @@ export function FeaturedProductsSection({ heading, products }: FeaturedProductsS
   );
 }
 
-function ProductCard({ product, featured }: { product: ProductSummary; featured: boolean }) {
+function ProductCard({ product, featured, locale }: { product: ProductSummary; featured: boolean; locale: string }) {
+  const href = locale ? `/${locale}/products/${product.slug}` : `/products/${product.slug}`;
+
   return (
     <article className={`product-card ${featured ? 'product-card--featured' : ''}`}>
-      <a href={`/products/${product.slug}`} className="card-link-overlay" aria-label={product.name}>
+      <a href={href} className="card-link-overlay" aria-label={product.name}>
         <span className="sr-only">{product.name}</span>
       </a>
       <div className={`product-card__image-wrap ${featured ? 'product-card__image-wrap--large' : ''}`}>

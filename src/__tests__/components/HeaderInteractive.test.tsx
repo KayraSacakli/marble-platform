@@ -1,6 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/tr',
+}));
+
 import { HeaderInteractive } from '@/components/navigation/HeaderInteractive';
 
 const mockPrimaryItems = [

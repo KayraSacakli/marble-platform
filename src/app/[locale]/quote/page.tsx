@@ -142,8 +142,8 @@ export default async function QuotePage({ params, searchParams }: PageProps) {
                   : 'For questions, reach out to us:'}
               </p>
               <p className="quote-aside__value">
-                <a href="mailto:hello@example.invalid" style={{ color: 'var(--color-accent)', textDecoration: 'none', borderBottom: '1px solid var(--color-accent)' }}>
-                  hello@example.invalid
+                <a href="mailto:info@marbleplatform.com" style={{ color: 'var(--color-accent)', textDecoration: 'none', borderBottom: '1px solid var(--color-accent)' }}>
+                  info@marbleplatform.com
                 </a>
               </p>
             </div>

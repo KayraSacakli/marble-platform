@@ -94,9 +94,6 @@ export default async function FactoryPage({ params }: PageProps) {
             <h2 className="company-hero__name" style={{ fontSize: 'var(--text-h2)' }}>
               {locale === 'tr' ? 'Fabrikamız' : 'Our Factory'}
             </h2>
-            <p className="company-hero__description">
-              {factory.description}
-            </p>
           </div>
 
           {factory.coverImage && (

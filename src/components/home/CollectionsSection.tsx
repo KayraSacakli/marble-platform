@@ -5,9 +5,10 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 interface CollectionsSectionProps {
   heading?: string;
   collections: CollectionSummary[];
+  locale: string;
 }
 
-export function CollectionsSection({ heading, collections }: CollectionsSectionProps) {
+export function CollectionsSection({ heading, collections, locale }: CollectionsSectionProps) {
   if (collections.length === 0) return null;
 
   const displayHeading = heading || 'Collections';
@@ -21,7 +22,7 @@ export function CollectionsSection({ heading, collections }: CollectionsSectionP
         />
         <div className="collections-grid">
           {collections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} />
+            <CollectionCard key={collection.id} collection={collection} locale={locale} />
           ))}
         </div>
       </Container>
@@ -29,10 +30,12 @@ export function CollectionsSection({ heading, collections }: CollectionsSectionP
   );
 }
 
-function CollectionCard({ collection }: { collection: CollectionSummary }) {
+function CollectionCard({ collection, locale }: { collection: CollectionSummary; locale: string }) {
+  const href = locale ? `/${locale}/collections/${collection.slug}` : `/collections/${collection.slug}`;
+
   return (
     <article className="collection-card">
-      <a href={`/collections/${collection.slug}`} className="card-link-overlay" aria-label={collection.name}>
+      <a href={href} className="card-link-overlay" aria-label={collection.name}>
         <span className="sr-only">{collection.name}</span>
       </a>
       <div className="collection-card__image-wrap">

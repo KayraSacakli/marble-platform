@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type { NavigationItem, UtilityNavigationItem } from '@/types/api';
 
 interface MobileMenuProps {
@@ -21,6 +22,7 @@ export function MobileMenu({
 }: MobileMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<Element | null>(null);
+  const pathname = usePathname();
 
   const visiblePrimary = primaryItems.filter((item) => item.visible);
   const ctaItem = utilityItems.find((item) => item.type === 'cta' && item.visible);
@@ -93,6 +95,7 @@ export function MobileMenu({
   return (
     <div
       ref={menuRef}
+      id="mobile-menu"
       role="dialog"
       aria-modal="true"
       aria-label={locale === 'tr' ? 'Menü' : 'Menu'}
@@ -117,7 +120,7 @@ export function MobileMenu({
         <nav aria-label={locale === 'tr' ? 'Ana navigasyon' : 'Main navigation'}>
           <ul className="mobile-menu__list">
             {visiblePrimary.map((item) => {
-              const isActive = false;
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <li key={item.href} className="mobile-menu__item">
                   <Link

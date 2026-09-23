@@ -3,6 +3,23 @@
    docs/10_DESIGN_SYSTEM.md §18, §19
    ============================================================ */
 
+/* ---- Main content offset for fixed header ---- */
+.main-content {
+  padding-top: var(--header-height-mobile);
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    padding-top: var(--header-height-tablet);
+  }
+}
+
+@media (min-width: 1200px) {
+  .main-content {
+    padding-top: var(--header-height-desktop);
+  }
+}
+
 .header {
   position: fixed;
   top: 0;

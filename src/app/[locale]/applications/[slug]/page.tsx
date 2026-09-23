@@ -102,15 +102,6 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {application.description && (
-          <section className="application-description">
-            <div
-              className="application-description__content"
-              dangerouslySetInnerHTML={{ __html: application.description }}
-            />
-          </section>
-        )}
-
         {application.products.length > 0 && (
           <section className="application-products">
             <h2 className="application-products__heading">
@@ -122,6 +113,7 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
                   key={product.id}
                   product={product}
                   priority={index < 3}
+                  locale={locale}
                 />
               ))}
             </div>

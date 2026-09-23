@@ -58,5 +58,5 @@ export default async function LocalePage({ params }: PageProps) {
     notFound();
   }
 
-  return <Homepage data={data} />;
+  return <Homepage data={data} locale={locale} />;
 }

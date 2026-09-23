@@ -137,7 +137,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
             basePath={`${locale}/projects`}
           />
 
-          <RelatedProducts products={product.relatedProducts} />
+          <RelatedProducts
+            products={product.relatedProducts}
+            locale={locale}
+            title={locale === 'tr' ? 'İlgili Ürünler' : 'Related Products'}
+          />
         </section>
 
         <section className="product-quote-cta">

@@ -94,9 +94,6 @@ export default async function QuarryPage({ params }: PageProps) {
             <h2 className="company-hero__name" style={{ fontSize: 'var(--text-h2)' }}>
               {locale === 'tr' ? 'Ocağımızdan' : 'From Our Quarry'}
             </h2>
-            <p className="company-hero__description">
-              {quarry.description}
-            </p>
           </div>
 
           {quarry.coverImage && (

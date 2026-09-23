@@ -10,20 +10,26 @@ export default function NotFound() {
   const locale = isLocale(segments[1]) ? segments[1] : DEFAULT_LOCALE;
 
   return (
-    <div style={{ padding: '48px 24px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>Page not found</h1>
-      <p style={{ marginBottom: '24px', color: '#666' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '50vh',
+        padding: 'var(--space-8) var(--grid-margin)',
+        textAlign: 'center',
+      }}
+    >
+      <h1 className="text-h2" style={{ marginBottom: 'var(--space-4)' }}>
+        Page not found
+      </h1>
+      <p className="text-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)', maxWidth: '40ch' }}>
         The page you are looking for does not exist or has been moved.
       </p>
       <Link
         href={`/${locale}`}
-        style={{
-          display: 'inline-block',
-          padding: '8px 24px',
-          fontSize: '14px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-        }}
+        className="button button--primary button--md"
       >
         Go to homepage
       </Link>

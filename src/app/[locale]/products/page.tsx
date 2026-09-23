@@ -107,7 +107,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
           </div>
         ) : (
           <>
-            <ProductGrid products={products} />
+            <ProductGrid products={products} locale={locale} />
             <Pagination
               currentPage={meta.page}
               totalPages={meta.totalPages}

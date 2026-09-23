@@ -82,7 +82,7 @@ export default async function ContactPage({ params }: PageProps) {
                 {locale === 'tr' ? 'E-posta' : 'Email'}
               </span>
               <p className="contact-info__value">
-                <a href="mailto:hello@example.invalid">hello@example.invalid</a>
+                <a href="mailto:info@marbleplatform.com">info@marbleplatform.com</a>
               </p>
             </div>
 
@@ -91,7 +91,7 @@ export default async function ContactPage({ params }: PageProps) {
                 {locale === 'tr' ? 'Telefon' : 'Phone'}
               </span>
               <p className="contact-info__value">
-                <a href="tel:+900000000000">+90 (000) 000 00 00</a>
+                <a href="tel:+902120000000">+90 (212) 000 00 00</a>
               </p>
             </div>
 
@@ -101,8 +101,8 @@ export default async function ContactPage({ params }: PageProps) {
               </span>
               <p className="contact-info__value">
                 {locale === 'tr'
-                  ? 'Örnek Mahallesi, Demo Caddesi No: 1\nİstanbul, Türkiye'
-                  : 'Example District, Demo Street No: 1\nIstanbul, Turkey'}
+                  ? 'Mermer Platformu\nİstanbul, Türkiye'
+                  : 'Marble Platform\nIstanbul, Turkey'}
               </p>
             </div>
 

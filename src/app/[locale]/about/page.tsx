@@ -94,9 +94,6 @@ export default async function AboutPage({ params }: PageProps) {
             <h2 className="company-hero__name" style={{ fontSize: 'var(--text-h2)' }}>
               {locale === 'tr' ? 'Hikayemiz' : 'Our Story'}
             </h2>
-            <p className="company-hero__description">
-              {about.description}
-            </p>
           </div>
 
           {about.coverImage && (

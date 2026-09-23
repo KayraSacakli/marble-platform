@@ -9,9 +9,10 @@ import { HomepageCTA } from './HomepageCTA';
 
 interface HomepageProps {
   data: HomepageContent;
+  locale: string;
 }
 
-function renderSection(section: HomepageSection) {
+function renderSection(section: HomepageSection, locale: string) {
   switch (section.type) {
     case 'featured_products':
       return (
@@ -19,6 +20,7 @@ function renderSection(section: HomepageSection) {
           key={section.type}
           heading={section.heading}
           products={section.products}
+          locale={locale}
         />
       );
     case 'featured_collections':
@@ -27,6 +29,7 @@ function renderSection(section: HomepageSection) {
           key={section.type}
           heading={section.heading}
           collections={section.collections}
+          locale={locale}
         />
       );
     case 'featured_applications':
@@ -35,6 +38,7 @@ function renderSection(section: HomepageSection) {
           key={section.type}
           heading={section.heading}
           applications={section.applications}
+          locale={locale}
         />
       );
     case 'featured_projects':
@@ -43,6 +47,7 @@ function renderSection(section: HomepageSection) {
           key={section.type}
           heading={section.heading}
           projects={section.projects}
+          locale={locale}
         />
       );
     case 'featured_journal':
@@ -51,6 +56,7 @@ function renderSection(section: HomepageSection) {
           key={section.type}
           heading={section.heading}
           articles={section.articles}
+          locale={locale}
         />
       );
     case 'final_cta':
@@ -73,7 +79,7 @@ function renderSection(section: HomepageSection) {
   }
 }
 
-export function Homepage({ data }: HomepageProps) {
+export function Homepage({ data, locale }: HomepageProps) {
   const orderedSections = data.sectionOrder
     .map((sectionType) => data.sections.find((s) => s.type === sectionType))
     .filter((section): section is HomepageSection => section !== undefined);
@@ -83,7 +89,7 @@ export function Homepage({ data }: HomepageProps) {
   return (
     <>
       <HeroSection hero={data.hero} />
-      {allSections.map((section) => renderSection(section))}
+      {allSections.map((section) => renderSection(section, locale))}
     </>
   );
 }

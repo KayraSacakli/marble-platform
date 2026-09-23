@@ -5,9 +5,10 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 interface ProjectsSectionProps {
   heading?: string;
   projects: ProjectSummary[];
+  locale: string;
 }
 
-export function ProjectsSection({ heading, projects }: ProjectsSectionProps) {
+export function ProjectsSection({ heading, projects, locale }: ProjectsSectionProps) {
   if (projects.length === 0) return null;
 
   const displayHeading = heading || 'Projects';
@@ -23,7 +24,7 @@ export function ProjectsSection({ heading, projects }: ProjectsSectionProps) {
         />
         <div className={`projects-grid ${editorial ? 'projects-grid--editorial' : ''}`}>
           {projects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} featured={editorial && index === 0} />
+            <ProjectCard key={project.id} project={project} featured={editorial && index === 0} locale={locale} />
           ))}
         </div>
       </Container>
@@ -31,10 +32,12 @@ export function ProjectsSection({ heading, projects }: ProjectsSectionProps) {
   );
 }
 
-function ProjectCard({ project, featured }: { project: ProjectSummary; featured: boolean }) {
+function ProjectCard({ project, featured, locale }: { project: ProjectSummary; featured: boolean; locale: string }) {
+  const href = locale ? `/${locale}/projects/${project.slug}` : `/projects/${project.slug}`;
+
   return (
     <article className={`project-card ${featured ? 'project-card--featured' : ''}`}>
-      <a href={`/projects/${project.slug}`} className="card-link-overlay" aria-label={project.name}>
+      <a href={href} className="card-link-overlay" aria-label={project.name}>
         <span className="sr-only">{project.name}</span>
       </a>
       <div className="project-card__image-wrap">

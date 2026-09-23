@@ -81,7 +81,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body>
         <SkipNavigation />
         <Header locale={locale} currentPath={`/${locale}`} />
-        <main id="main-content" style={{ paddingTop: 'var(--header-height-mobile)' }}>
+        <main id="main-content" className="main-content">
           {children}
         </main>
         <Footer locale={locale} />

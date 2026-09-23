@@ -5,9 +5,10 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 interface ApplicationsSectionProps {
   heading?: string;
   applications: ApplicationSummary[];
+  locale: string;
 }
 
-export function ApplicationsSection({ heading, applications }: ApplicationsSectionProps) {
+export function ApplicationsSection({ heading, applications, locale }: ApplicationsSectionProps) {
   if (applications.length === 0) return null;
 
   const displayHeading = heading || 'Applications';
@@ -21,7 +22,7 @@ export function ApplicationsSection({ heading, applications }: ApplicationsSecti
         />
         <div className="applications-grid">
           {applications.map((application) => (
-            <ApplicationCard key={application.id} application={application} />
+            <ApplicationCard key={application.id} application={application} locale={locale} />
           ))}
         </div>
       </Container>
@@ -29,10 +30,12 @@ export function ApplicationsSection({ heading, applications }: ApplicationsSecti
   );
 }
 
-function ApplicationCard({ application }: { application: ApplicationSummary }) {
+function ApplicationCard({ application, locale }: { application: ApplicationSummary; locale: string }) {
+  const href = locale ? `/${locale}/applications/${application.slug}` : `/applications/${application.slug}`;
+
   return (
     <article className="application-card">
-      <a href={`/applications/${application.slug}`} className="card-link-overlay" aria-label={application.name}>
+      <a href={href} className="card-link-overlay" aria-label={application.name}>
         <span className="sr-only">{application.name}</span>
       </a>
       <div className="application-card__image-wrap">

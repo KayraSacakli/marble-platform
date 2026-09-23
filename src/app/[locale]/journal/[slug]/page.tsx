@@ -139,11 +139,12 @@ export default async function JournalDetailPage({ params }: PageProps) {
               </h2>
               <div className="collection-grid">
                 {article.relatedProducts.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    priority={index < 3}
-                  />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  priority={index < 3}
+                  locale={locale}
+                />
                 ))}
               </div>
             </section>

@@ -3,13 +3,16 @@ import type { ProductSummary } from '@/types/api';
 interface ProductCardProps {
   product: ProductSummary;
   priority?: boolean;
+  locale?: string;
 }
 
-export function ProductCard({ product, priority = false }: ProductCardProps) {
+export function ProductCard({ product, priority = false, locale }: ProductCardProps) {
+  const href = locale ? `/${locale}/products/${product.slug}` : `/products/${product.slug}`;
+
   return (
     <article className="product-card">
       <a
-        href={`/products/${product.slug}`}
+        href={href}
         className="card-link-overlay"
         aria-label={product.name}
       >

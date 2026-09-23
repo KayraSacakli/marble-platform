@@ -7,22 +7,29 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ reset }: ErrorPageProps) {
   return (
-    <div role="alert" aria-live="assertive" style={{ padding: '48px 24px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>Something went wrong</h1>
-      <p style={{ marginBottom: '24px', color: '#666' }}>
+    <div
+      role="alert"
+      aria-live="assertive"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '50vh',
+        padding: 'var(--space-8) var(--grid-margin)',
+        textAlign: 'center',
+      }}
+    >
+      <h1 className="text-h2" style={{ marginBottom: 'var(--space-4)' }}>
+        Something went wrong
+      </h1>
+      <p className="text-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)', maxWidth: '40ch' }}>
         An unexpected error occurred. Please try again.
       </p>
       <button
         onClick={reset}
         type="button"
-        style={{
-          padding: '8px 24px',
-          fontSize: '14px',
-          cursor: 'pointer',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          background: '#fff',
-        }}
+        className="button button--primary button--md"
       >
         Try again
       </button>

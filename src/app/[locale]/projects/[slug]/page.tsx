@@ -113,15 +113,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {project.description && (
-          <section className="project-description">
-            <div
-              className="project-description__content"
-              dangerouslySetInnerHTML={{ __html: project.description }}
-            />
-          </section>
-        )}
-
         {project.gallery.length > 0 && (
           <section className="project-gallery">
             <h2 className="project-gallery__heading">
@@ -155,6 +146,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   key={product.id}
                   product={product}
                   priority={index < 3}
+                  locale={locale}
                 />
               ))}
             </div>

@@ -3,9 +3,10 @@ import { ProductCard } from './ProductCard';
 
 interface ProductGridProps {
   products: ProductSummary[];
+  locale?: string;
 }
 
-export function ProductGrid({ products }: ProductGridProps) {
+export function ProductGrid({ products, locale }: ProductGridProps) {
   if (products.length === 0) return null;
 
   return (
@@ -15,6 +16,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           key={product.id}
           product={product}
           priority={index < 3}
+          locale={locale}
         />
       ))}
     </div>

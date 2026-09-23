@@ -102,15 +102,6 @@ export default async function CollectionDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {collection.description && (
-          <section className="collection-description">
-            <div
-              className="collection-description__content"
-              dangerouslySetInnerHTML={{ __html: collection.description }}
-            />
-          </section>
-        )}
-
         {collection.products.length > 0 && (
           <section className="collection-products">
             <h2 className="collection-products__heading">
@@ -122,6 +113,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
                   key={product.id}
                   product={product}
                   priority={index < 3}
+                  locale={locale}
                 />
               ))}
             </div>
