@@ -110,6 +110,23 @@ export const quoteRequestSchema = z.object({
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>;
 
 // ============================================================
+// Admin auth
+// ============================================================
+
+export const adminLoginSchema = z.object({
+  email: z
+    .string()
+    .email('A valid email address is required.')
+    .max(300, 'Email must be 300 characters or fewer.'),
+  password: z
+    .string()
+    .min(1, 'Password is required.')
+    .max(500, 'Password must be 500 characters or fewer.'),
+});
+
+export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
+
+// ============================================================
 // Query param helpers
 // ============================================================
 

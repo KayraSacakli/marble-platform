@@ -27,6 +27,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Admin pages (except the login page itself) require a session cookie.
+  // This is a presence check only — the cookie value is verified
+  // server-side in pages and API handlers. Missing cookie → login.
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    if (pathname !== '/admin/login' && !request.cookies.get('mp_admin_session')?.value) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/admin/login';
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
+
   const locale = getLocaleFromPathname(pathname);
 
   if (!locale) {

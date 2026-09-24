@@ -400,11 +400,16 @@ model InternalUser {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Credential hash (scrypt, see src/lib/auth/password.ts).
+  // NULL = login disabled for this user. Never expose via API.
+  passwordHash String? @db.VarChar(500)
+
   roles             UserRole[]
   approvals         Approval[]
   authoredRevisions ContentRevision[]
   processedRequests QuoteRequest[]
   auditEvents       AuditEvent[]
+  sessions          AdminSession[]
 }
 
 model Role {
@@ -424,6 +429,20 @@ model UserRole {
   role Role         @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, roleId])
+}
+
+// Opaque admin session tokens. Only the SHA-256 hash is stored;
+// the raw token lives in an httpOnly cookie (see src/lib/auth/session.ts).
+model AdminSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  tokenHash String   @unique @db.VarChar(100)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user InternalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model AuditEvent {

@@ -13,6 +13,7 @@
  */
 
 import { PrismaClient, type Prisma } from '@prisma/client';
+import { hashPassword } from '../src/lib/auth/password';
 
 const prisma = new PrismaClient();
 
@@ -651,6 +652,49 @@ async function getOrCreateUser(prisma: PrismaClient) {
   });
 }
 
+const DEV_ADMIN_EMAIL = 'admin@marble-platform.local';
+const DEV_EDITOR_EMAIL = 'editor@marble-platform.local';
+const DEV_ADMIN_DEFAULT_PASSWORD = 'Admin123!ChangeMe';
+
+/**
+ * Development-only admin/editor logins. Password comes from SEED_ADMIN_PASSWORD;
+ * a documented default is used otherwise (dev databases only — never prod).
+ */
+async function ensureDevAdmin(prisma: PrismaClient) {
+  const configured = process.env.SEED_ADMIN_PASSWORD;
+  const password = configured && configured.length >= 12 ? configured : DEV_ADMIN_DEFAULT_PASSWORD;
+  if (!configured) {
+    console.log('[seed] SEED_ADMIN_PASSWORD not set — using documented dev default password.');
+  }
+  const passwordHash = await hashPassword(password);
+  for (const [email, name, roleName] of [
+    [DEV_ADMIN_EMAIL, 'Development Admin', 'ADMIN'],
+    [DEV_EDITOR_EMAIL, 'Development Editor', 'EDITOR'],
+  ] as const) {
+    await prisma.internalUser.upsert({
+      where: { email },
+      update: { passwordHash, isActive: true },
+      create: {
+        email,
+        name,
+        isActive: true,
+        passwordHash,
+        roles: {
+          create: {
+            role: {
+              connectOrCreate: {
+                where: { name: roleName },
+                create: { name: roleName },
+              },
+            },
+          },
+        },
+      },
+    });
+    console.log(`[seed] Dev login ready: ${email} (${roleName})`);
+  }
+}
+
 // ============================================================
 // Core Seed Functions
 // ============================================================
@@ -873,6 +917,8 @@ async function main() {
   // 1. Create/get governance user
   const user = await getOrCreateUser(prisma);
   console.log(`[seed] Governance user ready: ${user.email}`);
+
+  await ensureDevAdmin(prisma);
 
   // 2. Create content items + variants via transaction
   const contentIds: Record<string, string> = {};
