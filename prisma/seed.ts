@@ -96,302 +96,302 @@ interface SeedCompanyContent {
 
 const PRODUCTS: SeedProduct[] = [
   {
-    identifier: 'dev-01',
-    mediaFile: '/placeholders/product-01.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-ivory',
+    mediaFile: '/demo/images/demo-marble-ivory.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Honed',
     dimensions: '300x600mm',
     format: 'Slab',
     origin: 'Afyon, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 01',
-      slug: 'gelistirme-mermeri-01',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Bu ürün gerçek bir üretim bilgisi içermemektedir.',
-      tagline: 'Klasik beyaz mermer example',
-      seoTitle: 'Geliştirme Mermeri 01 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Ivory Stone',
+      slug: 'demo-ivory-stone',
+      description: 'Demo amaçlı oluşturulmuş ivory mermer ürünü. Klasik beyaz mermer example.',
+      tagline: 'Klasik beyaz mermer',
+      seoTitle: 'Demo Ivory Stone — Marble Platform',
+      seoDescription: 'Demo ivory mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 01',
-      slug: 'development-marble-01',
-      description: 'Development-purpose example marble product. This product does not contain real production information.',
-      tagline: 'Classic white marble example',
-      seoTitle: 'Development Marble 01 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo Ivory Stone',
+      slug: 'demo-ivory-stone',
+      description: 'Demo ivory marble product. Classic white marble example.',
+      tagline: 'Classic white marble',
+      seoTitle: 'Demo Ivory Stone — Marble Platform',
+      seoDescription: 'Demo ivory marble product.',
     },
     isFeatured: true,
     featuredOrder: 1,
     collections: ['classic-stones'],
     applications: ['residential', 'hospitality'],
-    relatedTo: ['dev-02', 'dev-03'],
+    relatedTo: ['demo-charcoal', 'demo-green'],
   },
   {
-    identifier: 'dev-02',
-    mediaFile: '/placeholders/product-02.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-charcoal',
+    mediaFile: '/demo/images/demo-marble-charcoal.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Polished',
     dimensions: '600x600mm',
     format: 'Tile',
     origin: 'Bilecik, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 02',
-      slug: 'gelistirme-mermeri-02',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Farklı yüzey bitişi ile.',
-      tagline: 'Parlak yüzey example',
-      seoTitle: 'Geliştirme Mermeri 02 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Dark Stone',
+      slug: 'demo-dark-stone',
+      description: 'Demo amaçlı oluşturulmuş koyu mermer ürünü. Modern ve şık tasarım.',
+      tagline: 'Parlak yüzey',
+      seoTitle: 'Demo Dark Stone — Marble Platform',
+      seoDescription: 'Demo koyu mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 02',
-      slug: 'development-marble-02',
-      description: 'Development-purpose example marble product. With different surface finish.',
-      tagline: 'Polished surface example',
-      seoTitle: 'Development Marble 02 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo Dark Stone',
+      slug: 'demo-dark-stone',
+      description: 'Demo dark marble product. Modern and elegant design.',
+      tagline: 'Polished surface',
+      seoTitle: 'Demo Dark Stone — Marble Platform',
+      seoDescription: 'Demo dark marble product.',
     },
     isFeatured: true,
     featuredOrder: 2,
     collections: ['classic-stones'],
     applications: ['commercial'],
-    relatedTo: ['dev-01', 'dev-04'],
+    relatedTo: ['demo-ivory', 'demo-navy'],
   },
   {
-    identifier: 'dev-03',
-    mediaFile: '/placeholders/product-03.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-green',
+    mediaFile: '/demo/images/demo-marble-green.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Brushed',
     dimensions: '400x800mm',
     format: 'Slab',
     origin: 'Muğla, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 03',
-      slug: 'gelistirme-mermeri-03',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Fırçalanmış yüzey.',
-      tagline: 'Fırçalanmış yüzey example',
-      seoTitle: 'Geliştirme Mermeri 03 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Green Stone',
+      slug: 'demo-green-stone',
+      description: 'Demo amaçlı oluşturulmuş yeşil mermer ürünü. Doğal tonlar.',
+      tagline: 'Fırçalanmış yüzey',
+      seoTitle: 'Demo Green Stone — Marble Platform',
+      seoDescription: 'Demo yeşil mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 03',
-      slug: 'development-marble-03',
-      description: 'Development-purpose example marble product. Brushed surface.',
-      tagline: 'Brushed surface example',
-      seoTitle: 'Development Marble 03 — Example',
-      seoDescription: 'Development-purpose example mermer ürünü.',
+      name: 'Demo Green Stone',
+      slug: 'demo-green-stone',
+      description: 'Demo green marble product. Natural tones.',
+      tagline: 'Brushed surface',
+      seoTitle: 'Demo Green Stone — Marble Platform',
+      seoDescription: 'Demo green marble product.',
     },
     isFeatured: false,
     collections: ['contemporary-stones'],
     applications: ['residential', 'commercial'],
-    relatedTo: ['dev-01', 'dev-05'],
+    relatedTo: ['demo-ivory', 'demo-beige'],
   },
   {
-    identifier: 'dev-04',
-    mediaFile: '/placeholders/product-04.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-beige',
+    mediaFile: '/demo/images/demo-marble-beige.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Leathered',
     dimensions: '300x600mm',
     format: 'Tile',
     origin: 'Eskişehir, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 04',
-      slug: 'gelistirme-mermeri-04',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Deri yüzey dokusu.',
-      tagline: 'Deri yüzey example',
-      seoTitle: 'Geliştirme Mermeri 04 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Warm Stone',
+      slug: 'demo-warm-stone',
+      description: 'Demo amaçlı oluşturulmuş sıcak tonlu mermer ürünü. Doğal doku.',
+      tagline: 'Deri yüzey',
+      seoTitle: 'Demo Warm Stone — Marble Platform',
+      seoDescription: 'Demo sıcak tonlu mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 04',
-      slug: 'development-marble-04',
-      description: 'Development-purpose example marble product. Leathered surface texture.',
-      tagline: 'Leathered surface example',
-      seoTitle: 'Development Marble 04 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo Warm Stone',
+      slug: 'demo-warm-stone',
+      description: 'Demo warm-toned marble product. Natural texture.',
+      tagline: 'Leathered surface',
+      seoTitle: 'Demo Warm Stone — Marble Platform',
+      seoDescription: 'Demo warm-toned marble product.',
     },
     isFeatured: false,
     collections: ['contemporary-stones'],
     applications: ['hospitality', 'commercial'],
-    relatedTo: ['dev-02', 'dev-06'],
+    relatedTo: ['demo-charcoal', 'demo-gold'],
   },
   {
-    identifier: 'dev-05',
-    mediaFile: '/placeholders/product-05.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-white',
+    mediaFile: '/demo/images/demo-marble-white.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Honed',
     dimensions: '600x1200mm',
     format: 'Slab',
     origin: 'Afyon, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 05',
-      slug: 'gelistirme-mermeri-05',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Büyük ebat slab.',
-      tagline: 'Büyük ebat example',
-      seoTitle: 'Geliştirme Mermeri 05 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo White Stone',
+      slug: 'demo-white-stone',
+      description: 'Demo amaçlı oluşturulmuş beyaz mermer ürünü. Büyük ebat slab.',
+      tagline: 'Büyük ebat',
+      seoTitle: 'Demo White Stone — Marble Platform',
+      seoDescription: 'Demo beyaz mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 05',
-      slug: 'development-marble-05',
-      description: 'Development-purpose example marble product. Large format slab.',
-      tagline: 'Large format example',
-      seoTitle: 'Development Marble 05 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo White Stone',
+      slug: 'demo-white-stone',
+      description: 'Demo white marble product. Large format slab.',
+      tagline: 'Large format',
+      seoTitle: 'Demo White Stone — Marble Platform',
+      seoDescription: 'Demo white marble product.',
     },
     isFeatured: true,
     featuredOrder: 3,
     collections: ['architectural-stones'],
     applications: ['residential', 'hospitality', 'commercial'],
-    relatedTo: ['dev-03', 'dev-07'],
+    relatedTo: ['demo-green', 'demo-rosso'],
   },
   {
-    identifier: 'dev-06',
-    mediaFile: '/placeholders/product-06.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-gold',
+    mediaFile: '/demo/images/demo-marble-gold.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Polished',
     dimensions: '400x400mm',
     format: 'Tile',
     origin: 'İzmir, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 06',
-      slug: 'gelistirme-mermeri-06',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Kare format.',
-      tagline: 'Kare format example',
-      seoTitle: 'Geliştirme Mermeri 06 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Gold Stone',
+      slug: 'demo-gold-stone',
+      description: 'Demo amaçlı oluşturulmuş altın tonlu mermer ürünü. Lüks tasarım.',
+      tagline: 'Kare format',
+      seoTitle: 'Demo Gold Stone — Marble Platform',
+      seoDescription: 'Demo altın tonlu mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 06',
-      slug: 'development-marble-06',
-      description: 'Development-purpose example marble product. Square format.',
-      tagline: 'Square format example',
-      seoTitle: 'Development Marble 06 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo Gold Stone',
+      slug: 'demo-gold-stone',
+      description: 'Demo gold-toned marble product. Luxury design.',
+      tagline: 'Square format',
+      seoTitle: 'Demo Gold Stone — Marble Platform',
+      seoDescription: 'Demo gold-toned marble product.',
     },
     isFeatured: false,
     collections: ['architectural-stones'],
     applications: ['commercial'],
-    relatedTo: ['dev-04', 'dev-08'],
+    relatedTo: ['demo-beige', 'demo-rosso'],
   },
   {
-    identifier: 'dev-07',
-    mediaFile: '/placeholders/product-07.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-rosso',
+    mediaFile: '/demo/images/demo-marble-rosso.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Flamed',
     dimensions: '300x600mm',
     format: 'Tile',
     origin: 'Burdur, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 07',
-      slug: 'gelistirme-mermeri-07',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Alevli yüzey.',
-      tagline: 'Alevli yüzey example',
-      seoTitle: 'Geliştirme Mermeri 07 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Rosso Stone',
+      slug: 'demo-rosso-stone',
+      description: 'Demo amaçlı oluşturulmuş kırmızı mermer ürünü. Alevli yüzey.',
+      tagline: 'Alevli yüzey',
+      seoTitle: 'Demo Rosso Stone — Marble Platform',
+      seoDescription: 'Demo kırmızı mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 07',
-      slug: 'development-marble-07',
-      description: 'Development-purpose example marble product. Flamed surface.',
-      tagline: 'Flamed surface example',
-      seoTitle: 'Development Marble 07 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo Rosso Stone',
+      slug: 'demo-rosso-stone',
+      description: 'Demo red marble product. Flamed surface.',
+      tagline: 'Flamed surface',
+      seoTitle: 'Demo Rosso Stone — Marble Platform',
+      seoDescription: 'Demo red marble product.',
     },
     isFeatured: false,
     collections: ['classic-stones', 'architectural-stones'],
     applications: ['residential'],
-    relatedTo: ['dev-05'],
+    relatedTo: ['demo-white'],
   },
   {
-    identifier: 'dev-08',
-    mediaFile: '/placeholders/product-08.svg',
-    mediaWidth: 800,
-    mediaHeight: 600,
+    identifier: 'demo-navy',
+    mediaFile: '/demo/images/demo-marble-navy.svg',
+    mediaWidth: 1200,
+    mediaHeight: 900,
     surfaceFinish: 'Sawn',
     dimensions: '600x600mm',
     format: 'Slab',
     origin: 'Kütahya, Turkey',
     tr: {
-      name: 'Geliştirme Mermeri 08',
-      slug: 'gelistirme-mermeri-08',
-      description: 'Geliştirme amaçlı oluşturulmuş example mermer ürünü. Kesilmiş yüzey.',
-      tagline: 'Kesilmiş yüzey example',
-      seoTitle: 'Geliştirme Mermeri 08 — Example',
-      seoDescription: 'Geliştirme amaçlı example mermer ürünü.',
+      name: 'Demo Navy Stone',
+      slug: 'demo-navy-stone',
+      description: 'Demo amaçlı oluşturulmuş lacivert mermer ürünü. Kesilmiş yüzey.',
+      tagline: 'Kesilmiş yüzey',
+      seoTitle: 'Demo Navy Stone — Marble Platform',
+      seoDescription: 'Demo lacivert mermer ürünü.',
     },
     en: {
-      name: 'Development Marble 08',
-      slug: 'development-marble-08',
-      description: 'Development-purpose example marble product. Sawn surface.',
-      tagline: 'Sawn surface example',
-      seoTitle: 'Development Marble 08 — Example',
-      seoDescription: 'Development-purpose example marble product.',
+      name: 'Demo Navy Stone',
+      slug: 'demo-navy-stone',
+      description: 'Demo navy marble product. Sawn surface.',
+      tagline: 'Sawn surface',
+      seoTitle: 'Demo Navy Stone — Marble Platform',
+      seoDescription: 'Demo navy marble product.',
     },
     isFeatured: false,
     collections: ['contemporary-stones'],
     applications: ['hospitality'],
-    relatedTo: ['dev-06'],
+    relatedTo: ['demo-charcoal'],
   },
 ];
 
 const COLLECTIONS: Record<string, SeedCollection> = {
   'classic-stones': {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-collection-classic.svg',
     tr: {
       name: 'Klasik Taşlar',
       slug: 'klasik-taslar',
-      description: 'Klasik mermer ve doğal taş koleksiyonu. Geleneksel dokular ve zamansız tasarım exampleları.',
-      seoTitle: 'Klasik Taşlar — Example Koleksiyon',
-      seoDescription: 'Klasik mermer ve doğal taş koleksiyonu example.',
+      description: 'Klasik mermer ve doğal taş koleksiyonu. Geleneksel dokular ve zamansız tasarım.',
+      seoTitle: 'Klasik Taşlar — Marble Platform',
+      seoDescription: 'Klasik mermer ve doğal taş koleksiyonu.',
     },
     en: {
       name: 'Classic Stones',
       slug: 'classic-stones',
-      description: 'Classic marble and natural stone collection. Traditional textures and timeless design examples.',
-      seoTitle: 'Classic Stones — Example Collection',
-      seoDescription: 'Classic marble and natural stone collection example.',
+      description: 'Classic marble and natural stone collection. Traditional textures and timeless design.',
+      seoTitle: 'Classic Stones — Marble Platform',
+      seoDescription: 'Classic marble and natural stone collection.',
     },
     displayOrder: 1,
   },
   'contemporary-stones': {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-collection-modern.svg',
     tr: {
       name: 'Çağdaş Taşlar',
       slug: 'cagdas-taslar',
       description: 'Çağdaş tasarım anlayışına yönelik doğal taş koleksiyonu. Modern dokular ve yüzey bitişleri.',
-      seoTitle: 'Çağdaş Taşlar — Example Koleksiyon',
-      seoDescription: 'Çağdaş doğal taş koleksiyonu example.',
+      seoTitle: 'Çağdaş Taşlar — Marble Platform',
+      seoDescription: 'Çağdaş doğal taş koleksiyonu.',
     },
     en: {
       name: 'Contemporary Stones',
       slug: 'contemporary-stones',
       description: 'Natural stone collection for contemporary design. Modern textures and surface finishes.',
-      seoTitle: 'Contemporary Stones — Example Collection',
-      seoDescription: 'Contemporary natural stone collection example.',
+      seoTitle: 'Contemporary Stones — Marble Platform',
+      seoDescription: 'Contemporary natural stone collection.',
     },
     displayOrder: 2,
   },
   'architectural-stones': {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-collection-luxe.svg',
     tr: {
       name: 'Mimari Taşlar',
       slug: 'mimari-taslar',
       description: 'Mimari projeler için tasarlanmış doğal taş koleksiyonu. Büyük ebat ve özel yüzey seçenekleri.',
-      seoTitle: 'Mimari Taşlar — Example Koleksiyon',
-      seoDescription: 'Mimari doğal taş koleksiyonu example.',
+      seoTitle: 'Mimari Taşlar — Marble Platform',
+      seoDescription: 'Mimari doğal taş koleksiyonu.',
     },
     en: {
       name: 'Architectural Stones',
       slug: 'architectural-stones',
       description: 'Natural stone collection designed for architectural projects. Large format and special surface options.',
-      seoTitle: 'Architectural Stones — Example Collection',
-      seoDescription: 'Architectural natural stone collection example.',
+      seoTitle: 'Architectural Stones — Marble Platform',
+      seoDescription: 'Architectural natural stone collection.',
     },
     displayOrder: 3,
   },
@@ -399,56 +399,56 @@ const COLLECTIONS: Record<string, SeedCollection> = {
 
 const APPLICATIONS: Record<string, SeedApplication> = {
   residential: {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-app-bathroom.svg',
     tr: {
       name: 'Konut',
       slug: 'konut',
-      description: 'Konut projeleri için doğal taş uygulama exampleları. Mutfak, banyo ve yaşam alanları.',
-      seoTitle: 'Konut Uygulamaları — Example',
-      seoDescription: 'Konut projeleri için doğal taş uygulamaları example.',
+      description: 'Konut projeleri için doğal taş uygulama örnekleri. Mutfak, banyo ve yaşam alanları.',
+      seoTitle: 'Konut Uygulamaları — Marble Platform',
+      seoDescription: 'Konut projeleri için doğal taş uygulamaları.',
     },
     en: {
       name: 'Residential',
       slug: 'residential',
       description: 'Natural stone application examples for residential projects. Kitchen, bathroom and living spaces.',
-      seoTitle: 'Residential Applications — Example',
-      seoDescription: 'Natural stone applications for residential projects example.',
+      seoTitle: 'Residential Applications — Marble Platform',
+      seoDescription: 'Natural stone applications for residential projects.',
     },
     displayOrder: 1,
   },
   hospitality: {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-app-kitchen.svg',
     tr: {
       name: 'Otel ve Konaklama',
       slug: 'otel-ve-konaklama',
-      description: 'Otel ve konaklama projeleri için doğal taş uygulama exampleları. Lobi, koridor ve süit alanları.',
-      seoTitle: 'Otel ve Konaklama — Example',
-      seoDescription: 'Otel ve konaklama projeleri için doğal taş uygulamaları example.',
+      description: 'Otel ve konaklama projeleri için doğal taş uygulama örnekleri. Lobi, koridor ve süit alanları.',
+      seoTitle: 'Otel ve Konaklama — Marble Platform',
+      seoDescription: 'Otel ve konaklama projeleri için doğal taş uygulamaları.',
     },
     en: {
       name: 'Hospitality',
       slug: 'hospitality',
       description: 'Natural stone application examples for hotel and hospitality projects. Lobby, corridor and suite areas.',
-      seoTitle: 'Hospitality Applications — Example',
-      seoDescription: 'Natural stone applications for hospitality projects example.',
+      seoTitle: 'Hospitality Applications — Marble Platform',
+      seoDescription: 'Natural stone applications for hospitality projects.',
     },
     displayOrder: 2,
   },
   commercial: {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-app-living.svg',
     tr: {
       name: 'Ticari',
       slug: 'ticari',
-      description: 'Ticari projeler için doğal taş uygulama exampleları. Ofis, mağaza ve kamusal alanlar.',
-      seoTitle: 'Ticari Uygulamalar — Example',
-      seoDescription: 'Ticari projeler için doğal taş uygulamaları example.',
+      description: 'Ticari projeler için doğal taş uygulama örnekleri. Ofis, mağaza ve kamusal alanlar.',
+      seoTitle: 'Ticari Uygulamalar — Marble Platform',
+      seoDescription: 'Ticari projeler için doğal taş uygulamaları.',
     },
     en: {
       name: 'Commercial',
       slug: 'commercial',
       description: 'Natural stone application examples for commercial projects. Office, retail and public spaces.',
-      seoTitle: 'Commercial Applications — Example',
-      seoDescription: 'Natural stone applications for commercial projects example.',
+      seoTitle: 'Commercial Applications — Marble Platform',
+      seoDescription: 'Natural stone applications for commercial projects.',
     },
     displayOrder: 3,
   },
@@ -456,90 +456,90 @@ const APPLICATIONS: Record<string, SeedApplication> = {
 
 const PROJECTS: SeedProject[] = [
   {
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-project-facade.svg',
     location: 'İstanbul, Turkey',
     projectType: 'Hotel Lobby',
     tr: {
-      name: 'Geliştirme Mimari Projesi',
-      slug: 'gelistirme-mimari-projesi',
-      description: 'Geliştirme amaçlı oluşturulmuş example mimari proje. Gerçek bir proje bilgisi içermemektedir.',
-      seoTitle: 'Geliştirme Mimari Projesi — Example',
-      seoDescription: 'Geliştirme amaçlı example mimari proje.',
+      name: 'Demo Mimari Projesi',
+      slug: 'demo-mimari-projesi',
+      description: 'Demo amaçlı oluşturulmuş mimari proje. Otel lobi uygulaması.',
+      seoTitle: 'Demo Mimari Projesi — Marble Platform',
+      seoDescription: 'Demo mimari proje.',
     },
     en: {
-      name: 'Development Architectural Project',
-      slug: 'development-architectural-project',
-      description: 'Development-purpose example architectural project. Does not contain real project information.',
-      seoTitle: 'Development Architectural Project — Example',
-      seoDescription: 'Development-purpose example architectural project.',
+      name: 'Demo Architectural Project',
+      slug: 'demo-architectural-project',
+      description: 'Demo architectural project. Hotel lobby application.',
+      seoTitle: 'Demo Architectural Project — Marble Platform',
+      seoDescription: 'Demo architectural project.',
     },
-    products: ['dev-01', 'dev-05'],
+    products: ['demo-ivory', 'demo-white'],
     applications: ['hospitality'],
   },
 ];
 
 const JOURNAL_ARTICLES: SeedJournal[] = [
   {
-    mediaFile: '/placeholders/product-01.svg',
+    mediaFile: '/demo/images/demo-journal-quarry.svg',
     publicationDate: '2026-01-15',
-    authorName: 'Development Author',
+    authorName: 'Marble Platform Team',
     tr: {
       name: 'Doğal Taş Seçimi Hakkında',
       slug: 'dogal-tas-secimi-hakkinda',
-      description: 'Doğal taş seçimi sürecinde dikkat edilmesi gereken temel faktörler hakkında development example makalesi.',
-      seoTitle: 'Doğal Taş Seçimi — Example Makale',
-      seoDescription: 'Doğal taş seçimi hakkında example makale.',
+      description: 'Doğal taş seçimi sürecinde dikkat edilmesi gereken temel faktörler hakkında makale.',
+      seoTitle: 'Doğal Taş Seçimi — Marble Platform',
+      seoDescription: 'Doğal taş seçimi hakkında makale.',
     },
     en: {
       name: 'Understanding Natural Stone Selection',
       slug: 'understanding-natural-stone-selection',
-      description: 'Development example article about key factors to consider in the natural stone selection process.',
-      seoTitle: 'Natural Stone Selection — Example Article',
-      seoDescription: 'Article about natural stone selection example.',
+      description: 'Article about key factors to consider in the natural stone selection process.',
+      seoTitle: 'Natural Stone Selection — Marble Platform',
+      seoDescription: 'Article about natural stone selection.',
     },
-    referencedProducts: ['dev-01', 'dev-03'],
+    referencedProducts: ['demo-ivory', 'demo-green'],
     referencedApplications: ['residential'],
   },
   {
-    mediaFile: '/placeholders/product-02.svg',
+    mediaFile: '/demo/images/demo-collection-modern.svg',
     publicationDate: '2026-03-20',
-    authorName: 'Development Author',
+    authorName: 'Marble Platform Team',
     tr: {
       name: 'Çağdaş Mimarlıkta Taş Kullanımı',
       slug: 'cagdas-mimarlikta-tas-kullanimi',
-      description: 'Çağdaş mimari projelerde doğal taş kullanımı trendleri hakkında development example makalesi.',
-      seoTitle: 'Çağdaş Mimarlıkta Taş — Example Makale',
-      seoDescription: 'Çağdaş mimarlıkta taş kullanımı hakkında example makale.',
+      description: 'Çağdaş mimari projelerde doğal taş kullanımı trendleri hakkında makale.',
+      seoTitle: 'Çağdaş Mimarlıkta Taş — Marble Platform',
+      seoDescription: 'Çağdaş mimarlıkta taş kullanımı hakkında makale.',
     },
     en: {
       name: 'Stone in Contemporary Architecture',
       slug: 'stone-in-contemporary-architecture',
-      description: 'Development example article about natural stone usage trends in contemporary architectural projects.',
-      seoTitle: 'Stone in Architecture — Example Article',
-      seoDescription: 'Article about stone in contemporary architecture example.',
+      description: 'Article about natural stone usage trends in contemporary architectural projects.',
+      seoTitle: 'Stone in Architecture — Marble Platform',
+      seoDescription: 'Article about stone in contemporary architecture.',
     },
-    referencedProducts: ['dev-02', 'dev-04'],
+    referencedProducts: ['demo-charcoal', 'demo-beige'],
     referencedApplications: ['commercial', 'hospitality'],
   },
   {
-    mediaFile: '/placeholders/product-03.svg',
+    mediaFile: '/demo/images/demo-collection-luxe.svg',
     publicationDate: '2026-06-10',
-    authorName: 'Development Author',
+    authorName: 'Marble Platform Team',
     tr: {
       name: 'Ocaktan Bitiş Yüzeyine',
       slug: 'ocaktan-bitis-yuzeyine',
-      description: 'Doğal taşın ocaktan çıkarılmasından bitiş yüzeyine kadar olan süreç hakkında development example makalesi.',
-      seoTitle: 'Ocaktan Bitiş Yüzeyine — Example Makale',
-      seoDescription: 'Ocaktan bitiş yüzeyine kadar süreç hakkında example makale.',
+      description: 'Doğal taşın ocaktan çıkarılmasından bitiş yüzeyine kadar olan süreç hakkında makale.',
+      seoTitle: 'Ocaktan Bitiş Yüzeyine — Marble Platform',
+      seoDescription: 'Ocaktan bitiş yüzeyine kadar süreç hakkında makale.',
     },
     en: {
       name: 'From Quarry Block to Finished Surface',
       slug: 'from-quarry-block-to-finished-surface',
-      description: 'Development example article about the process from quarry extraction to finished surface.',
-      seoTitle: 'Quarry to Surface — Example Article',
-      seoDescription: 'Article about quarry to finished surface process example.',
+      description: 'Article about the process from quarry extraction to finished surface.',
+      seoTitle: 'Quarry to Surface — Marble Platform',
+      seoDescription: 'Article about quarry to finished surface process.',
     },
-    referencedProducts: ['dev-05', 'dev-07'],
+    referencedProducts: ['demo-white', 'demo-rosso'],
     referencedApplications: ['residential', 'commercial'],
   },
 ];
@@ -547,62 +547,62 @@ const JOURNAL_ARTICLES: SeedJournal[] = [
 const COMPANY_CONTENTS: SeedCompanyContent[] = [
   {
     kind: 'ABOUT',
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-collection-classic.svg',
     tr: {
       name: 'Hakkımızda',
       slug: 'hakkimizda',
-      description: 'Bu sayfa geliştirme amaçlı oluşturulmuş example şirket bilgisi içermektedir. Gerçek şirket bilgisi değildir.',
-      seoTitle: 'Hakkımızda — Example',
-      seoDescription: 'Geliştirme amaçlı example şirket bilgisi.',
+      description: 'Bu sayfa demo amaçlı oluşturulmuş şirket bilgisi içermektedir.',
+      seoTitle: 'Hakkımızda — Marble Platform',
+      seoDescription: 'Demo şirket bilgisi.',
     },
     en: {
       name: 'About Us',
       slug: 'about-us',
-      description: 'This page contains development-purpose example company information. Not real company information.',
-      seoTitle: 'About Us — Example',
-      seoDescription: 'Development-purpose example company information.',
+      description: 'This page contains demo company information.',
+      seoTitle: 'About Us — Marble Platform',
+      seoDescription: 'Demo company information.',
     },
-    referencedProducts: ['dev-01', 'dev-05'],
+    referencedProducts: ['demo-ivory', 'demo-white'],
     referencedJournalSlugs: ['dogal-tas-secimi-hakkinda'],
   },
   {
     kind: 'QUARRY',
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-journal-quarry.svg',
     tr: {
       name: 'Ocağımız',
       slug: 'ocagimiz',
-      description: 'Bu sayfa geliştirme amaçlı oluşturulmuş example ocak bilgisi içermektedir. Gerçek ocak bilgisi değildir.',
-      seoTitle: 'Ocağımız — Example',
-      seoDescription: 'Geliştirme amaçlı example ocak bilgisi.',
+      description: 'Bu sayfa demo amaçlı oluşturulmuş ocak bilgisi içermektedir.',
+      seoTitle: 'Ocağımız — Marble Platform',
+      seoDescription: 'Demo ocak bilgisi.',
     },
     en: {
       name: 'Our Quarry',
       slug: 'our-quarry',
-      description: 'This page contains development-purpose example quarry information. Not real quarry information.',
-      seoTitle: 'Our Quarry — Example',
-      seoDescription: 'Development-purpose example quarry information.',
+      description: 'This page contains demo quarry information.',
+      seoTitle: 'Our Quarry — Marble Platform',
+      seoDescription: 'Demo quarry information.',
     },
-    referencedProducts: ['dev-01', 'dev-03'],
+    referencedProducts: ['demo-ivory', 'demo-green'],
     referencedJournalSlugs: [],
   },
   {
     kind: 'FACTORY',
-    mediaFile: '/placeholders/collection-cover.svg',
+    mediaFile: '/demo/images/demo-collection-modern.svg',
     tr: {
       name: 'Fabrikamız',
       slug: 'fabrikamiz',
-      description: 'Bu sayfa geliştirme amaçlı oluşturulmuş example fabrika bilgisi içermektedir. Gerçek fabrika bilgisi değildir.',
-      seoTitle: 'Fabrikamız — Example',
-      seoDescription: 'Geliştirme amaçlı example fabrika bilgisi.',
+      description: 'Bu sayfa demo amaçlı oluşturulmuş fabrika bilgisi içermektedir.',
+      seoTitle: 'Fabrikamız — Marble Platform',
+      seoDescription: 'Demo fabrika bilgisi.',
     },
     en: {
       name: 'Our Factory',
       slug: 'our-factory',
-      description: 'This page contains development-purpose example factory information. Not real factory information.',
-      seoTitle: 'Our Factory — Example',
-      seoDescription: 'Development-purpose example factory information.',
+      description: 'This page contains demo factory information.',
+      seoTitle: 'Our Factory — Marble Platform',
+      seoDescription: 'Demo factory information.',
     },
-    referencedProducts: ['dev-02', 'dev-04'],
+    referencedProducts: ['demo-charcoal', 'demo-beige'],
     referencedJournalSlugs: [],
   },
 ];
@@ -796,6 +796,34 @@ async function seedRevisionAndApproval(
   }
 }
 
+async function seedMediaForContentItem(
+  tx: Prisma.TransactionClient,
+  contentItemId: string,
+  mediaFile: string,
+  width: number,
+  height: number,
+  role: 'PRIMARY' | 'HERO' | 'GALLERY',
+  trAlt: string,
+  enAlt: string
+) {
+  // Attach the same demo asset to every locale variant so all locales
+  // render the full media experience (cards, heroes, galleries).
+  const variants = await tx.contentVariant.findMany({
+    where: { contentItemId },
+  });
+  for (const variant of variants) {
+    await seedMediaForVariant(
+      tx,
+      variant.id,
+      mediaFile,
+      width,
+      height,
+      role,
+      variant.locale === 'en' ? enAlt : trAlt
+    );
+  }
+}
+
 async function seedMediaForVariant(
   tx: Prisma.TransactionClient,
   variantId: string,
@@ -824,6 +852,11 @@ async function seedMediaForVariant(
         displayOrder: role === 'PRIMARY' ? 0 : role === 'HERO' ? 0 : 1,
         altText,
       },
+    });
+  } else if (existing.altText !== altText) {
+    await tx.contentMedia.update({
+      where: { id: existing.id },
+      data: { altText },
     });
   }
 }
@@ -880,21 +913,17 @@ async function main() {
       // Seed revision + approval for both locales
       await seedRevisionAndApproval(tx, contentItemId, user.id);
 
-      // Seed media
-      const trVariant = await tx.contentVariant.findFirst({
-        where: { contentItemId, locale: 'tr' },
-      });
-      if (trVariant) {
-        await seedMediaForVariant(
-          tx,
-          trVariant.id,
-          product.mediaFile,
-          product.mediaWidth,
-          product.mediaHeight,
-          'PRIMARY',
-          `${product.tr.name} — Development placeholder`
-        );
-      }
+      // Seed media for all locale variants
+      await seedMediaForContentItem(
+        tx,
+        contentItemId,
+        product.mediaFile,
+        product.mediaWidth,
+        product.mediaHeight,
+        'PRIMARY',
+        `${product.tr.name}`,
+        `${product.en.name}`
+      );
     }
 
     // Collections
@@ -917,20 +946,16 @@ async function main() {
 
       await seedRevisionAndApproval(tx, contentItemId, user.id);
 
-      const trVariant = await tx.contentVariant.findFirst({
-        where: { contentItemId, locale: 'tr' },
-      });
-      if (trVariant) {
-        await seedMediaForVariant(
-          tx,
-          trVariant.id,
-          collection.mediaFile,
-          1200,
-          600,
-          'PRIMARY',
-          `${collection.tr.name} — Development placeholder`
-        );
-      }
+      await seedMediaForContentItem(
+        tx,
+        contentItemId,
+        collection.mediaFile,
+        1200,
+        600,
+        'PRIMARY',
+        `${collection.tr.name}`,
+        `${collection.en.name}`
+      );
     }
 
     // Applications
@@ -953,20 +978,16 @@ async function main() {
 
       await seedRevisionAndApproval(tx, contentItemId, user.id);
 
-      const trVariant = await tx.contentVariant.findFirst({
-        where: { contentItemId, locale: 'tr' },
-      });
-      if (trVariant) {
-        await seedMediaForVariant(
-          tx,
-          trVariant.id,
-          app.mediaFile,
-          1200,
-          600,
-          'PRIMARY',
-          `${app.tr.name} — Development placeholder`
-        );
-      }
+      await seedMediaForContentItem(
+        tx,
+        contentItemId,
+        app.mediaFile,
+        1200,
+        600,
+        'PRIMARY',
+        `${app.tr.name}`,
+        `${app.en.name}`
+      );
     }
 
     // Projects
@@ -995,20 +1016,16 @@ async function main() {
 
       await seedRevisionAndApproval(tx, contentItemId, user.id);
 
-      const trVariant = await tx.contentVariant.findFirst({
-        where: { contentItemId, locale: 'tr' },
-      });
-      if (trVariant) {
-        await seedMediaForVariant(
-          tx,
-          trVariant.id,
-          project.mediaFile,
-          1200,
-          600,
-          'HERO',
-          `${project.tr.name} — Development placeholder`
-        );
-      }
+      await seedMediaForContentItem(
+        tx,
+        contentItemId,
+        project.mediaFile,
+        1200,
+        600,
+        'HERO',
+        `${project.tr.name}`,
+        `${project.en.name}`
+      );
     }
 
     // Journal articles
@@ -1037,20 +1054,16 @@ async function main() {
 
       await seedRevisionAndApproval(tx, contentItemId, user.id);
 
-      const trVariant = await tx.contentVariant.findFirst({
-        where: { contentItemId, locale: 'tr' },
-      });
-      if (trVariant) {
-        await seedMediaForVariant(
-          tx,
-          trVariant.id,
-          article.mediaFile,
-          800,
-          600,
-          'PRIMARY',
-          `${article.tr.name} — Development placeholder`
-        );
-      }
+      await seedMediaForContentItem(
+        tx,
+        contentItemId,
+        article.mediaFile,
+        800,
+        600,
+        'PRIMARY',
+        `${article.tr.name}`,
+        `${article.en.name}`
+      );
     }
 
     // Company content
@@ -1075,20 +1088,16 @@ async function main() {
 
       await seedRevisionAndApproval(tx, contentItemId, user.id);
 
-      const trVariant = await tx.contentVariant.findFirst({
-        where: { contentItemId, locale: 'tr' },
-      });
-      if (trVariant) {
-        await seedMediaForVariant(
-          tx,
-          trVariant.id,
-          content.mediaFile,
-          1200,
-          600,
-          'PRIMARY',
-          `${content.tr.name} — Development placeholder`
-        );
-      }
+      await seedMediaForContentItem(
+        tx,
+        contentItemId,
+        content.mediaFile,
+        1200,
+        600,
+        'PRIMARY',
+        `${content.tr.name}`,
+        `${content.en.name}`
+      );
     }
   });
 

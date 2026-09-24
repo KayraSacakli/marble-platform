@@ -738,9 +738,23 @@ class ContentService {
     });
     sectionOrder.push('final_cta');
 
+    const heroHeading = locale === 'tr' ? 'Premium Türk Mermeri' : 'Premium Turkish Marble';
     const hero = {
-      heading: locale === 'tr' ? 'Premium Türk Mermeri' : 'Premium Turkish Marble',
+      heading: heroHeading,
       subheading: locale === 'tr' ? 'Doğanın Zarafeti, Ustalığın Gücü' : 'Elegance of Nature, Power of Craftsmanship',
+      // Demo hero poster — served as static fallback image until a real
+      // homepage video (and its DB-driven media) is available. HeroScrollStage
+      // renders this via HeroPoster; no video means poster-only mode.
+      fallbackImage: {
+        id: 'demo-hero-poster',
+        mediaType: 'image',
+        src: '/demo/images/demo-hero-poster.svg',
+        width: 1920,
+        height: 1080,
+        aspectRatio: '16/9',
+        alt: heroHeading,
+        loading: 'eager',
+      } satisfies MediaPresentation,
       primaryCTA: { label: locale === 'tr' ? 'Mermerleri Keşfet' : 'Explore Marbles', href: `/${locale}/products` },
       secondaryCTA: { label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote', href: `/${locale}/quote` },
     };

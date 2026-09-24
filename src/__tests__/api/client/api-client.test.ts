@@ -175,9 +175,13 @@ describe('ApiClient', () => {
 
   describe('getList', () => {
     it('returns list response', async () => {
+      // Wire shape for list routes: the paginated payload is nested once
+      // more under `data` by the generic API handler.
       const listData = {
-        data: [{ id: '1', name: 'Product 1' }],
-        meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
+        data: {
+          data: [{ id: '1', name: 'Product 1' }],
+          meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
+        },
       };
       fetchSpy.mockResolvedValue({
         ok: true,

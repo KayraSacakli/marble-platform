@@ -7,8 +7,22 @@ import { ApiClientError, type ApiErrorCode } from './client-errors';
 // Configuration
 // ============================================================
 
-const DEFAULT_BASE_URL = '';
 const DEFAULT_TIMEOUT = 15_000;
+
+// Server-side fetch() requires an absolute URL, while relative URLs are
+// fine in the browser. Resolve the default base URL accordingly so the
+// shared singleton works in Server Components without per-call config.
+function resolveDefaultBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    return '';
+  }
+  const configured = process.env.NEXT_PUBLIC_SITE_URL;
+  if (configured) {
+    return configured.replace(/\/$/, '');
+  }
+  const port = process.env.PORT ?? '3000';
+  return `http://localhost:${port}`;
+}
 
 interface ApiClientConfig {
   baseUrl?: string;
@@ -36,7 +50,7 @@ class ApiClient {
   private readonly timeout: number;
 
   constructor(config?: ApiClientConfig) {
-    this.baseUrl = config?.baseUrl ?? DEFAULT_BASE_URL;
+    this.baseUrl = config?.baseUrl ?? resolveDefaultBaseUrl();
     this.timeout = config?.timeout ?? DEFAULT_TIMEOUT;
   }
 
@@ -156,7 +170,11 @@ class ApiClient {
     params?: Record<string, string | number | undefined>,
     options?: RequestOptions
   ): Promise<ApiListResponse<T>> {
-    return this.get<ApiListResponse<T>>(locale, path, params, options);
+    const body = await this.get<ApiListResponse<T>>(locale, path, params, options);
+    // List services return an already-paginated `{ data, meta }` payload and
+    // the generic API handler wraps it once more, so the wire shape is
+    // `{ data: { data, meta } }`. Unwrap one level to honor ApiListResponse.
+    return body.data as unknown as ApiListResponse<T>;
   }
 
   async getOne<T>(

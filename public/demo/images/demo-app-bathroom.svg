@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="ab1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F0EBE5"/>
+      <stop offset="100%" stop-color="#E5DDD5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#ab1)"/>
+  <!-- Bathroom silhouette -->
+  <rect x="100" y="200" width="400" height="400" rx="8" fill="#D4C5B5" opacity="0.3"/>
+  <rect x="150" y="250" width="300" height="150" rx="4" fill="#C4B5A5" opacity="0.25"/>
+  <ellipse cx="300" cy="500" rx="120" ry="60" fill="#B5A595" opacity="0.2"/>
+  <!-- Marble texture overlay -->
+  <path d="M0 300 Q200 240 400 320 Q600 400 800 280 Q1000 160 1200 300" stroke="#C4B5A5" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M0 500 Q300 440 600 520 Q900 600 1200 480" stroke="#B5A595" stroke-width="1" fill="none" opacity="0.2"/>
+</svg>

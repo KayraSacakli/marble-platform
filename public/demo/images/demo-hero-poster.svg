@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="hero1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A1A1A"/>
+      <stop offset="50%" stop-color="#2C2C2C"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+    <filter id="hfn" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.4" numOctaves="4" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+      <feBlend in="SourceGraphic" in2="gray" mode="multiply"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.04"/></feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#hero1)"/>
+  <g opacity="0.06" filter="url(#hfn)"><rect width="1920" height="1080" fill="#3A3A3A"/></g>
+  <!-- Dramatic marble veining -->
+  <path d="M0 400 Q240 280 480 420 Q720 560 960 360 Q1200 160 1440 400 Q1680 640 1920 380" stroke="#5A5A5A" stroke-width="2.5" fill="none" opacity="0.4"/>
+  <path d="M0 700 Q320 580 640 720 Q960 860 1280 660 Q1600 460 1920 700" stroke="#4A4A4A" stroke-width="1.8" fill="none" opacity="0.3"/>
+  <path d="M0 200 Q480 100 960 240 Q1440 380 1920 180" stroke="#5A5A5A" stroke-width="1.2" fill="none" opacity="0.22"/>
+  <path d="M0 900 Q480 800 960 940 Q1440 1080 1920 880" stroke="#3A3A3A" stroke-width="1" fill="none" opacity="0.18"/>
+  <!-- Subtle gold accent veins -->
+  <path d="M300 0 Q280 270 320 540 Q360 810 300 1080" stroke="#8A6A42" stroke-width="0.6" fill="none" opacity="0.15"/>
+  <path d="M1500 0 Q1520 360 1480 720 Q1440 900 1500 1080" stroke="#8A6A42" stroke-width="0.5" fill="none" opacity="0.12"/>
+  <!-- Vignette effect -->
+  <rect width="1920" height="1080" fill="url(#hero1)" opacity="0.15"/>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <filter id="n2" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="4" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
+      <feBlend in="SourceGraphic" in2="gray" mode="multiply"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.06"/></feComponentTransfer>
+    </filter>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#2C2C2C"/>
+      <stop offset="50%" stop-color="#3A3A3A"/>
+      <stop offset="100%" stop-color="#252525"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg2)"/>
+  <g opacity="0.1" filter="url(#n2)"><rect width="1200" height="900" fill="#4A4A4A"/></g>
+  <path d="M0 200 Q200 140 400 220 Q600 300 800 180 Q1000 60 1200 200" stroke="#5A5A5A" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M0 500 Q300 420 600 520 Q900 620 1200 480" stroke="#4A4A4A" stroke-width="1" fill="none" opacity="0.3"/>
+  <path d="M0 700 Q400 650 800 720 Q1200 790 1200 700" stroke="#555" stroke-width="0.7" fill="none" opacity="0.2"/>
+  <path d="M300 0 Q280 200 320 400 Q360 600 300 900" stroke="#5A5A5A" stroke-width="0.5" fill="none" opacity="0.15"/>
+  <path d="M900 0 Q920 300 880 600 Q840 800 900 900" stroke="#4A4A4A" stroke-width="0.4" fill="none" opacity="0.12"/>
+</svg>
