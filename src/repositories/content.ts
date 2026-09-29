@@ -84,7 +84,10 @@ export class ContentRepository extends BaseRepository {
 
     const where = {
       ...this.publishedClause(locale),
-      ...(contentType ? { contentItem: { type: contentType } } : {}),
+      contentItem: {
+        aggregateState: 'ACTIVE' as ContentAggregateState,
+        ...(contentType ? { type: contentType } : {}),
+      },
     };
 
     const [items, total] = await Promise.all([
@@ -138,8 +141,13 @@ export class ContentRepository extends BaseRepository {
   }
 
   async countPublished(contentType: ContentType, locale: Locale): Promise<number> {
+    // NOTE: a second `contentItem` key would silently replace the one from
+    // publishedClause, so the ACTIVE gate is repeated here on purpose.
     return this.db.contentVariant.count({
-      where: { ...this.publishedClause(locale), contentItem: { type: contentType } },
+      where: {
+        ...this.publishedClause(locale),
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState, type: contentType },
+      },
     });
   }
 
@@ -153,6 +161,7 @@ export class ContentRepository extends BaseRepository {
       where: {
         ...this.publishedClause(locale),
         contentItem: {
+          aggregateState: 'ACTIVE' as ContentAggregateState,
           type: 'COMPANY_CONTENT',
           companyContent: { kind: kind as never },
         },
@@ -604,7 +613,7 @@ export class ContentRepository extends BaseRepository {
     return this.db.contentVariant.findMany({
       where: {
         ...this.publishedClause(locale),
-        contentItem: { type: 'PRODUCT' },
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState, type: 'PRODUCT' },
         isFeatured: true,
       },
       include: {
@@ -626,7 +635,7 @@ export class ContentRepository extends BaseRepository {
     return this.db.contentVariant.findMany({
       where: {
         ...this.publishedClause(locale),
-        contentItem: { type: 'COLLECTION' },
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState, type: 'COLLECTION' },
       },
       include: {
         contentItem: { include: { collection: true } },
@@ -647,7 +656,7 @@ export class ContentRepository extends BaseRepository {
     return this.db.contentVariant.findMany({
       where: {
         ...this.publishedClause(locale),
-        contentItem: { type: 'APPLICATION' },
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState, type: 'APPLICATION' },
       },
       include: {
         contentItem: { include: { application: true } },
@@ -668,7 +677,7 @@ export class ContentRepository extends BaseRepository {
     return this.db.contentVariant.findMany({
       where: {
         ...this.publishedClause(locale),
-        contentItem: { type: 'PROJECT' },
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState, type: 'PROJECT' },
       },
       include: {
         contentItem: { include: { project: true } },
@@ -689,7 +698,7 @@ export class ContentRepository extends BaseRepository {
     return this.db.contentVariant.findMany({
       where: {
         ...this.publishedClause(locale),
-        contentItem: { type: 'JOURNAL_ARTICLE' },
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState, type: 'JOURNAL_ARTICLE' },
       },
       include: {
         contentItem: {

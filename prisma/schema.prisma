@@ -68,6 +68,14 @@ enum ApprovalOutcome {
   REJECTED
 }
 
+enum RevisionStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+}
+
 enum QuoteRequestState {
   PENDING
   IN_REVIEW
@@ -147,18 +155,20 @@ model ContentVariant {
 }
 
 model ContentRevision {
-  id               String   @id @default(uuid()) @db.Uuid
-  contentVariantId String   @db.Uuid
-  authorId         String?  @db.Uuid
+  id               String         @id @default(uuid()) @db.Uuid
+  contentVariantId String         @db.Uuid
+  authorId         String?        @db.Uuid
   revisionNumber   Int
-  materialSnapshot String?  @db.Text
-  createdAt        DateTime @default(now())
+  status           RevisionStatus @default(DRAFT)
+  materialSnapshot String?        @db.Text
+  createdAt        DateTime       @default(now())
 
   contentVariant ContentVariant @relation(fields: [contentVariantId], references: [id], onDelete: Cascade)
   author         InternalUser?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
   approvals      Approval[]
 
-  @@index([contentVariantId, revisionNumber])
+  @@unique([contentVariantId, revisionNumber])
+  @@index([contentVariantId, status])
 }
 
 model Approval {

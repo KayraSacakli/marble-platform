@@ -42,3 +42,6 @@ next-env.d.ts
 node_modules/
 dist/
 .env
+
+# local dev media uploads (phase 17C, never commit uploaded bytes)
+storage/

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { SUPPORTED_LOCALES, type Locale } from '@/types/locale';
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@/types/api';
+import { QUOTE_REQUEST_STATES } from '@/lib/admin/quote-state';
 import { BadRequestError } from './errors';
 
 // ============================================================
@@ -109,6 +110,18 @@ export const quoteRequestSchema = z.object({
 
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>;
 
+/**
+ * Admin status update. Strict: only `state` may be supplied — submitted
+ * customer data can never be modified through the admin API.
+ */
+export const adminQuoteStateUpdateSchema = z
+  .object({
+    state: z.enum(QUOTE_REQUEST_STATES),
+  })
+  .strict();
+
+export type AdminQuoteStateUpdateInput = z.infer<typeof adminQuoteStateUpdateSchema>;
+
 // ============================================================
 // Admin auth
 // ============================================================
@@ -125,6 +138,165 @@ export const adminLoginSchema = z.object({
 });
 
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
+
+// ============================================================
+// Admin content management (products, collections, applications)
+// ============================================================
+
+export const adminContentVariantSchema = z.object({
+  slug: slugSchema,
+  name: z
+    .string()
+    .min(1, 'Name is required.')
+    .max(500, 'Name must be 500 characters or fewer.'),
+  description: z.string().max(20000, 'Description must be 20000 characters or fewer.').optional(),
+  tagline: z.string().max(500, 'Tagline must be 500 characters or fewer.').optional(),
+  seoTitle: z.string().max(500, 'SEO title must be 500 characters or fewer.').optional(),
+  seoDescription: z.string().max(1000, 'SEO description must be 1000 characters or fewer.').optional(),
+  seoCanonical: z.string().max(1000, 'Canonical URL must be 1000 characters or fewer.').optional(),
+  isFeatured: z.boolean().optional(),
+  featuredOrder: z.number().int().min(0).max(100000).nullable().optional(),
+  displayOrder: z.number().int().min(0).max(100000).nullable().optional(),
+});
+
+const adminProductExtensionSchema = z.object({
+  internalIdentifier: z.string().max(100, 'Identifier must be 100 characters or fewer.').optional(),
+  surfaceFinish: z.string().max(500).optional(),
+  dimensions: z.string().max(500).optional(),
+  format: z.string().max(500).optional(),
+  origin: z.string().max(500).optional(),
+  applicableStandards: z.string().max(500).optional(),
+});
+
+export const adminProductCreateSchema = adminProductExtensionSchema.extend({
+  tr: adminContentVariantSchema,
+  en: adminContentVariantSchema,
+});
+
+export const adminProductUpdateSchema = adminProductExtensionSchema.extend({
+  tr: adminContentVariantSchema.partial().optional(),
+  en: adminContentVariantSchema.partial().optional(),
+});
+
+export type AdminProductCreateInput = z.infer<typeof adminProductCreateSchema>;
+export type AdminProductUpdateInput = z.infer<typeof adminProductUpdateSchema>;
+export type AdminProductVariantInput = z.infer<typeof adminContentVariantSchema>;
+
+// Collections and Applications share the variant shape (no extension table).
+export const adminCollectionCreateSchema = z.object({
+  tr: adminContentVariantSchema,
+  en: adminContentVariantSchema,
+});
+
+export const adminCollectionUpdateSchema = z.object({
+  tr: adminContentVariantSchema.partial().optional(),
+  en: adminContentVariantSchema.partial().optional(),
+});
+
+export const adminApplicationCreateSchema = z.object({
+  tr: adminContentVariantSchema,
+  en: adminContentVariantSchema,
+});
+
+export const adminApplicationUpdateSchema = z.object({
+  tr: adminContentVariantSchema.partial().optional(),
+  en: adminContentVariantSchema.partial().optional(),
+});
+
+export type AdminCollectionCreateInput = z.infer<typeof adminCollectionCreateSchema>;
+export type AdminCollectionUpdateInput = z.infer<typeof adminCollectionUpdateSchema>;
+export type AdminApplicationCreateInput = z.infer<typeof adminApplicationCreateSchema>;
+export type AdminApplicationUpdateInput = z.infer<typeof adminApplicationUpdateSchema>;
+
+export const adminRelationAttachSchema = z.object({
+  productId: z.string().uuid('Invalid product id.'),
+});
+
+export type AdminRelationAttachInput = z.infer<typeof adminRelationAttachSchema>;
+
+// ============================================================
+// Admin project / journal management
+// ============================================================
+
+const adminEditorialVariantSchema = adminContentVariantSchema;
+
+export const adminProjectCreateSchema = z.object({
+  location: z.string().max(500, 'Location must be 500 characters or fewer.').optional(),
+  projectType: z.string().max(200, 'Project type must be 200 characters or fewer.').optional(),
+  tr: adminEditorialVariantSchema,
+  en: adminEditorialVariantSchema,
+});
+
+export const adminProjectUpdateSchema = z.object({
+  location: z.string().max(500, 'Location must be 500 characters or fewer.').optional(),
+  projectType: z.string().max(200, 'Project type must be 200 characters or fewer.').optional(),
+  tr: adminEditorialVariantSchema.partial().optional(),
+  en: adminEditorialVariantSchema.partial().optional(),
+});
+
+const isoDateString = z
+  .string()
+  .refine((value) => !Number.isNaN(Date.parse(value)), 'Invalid publication date.');
+
+export const adminJournalCreateSchema = z.object({
+  publicationDate: isoDateString,
+  authorName: z.string().max(300, 'Author name must be 300 characters or fewer.').optional(),
+  tr: adminEditorialVariantSchema,
+  en: adminEditorialVariantSchema,
+});
+
+export const adminJournalUpdateSchema = z.object({
+  publicationDate: isoDateString.optional(),
+  authorName: z.string().max(300, 'Author name must be 300 characters or fewer.').optional(),
+  tr: adminEditorialVariantSchema.partial().optional(),
+  en: adminEditorialVariantSchema.partial().optional(),
+});
+
+export type AdminProjectCreateInput = z.infer<typeof adminProjectCreateSchema>;
+export type AdminProjectUpdateInput = z.infer<typeof adminProjectUpdateSchema>;
+export type AdminJournalCreateInput = z.infer<typeof adminJournalCreateSchema>;
+export type AdminJournalUpdateInput = z.infer<typeof adminJournalUpdateSchema>;
+
+export const adminJournalReferenceSchema = z.object({
+  targetKind: z.enum(['product', 'application', 'project']),
+  targetId: z.string().uuid('Invalid target id.'),
+});
+
+export type AdminJournalReferenceInput = z.infer<typeof adminJournalReferenceSchema>;
+
+/** Flatten a ZodError into the project's API error details shape. */
+export function toValidationDetails(error: {
+  flatten: () => { fieldErrors: Record<string, unknown> };
+}) {
+  return Object.entries(error.flatten().fieldErrors).flatMap(([field, messages]) =>
+    ((messages as string[] | undefined) ?? []).map((message) => ({ field, code: 'INVALID', message }))
+  );
+}
+
+// ============================================================
+// Admin media management
+// ============================================================
+
+export const adminMediaAttachSchema = z.object({
+  assetId: z.string().uuid('Invalid media id.'),
+  role: z.enum(['PRIMARY', 'GALLERY', 'HERO']),
+  altTr: z.string().max(500, 'Alt text must be 500 characters or fewer.').optional(),
+  altEn: z.string().max(500, 'Alt text must be 500 characters or fewer.').optional(),
+});
+
+export const adminMediaReorderItemSchema = z.object({
+  assetId: z.string().uuid('Invalid media id.'),
+  displayOrder: z.number().int().min(0).max(100000).optional(),
+  altTr: z.string().max(500, 'Alt text must be 500 characters or fewer.').optional(),
+  altEn: z.string().max(500, 'Alt text must be 500 characters or fewer.').optional(),
+});
+
+export const adminMediaReorderSchema = z.object({
+  items: adminMediaReorderItemSchema.array().min(1).max(100),
+});
+
+export type AdminMediaAttachInput = z.infer<typeof adminMediaAttachSchema>;
+export type AdminMediaReorderInput = z.infer<typeof adminMediaReorderSchema>;
 
 // ============================================================
 // Query param helpers

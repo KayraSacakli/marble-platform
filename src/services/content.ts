@@ -22,6 +22,7 @@ const SITE_NAME = 'Premium Turkish Marble';
 // ============================================================
 
 function findPublishedVariant(contentItem: {
+  aggregateState?: string;
   variants?: Array<{
     id: string;
     locale: string;
@@ -55,6 +56,11 @@ function findPublishedVariant(contentItem: {
     }>;
   }>;
 }, locale: Locale) {
+  // Full public gate: PUBLISHED + ACTIVE. Relation reads come from junction
+  // queries that do not carry the aggregate filter, so it is enforced here.
+  if (contentItem.aggregateState && contentItem.aggregateState !== 'ACTIVE') {
+    return null;
+  }
   return contentItem.variants?.find(
     (v) => v.locale === locale && v.lifecycleState === 'PUBLISHED'
   );

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getAdminSessionUser } from '@/lib/auth/session';
 import { LogoutButton } from './LogoutButton';
@@ -18,6 +19,24 @@ export default async function AdminDashboardPage() {
         Signed in as <strong>{admin.email}</strong>
       </p>
       <p>Roles: {admin.roles.length > 0 ? admin.roles.join(', ') : '—'}</p>
+      <p>
+        <Link href="/admin/products">Manage products →</Link>
+      </p>
+      <p>
+        <Link href="/admin/collections">Manage collections →</Link>
+      </p>
+      <p>
+        <Link href="/admin/applications">Manage applications →</Link>
+      </p>
+      <p>
+        <Link href="/admin/projects">Manage projects →</Link>
+      </p>
+      <p>
+        <Link href="/admin/journal">Manage journal →</Link>
+      </p>
+      <p>
+        <Link href="/admin/quotes">Quote requests →</Link>
+      </p>
       <p style={{ opacity: 0.7 }}>
         Content management (products, media, publishing) lands in the next phase. This page only verifies
         authentication and role resolution.

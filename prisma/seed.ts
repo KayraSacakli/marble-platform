@@ -14,6 +14,7 @@
 
 import { PrismaClient, type Prisma } from '@prisma/client';
 import { hashPassword } from '../src/lib/auth/password';
+import { resolveSeedAdminPassword } from '../src/lib/auth/seed-password';
 
 const prisma = new PrismaClient();
 
@@ -654,19 +655,28 @@ async function getOrCreateUser(prisma: PrismaClient) {
 
 const DEV_ADMIN_EMAIL = 'admin@marble-platform.local';
 const DEV_EDITOR_EMAIL = 'editor@marble-platform.local';
-const DEV_ADMIN_DEFAULT_PASSWORD = 'Admin123!ChangeMe';
 
 /**
- * Development-only admin/editor logins. Password comes from SEED_ADMIN_PASSWORD;
- * a documented default is used otherwise (dev databases only — never prod).
+ * Development-only admin/editor logins. Password comes from SEED_ADMIN_PASSWORD.
+ * In production the documented default is NEVER used: without a configured
+ * value (min 12 chars) admin provisioning is skipped entirely so a known
+ * credential can never be created (or an existing one silently reset).
  */
 async function ensureDevAdmin(prisma: PrismaClient) {
-  const configured = process.env.SEED_ADMIN_PASSWORD;
-  const password = configured && configured.length >= 12 ? configured : DEV_ADMIN_DEFAULT_PASSWORD;
-  if (!configured) {
-    console.log('[seed] SEED_ADMIN_PASSWORD not set — using documented dev default password.');
+  const resolution = resolveSeedAdminPassword(process.env.SEED_ADMIN_PASSWORD, process.env.NODE_ENV === 'production');
+
+  if (resolution.action === 'skip') {
+    console.warn(
+      `[seed] ${resolution.reason} - skipping admin/editor provisioning in production (no default password fallback).`
+    );
+    return;
   }
-  const passwordHash = await hashPassword(password);
+
+  if (resolution.isDefault) {
+    console.log('[seed] SEED_ADMIN_PASSWORD not set or too short - using documented dev default password.');
+  }
+
+  const passwordHash = await hashPassword(resolution.password);
   for (const [email, name, roleName] of [
     [DEV_ADMIN_EMAIL, 'Development Admin', 'ADMIN'],
     [DEV_EDITOR_EMAIL, 'Development Editor', 'EDITOR'],
@@ -810,12 +820,19 @@ async function seedRevisionAndApproval(
         data: {
           contentVariantId: variant.id,
           revisionNumber: 1,
+          status: 'PUBLISHED',
           materialSnapshot: JSON.stringify({
             name: variant.name,
             slug: variant.slug,
             locale: variant.locale,
           }),
         },
+      });
+    } else if ((revision as { status?: string }).status !== 'PUBLISHED' && variant.lifecycleState === 'PUBLISHED') {
+      // Pre-workflow rows backfilled by migration; keep seed idempotent.
+      await tx.contentRevision.update({
+        where: { id: revision.id },
+        data: { status: 'PUBLISHED' },
       });
     }
 
