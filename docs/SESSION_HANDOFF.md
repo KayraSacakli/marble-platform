@@ -1,6 +1,6 @@
 # SESSION HANDOFF — marble-platform
 
-Generated: 2026-10-01. Source of truth: repository + live git/server state at generation time.
+Generated: 2026-10-01. Last updated: 2026-10-06 (Phase 18D-6 final sweep). Source of truth: repository + live git/server state at generation time.
 
 ---
 
@@ -10,7 +10,7 @@ Generated: 2026-10-01. Source of truth: repository + live git/server state at ge
 - **Stack**: Next.js 16.3.5 (App Router, Turbopack), React 19.2.8, TypeScript ~5, Prisma 6.19.3 + PostgreSQL (`localhost:5432/marble_platform_dev`), Vitest 5.0.1, ESLint. Note: this Next.js version has breaking changes vs training data — read `node_modules/next/dist/docs/` before writing Next-specific code (see `AGENTS.md`).
 - **Branch**: `master` (only branch worked on).
 - **HEAD**: `f3831084245293b59bc83a83ed64712a08b87321` — `feat(admin): complete CMS administration and publishing workflow`.
-- **Phase status**: Phase 17 CLOSED (`f383108`). **Phases 18A, 18B, 18C, 18D-1, 18D-2, 18D-3, 18D-4: all CLOSED (PASS)**. **Phase 18D-5: code complete, verification partial — CHECKPOINT taken (see §13)**. All 18A–18D-5 changes **committed as one checkpoint commit and pushed to `origin/master`**. Next: **finish 18D-5 verification → 18D-6 final sweep**.
+- **Phase status**: Phase 17 CLOSED (`f383108`). **PHASE 18: CLOSED / PASS** — every sub-phase 18A, 18B, 18C, 18D-1, 18D-2, 18D-3, 18D-4, 18D-5, 18D-6 CLOSED (PASS). See §4, §10–§14. Checkpoint commit `d0b432c` (18A–18D-5) already on `origin/master`; the 18D-6 closing commit is the docs-only commit containing this handoff (hash = `git log -1`, reported in the closing session report). Next: **Phase 19 not defined — nothing pending in Phase 18.**
 
 ---
 
@@ -100,24 +100,23 @@ Do **NOT** implement in this task: soft-404, locale SEO/sitemap, rate limiting, 
 
 ## 7. CURRENT TERMINAL / SERVER STATE
 
-Updated at the 18D-5 checkpoint (2026-10-06):
+Updated at the 18D-6 final sweep (2026-10-06):
 
-| Server | Command | Port | PID(s) | Status |
-|---|---|---|---|---|
-| Temp API data source | `next dev --port 3000` (`%TEMP%\opencode\marble-api-copy`) | 3000 | tree killed (listener 40672; earlier refs 60072 gone) | **CLOSED at checkpoint** |
-| 18D-4/18D-5 smoke | `next start --port 3100` | 3100 | tree killed (listener 55548; wrappers 47496 gone) | **CLOSED at checkpoint** |
+| Server | Command | Port | Status |
+|---|---|---|---|
+| Temp API data source | `next dev` (`%TEMP%\opencode\marble-api-copy`) | 3000 | **CLOSED after 18D-6** |
+| 18D-6 smoke | `next start --port 3100` | 3100 | **CLOSED after 18D-6** |
 
-- Ports 3000/3100 verified FREE. Temp `dev-*.log` files deleted.
-- Remaining node processes belong to an unrelated project (`D:\20tl-akimi`, expo) — untouched.
-- Restart the temp API copy from `%TEMP%\opencode\marble-api-copy` if 18D-6 needs a build-time data source.
+- Ports 3000/3100 verified FREE; both trees killed with `taskkill /T /F`.
+- Temp logs live in `%TEMP%\opencode\` (`api-copy-dev.log`, `p18-final-3100.log`, `p18-final2-3100.log`).
+- Remaining node processes (if any) belong to an unrelated project (`D:\20tl-akimi`, expo) — untouched.
+- Restart the temp API copy from `%TEMP%\opencode\marble-api-copy` if a later phase needs a build-time data source.
 
 ---
 
 ## 8. GIT STATE
 
-Superseded at the 18D-5 checkpoint — current state lives in §13. Historical (18A era, HEAD `f383108`): 2 modified files, everything uncommitted.
-
-At the checkpoint: **all 18A–18D-5 changes committed as ONE checkpoint commit and pushed to `origin/master`** (verify with `git log -1` / `git status`). Only untracked leftovers are the excluded tool dirs `.agents/ .claude/ .cursor/ .devin/` (§6 commit hygiene).
+Superseded at the 18D-6 close — current state lives in §14. Historical: at the 18D-5 checkpoint all 18A–18D-5 changes were committed as ONE checkpoint commit (`d0b432c`) and pushed to `origin/master`. Only untracked leftovers are the excluded tool dirs `.agents/ .claude/ .cursor/ .devin/` (§6 commit hygiene).
 
 ---
 
@@ -297,9 +296,9 @@ Scope: §9 SHOULD #2 + #3 + #6, §3 SHOULD "dynamic sitemap detail URLs", exit #
 
 ---
 
-## 13. PHASE 18D-5 — next/image + LOGIN LOGGING (CHECKPOINT — CODE COMPLETE, VERIFICATION PARTIAL)
+## 13. PHASE 18D-5 — next/image + LOGIN LOGGING (CLOSED — PASS, completed 2026-10-06)
 
-Scope: §9 SHOULD #4 (`<img>` → `next/image`), SHOULD #5 (ProductGallery lazy/thumbnail sizing), §3/§9 note (login attempt logging + session token entropy/rotation). Checkpoint requested by user (PC resource pressure); commit + push explicitly authorized for this checkpoint. 18A–18D-4 are CLOSED (PASS) — see §4, §10, §11, §12 (18B/18C/18D-1 changes are in the tree: soft-404 `page-errors.ts`, `SEO_LOCALES`, `rate-limit.ts`, success-path `x-request-id`).
+Scope: §9 SHOULD #4 (`<img>` → `next/image`), SHOULD #5 (ProductGallery lazy/thumbnail sizing), §3/§9 note (login attempt logging + session token entropy/rotation). Code committed at the 18D-5 checkpoint (`d0b432c`, commit + push authorized by user); the two open runtime HTML checks below were finished during the 18D-6 sweep (§14). 18A–18D-4 are CLOSED (PASS) — see §4, §10, §11, §12 (18B/18C/18D-1 changes are in the tree: soft-404 `page-errors.ts`, `SEO_LOCALES`, `rate-limit.ts`, success-path `x-request-id`).
 
 ### Changes applied (committed at checkpoint)
 
@@ -322,11 +321,11 @@ Scope: §9 SHOULD #4 (`<img>` → `next/image`), SHOULD #5 (ProductGallery lazy/
 | `npm run build` (valid env) | **EXIT=0** |
 | Runtime :3100 smoke | health 200; `/tr` `/en` `/tr/about` `/tr/products` `/tr/products/demo-dark-stone` `/sitemap.xml` → **200**; SVG optimizer `/_next/image?url=%2Fdemo%2Fimages%2Fdemo-marble-charcoal.svg&w=640&q=75` → **200 image/svg+xml** (`dangerouslyAllowSVG` works); product HTML has **21 optimized `<img>`**; CSP **without `'unsafe-eval'`** (18D-4 regression ✓) |
 
-### Remaining to finish 18D-5 (RESUME POINT)
+### Remaining to finish 18D-5 — RESOLVED in §14 (18D-6)
 
-1. Gallery-thumb runtime HTML check (`sizes="4rem"` + `loading="lazy"`): **no demo product currently has >1 ContentMedia row** — the unit test already asserts both attributes; optionally attach a 2nd media (admin or SQL) and re-check served HTML.
-2. Hero `priority`/preload HTML check on `/tr` (earlier attempt aborted; PowerShell trap: `$HOME` is read-only — use another variable name).
-3. → **Phase 18D-6**: final §9 MUST/SHOULD + exit-criteria sweep, restart temp API copy (`%TEMP%\opencode\marble-api-copy`) only if a build is needed, final `git status` report.
+1. ✅ Gallery-thumb runtime HTML check — **PASS** (temporary 2nd media row → clean rebuild → served HTML; see §14.1). Demo data has exactly 1 media per product variant, so a temp `ContentMedia` (role `GALLERY`) row was attached to `tr/demo-dark-stone`, the page was rebuilt, the HTML verified, and the row **deleted again** (baseline restored: 1 media for that variant).
+2. ✅ Hero `priority`/preload HTML check on `/tr` — **PASS** (see §14.1).
+3. ✅ Phase 18D-6 final sweep — **PASS** (see §14).
 
 ### Process state at checkpoint
 
@@ -334,4 +333,89 @@ Scope: §9 SHOULD #4 (`<img>` → `next/image`), SHOULD #5 (ProductGallery lazy/
 
 ---
 
-NEXT: Phase 18D-5 — resume at §13 verification step 1 (gallery thumb HTML), then Phase 18D-6 final sweep
+## 14. PHASE 18D-6 — FINAL SWEEP (CLOSED — PASS, 2026-10-06)
+
+Scope: finish 18D-5's two open runtime HTML checks, then sweep §9 MUST/SHOULD, the Phase 18 exit criteria and the 18A–18D-5 regressions. **No source code changed in this step** — only `docs/SESSION_HANDOFF.md` (this file) and one operational note in `docs/DEPLOY_RUNBOOK.md`.
+
+### 14.1 18D-5 leftover HTML checks — both PASS
+
+**ProductGallery thumbnails** (`src/components/product/ProductGallery.tsx:57`): demo data has exactly 1 media row per product variant, so the `allImages.length > 1` branch never renders. Procedure: attached a temporary `ContentMedia` row (`id b7062d56-1d29-4c57-aa0a-d1e894f07bfb`, role `GALLERY`, asset `demo-marble-ivory.svg`, variant `tr/demo-dark-stone`) → clean `npm run build` → `next start :3100` → verified served HTML → **row deleted again** and baseline confirmed (that variant back to 1 media).
+
+Served `/tr/products/demo-dark-stone` HTML: `product-hero__thumbnails` container present; **2 thumbnails, each `<img … sizes="4rem" loading="lazy">`**; srcSet starts at `w=32` (thumb-sized, no full-size download); primary image carries **no** `loading` attribute (eager/`priority`). Baseline re-check after the delete: 0 thumbnail containers, exactly 1 `<img>`, and that `<img>` is served through `/_next/image` (0 raw images).
+
+**Hero `priority`/preload on `/tr`**: `<head>` contains `<link rel="preload" as="image" imageSrcSet="…demo-hero-poster.svg…" imageSizes="…">` (verified index-inside-`<head>`), and the hero `<img class="hero__poster">` has **no** `loading="lazy"`. Note (documented, no change made): Next 16 `next/image` emits `fetchpriority="high"` only when the `fetchPriority` prop is passed explicitly — `priority` maps to the preload link + eager loading (`node_modules/next/dist/shared/lib/get-img-props.js:271` `isLazy`, `:587` `preload: preload || priority`). Framework behaviour, not a defect; no scope creep taken.
+
+### 14.2 §9 MUST FIX sweep — 4/4 PASS
+
+| # | MUST | Status | Evidence (2026-10-06) |
+|---|---|---|---|
+| 1 | Rate limiting on login + quote-requests | **PASS** | Runtime: 6th `POST /api/v1/admin/auth/login` → **429 `retry-after: 60`** (limit 5/60s); 11th `POST /api/v1/public/tr/quote-requests` → **429 `retry-after: 60`** (limit 10/60s). Payloads were invalid → 422 on the allowed attempts, so no rows written (`QuoteRequest` count still 1). Unit: `src/__tests__/api/v1/rate-limit.test.ts` + `src/lib/__tests__/rate-limit.test.ts` green. |
+| 2 | Startup/build env validation + `NEXT_PUBLIC_SITE_URL` | **PASS** | `next start` **without** prod env → **EXIT=1** with aggregated `Production environment validation failed: - NEXT_PUBLIC_SITE_URL is required… - NEXTAUTH_SECRET is a documented placeholder…`; `next dev` without those envs → runs (no-op gate). Canonical/hreflang/sitemap reflect the configured `NEXT_PUBLIC_SITE_URL` (never `example.com`). |
+| 3 | Backup/restore + `migrate:deploy` + runbook | **PASS** | See §14.4 — `npm run backup`, `npm run migrate:deploy`, full restore rehearsal, destructive guard, `docs/DEPLOY_RUNBOOK.md`. |
+| 4 | Build cannot bake a 404/stale page | **PASS** | Re-run this sweep: clean `.next` + unreachable prerender base (`NEXT_PUBLIC_SITE_URL=http://localhost:3100`, port dead) → **`npm run build` EXIT=1** with `Error [ApiClientError]: Network error` propagated from `page.tsx` — the old behaviour (EXIT=0 baking `404: This page could not be found.`) is gone. Healthy build → **EXIT=0, 94/94 pages**, `NEXT_HTTP_ERROR_FALLBACK` absent from built HTML. |
+
+### 14.3 §9 SHOULD FIX sweep — 8/8 PASS
+
+| # | SHOULD | Status | Evidence |
+|---|---|---|---|
+| 1 | `x-request-id` on success AND error | **PASS** | Runtime: 200 `GET /api/v1/public/tr/journal` → `x-request-id: req_…`; 404 detail → `req_…`; 400 invalid locale → `req_…`. |
+| 2 | CSP without `unsafe-eval` in prod | **PASS** | Runtime header on `/tr`: `script-src 'self' 'unsafe-inline';` — no `'unsafe-eval'`; unit tests `security-headers.test.ts` / `next-config-headers.test.ts` green. |
+| 3 | `revalidate` forwarded to `fetch` | **PASS** | `src/lib/api/client.ts` `fetchInit.next = { revalidate }` + 3 assertions in `api-client.test.ts`. |
+| 4 | `<img>` → `next/image` | **PASS** | Product detail HTML: every `<img>` resolves through `/_next/image` (0 raw); SVG optimizer `/_next/image?…demo-marble-charcoal.svg&w=640&q=75` → **200 image/svg+xml**. |
+| 5 | ProductGallery lazy/thumbnail sizing | **PASS** | §14.1. |
+| 6 | JSON-LD escaping | **PASS** | `escapeJsonLd()` + `jsonld-escape.test.tsx`. |
+| 7 | Production admin provisioning documented | **PASS** | `docs/DEPLOY_RUNBOOK.md` §6 (+ §1 env table, §5 rollback). |
+| 8 | Login attempt logging + session entropy/rotation | **PASS** | Runtime log lines emitted during the rate-limit check: `[req_…] admin.login.failure email=unknown ip=::1 reason=ValidationError` (correlated by request id); `session.test.ts` asserts 64-hex token, unique per login, hash-only persistence. |
+
+### 14.4 Exit criteria — 10/10 PASS
+
+| Criterion | Status |
+|---|---|
+| Rate limiting active (429 + `Retry-After`) on login **and** quote-requests, verified by test | **PASS** (runtime 429s above + unit tests) |
+| Fail-fast on missing/invalid `DATABASE_URL` / `NEXT_PUBLIC_SITE_URL`; set correctly in prod env | **PASS** (EXIT=1 fail-fast; `.env.example` + runbook §1) |
+| Canonical/sitemap/hreflang use the configured real domain | **PASS** — `<link rel="canonical" href="http://localhost:3000/tr">`, `hreflang="tr"/"en"/"x-default"` present, `robots.txt Sitemap:` + sitemap entries from `NEXT_PUBLIC_SITE_URL`; `https://example.com` gone |
+| Build cannot bake 404/stale page | **PASS** (EXIT=1 on prerender fetch failure) |
+| Backup restorable, restore rehearsed, `migrate:deploy` in path, runbook committed | **PASS** — `backups\marble-20261006-203502.dump` (90,821 B) → `RESTORE_OK` → identical row counts (`Product 8, JournalArticle 3, InternalUser 3, MediaAsset 16, ContentMedia 43, QuoteRequest 1`) → `dropdb` EXIT=0; guard re-checked: no `-Force` → **EXIT 1**; `migrate:deploy` EXIT=0 (3 migrations, none pending) |
+| `x-request-id` on success AND error | **PASS** |
+| CSP without `unsafe-eval` + unit test | **PASS** |
+| `/api/health` 200 only when DB reachable, used as deploy probe | **PASS** (`200` in smoke; runbook §2 step 5) |
+| No committed secrets | **PASS** — `git ls-files` → 0 `.env` files; `.gitignore` `.env*` + `/backups/` |
+| Full test/typecheck/lint/build green; 18A/18B/18C regressions unchanged | **PASS** — see §14.5 |
+
+### 14.5 Verification results (all PASS, 2026-10-06)
+
+| Check | Result |
+|---|---|
+| `npm test` | **818/818 PASS (60 files)** |
+| `npm run typecheck` | **PASS** (0 errors) |
+| `npm run lint` | **PASS** (0 errors, 2 pre-existing `_locale` warnings in `src/repositories/content.ts:250,463`) |
+| `npm run build` (clean `.next`, valid env, API copy on :3000) | **EXIT=0**, 94/94 static pages (run twice: once for the gallery check, once final after baseline restore) |
+| Build negative test (dead prerender base) | **EXIT=1**, no baked 404 |
+| `npm run migrate:deploy` | **EXIT=0** — 3 migrations, none pending |
+| `npm run backup` | **PASS** — `backups\marble-20261006-203502.dump` 90,821 bytes |
+| Restore rehearsal (exit #5, 2nd time) | **PASS** — createdb → `RESTORE_OK` → 6/6 table counts identical → `dropdb` EXIT=0 |
+| Restore destructive guard | **PASS** — no `-Force` → exit 1 |
+| Runtime smoke (`next start :3100`) | health **200**; `/tr` `/en` `/tr/about` `/tr/products` `/tr/products/demo-dark-stone` `/tr/journal` `/tr/journal/ocaktan-bitis-yuzeyine` `/en/products/demo-dark-stone` `/tr/projects` `/sitemap.xml` `/robots.txt` → **200**; missing product/journal slugs → **404** |
+| Regressions (18A/18B/18C) | soft-404 404s ✓; sitemap **58 URLs = 22 static + 36 detail, 0 unsupported locales** ✓; TR/EN + `x-default` hreflang ✓; CSP ✓; SVG optimizer ✓ |
+
+### 14.6 Operational note (documented, no code change)
+
+`NEXT_PUBLIC_SITE_URL` is **inlined at build time** into prerendered output (`sitemap.xml`, `robots.txt`, canonical/hreflang) *and* used as the server-side API base URL. Local smoke therefore shows `http://localhost:3000` (the value the build ran with) even when `next start` is given a different runtime value — production must set the real origin **before** `npm run build` (runbook §1). Verified directly: building with a dead `:3100` base fails the build instead of baking pages.
+
+### 14.7 Git state at 18D-6 close
+
+- Checkpoint commit `d0b432c` (18A–18D-5) already on `origin/master`.
+- 18D-6 changes are **docs only**: `docs/SESSION_HANDOFF.md` (this file) + `docs/DEPLOY_RUNBOOK.md` (rehearsal re-run + build-time env note).
+- Committed and pushed as the Phase 18 closing commit; verify with `git log -1` / `git status`.
+- Working tree afterwards must show only the excluded untracked tool dirs `.agents/ .claude/ .cursor/ .devin/`.
+
+---
+
+## NEXT
+
+**Phase 18 = CLOSED / PASS.** Nothing pending inside Phase 18 — all §9 MUST (4/4), §9 SHOULD (8/8) and all 10 exit criteria are PASS, and 18A–18D-6 are closed.
+
+RESUME POINT for a future session:
+1. Read this file top-to-bottom (§1 source of truth) and `git log -1`.
+2. No Phase 18 work remains. A future **Phase 19 is not yet defined** — candidates already parked in §9 DEFER (distributed rate limiting, structured logging, HTML sanitizer, ISR/CDN strategy, `middleware`→`proxy` rename, CORS) require an explicit new scope decision before any work.
+3. Temp servers are closed (ports 3000/3100 free); restart the temp API copy from `%TEMP%\opencode\marble-api-copy` if a build-time data source is needed.

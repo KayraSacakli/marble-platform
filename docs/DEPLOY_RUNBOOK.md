@@ -23,6 +23,11 @@ untouched.
 Never commit `.env` (gitignored via `.env*`). Copy `.env.example` on the server and
 fill real values.
 
+> **Set `NEXT_PUBLIC_SITE_URL` before `npm run build`.** It is inlined at build time
+> into the prerendered output (`sitemap.xml`, `robots.txt`, canonical/hreflang) *and*
+> used as the server-side API base URL for prerender fetches. Changing it only at
+> `npm start` does not correct URLs already baked into the build.
+
 ## 2. Deploy procedure
 
 ```powershell
@@ -76,8 +81,10 @@ dropdb marble_platform_restore_test
 - Script: `scripts/restore.ps1`. `-Force` is mandatory (restore is destructive);
   existing objects in the target are dropped (`--clean --if-exists`).
 - The target database must already exist.
-- **Rehearsal status: performed once during Phase 18D-3** (dump → restore into
-  `marble_platform_restore_test` → row-count verification → drop).
+- **Rehearsal status: performed twice** — Phase 18D-3 and again during the Phase 18D-6
+  final sweep (2026-10-06): fresh dump → restore into `marble_platform_restore_test`
+  → row-count verification (6/6 tables identical) → `dropdb`. The destructive guard
+  (`-Force` required) is re-verified each time.
 
 ## 5. Rollback
 
