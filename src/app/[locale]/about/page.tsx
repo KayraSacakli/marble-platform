@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getAbout } from '@/lib/data/company';
+import { Media } from '@/components/media/Media';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -31,15 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: about.coverImage ? [{ url: about.coverImage.src, alt: about.coverImage.alt, width: about.coverImage.width, height: about.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/about`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/about`])
-          ),
-          'x-default': `${SITE_URL}/tr/about`,
-        },
-      },
+      alternates: buildPageAlternates(locale, '/about'),
     };
   } catch {
     return {};
@@ -56,8 +50,8 @@ export default async function AboutPage({ params }: PageProps) {
   let about;
   try {
     about = await getAbout(locale);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (
@@ -98,13 +92,10 @@ export default async function AboutPage({ params }: PageProps) {
 
           {about.coverImage && (
             <div className="company-hero__media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Media
                 src={about.coverImage.src}
                 alt={about.coverImage.alt}
                 loading="eager"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           )}

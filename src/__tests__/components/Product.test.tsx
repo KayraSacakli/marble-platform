@@ -63,7 +63,9 @@ describe('ProductCard', () => {
   it('uses eager loading when priority is true', () => {
     render(<ProductCard product={product} priority />);
     const img = screen.getByRole('img');
-    expect(img.getAttribute('loading')).toBe('eager');
+    // next/image renders priority images without a loading attribute
+    // (eager by default + preload), never loading="lazy".
+    expect(img.getAttribute('loading')).toBeNull();
   });
 
   it('uses lazy loading when priority is false', () => {
@@ -334,7 +336,7 @@ describe('ProductGallery', () => {
   it('renders primary image', () => {
     render(<ProductGallery primaryImage={primaryImage} gallery={[]} productName="Test" />);
     const img = screen.getByRole('img');
-    expect(img.getAttribute('src')).toBe('/images/primary.jpg');
+    expect(decodeURIComponent(img.getAttribute('src') ?? '')).toContain('/images/primary.jpg');
   });
 
   it('renders thumbnails when multiple images', () => {
@@ -353,7 +355,7 @@ describe('ProductGallery', () => {
     const thumbnails = screen.getAllByRole('tab');
     fireEvent.click(thumbnails[1]);
     const mainImg = screen.getAllByRole('img')[0];
-    expect(mainImg.getAttribute('src')).toBe('/images/gallery-1.jpg');
+    expect(decodeURIComponent(mainImg.getAttribute('src') ?? '')).toContain('/images/gallery-1.jpg');
   });
 
   it('renders fallback when no images', () => {
@@ -366,6 +368,20 @@ describe('ProductGallery', () => {
     const thumbnails = screen.getAllByRole('tab');
     expect(thumbnails[0].getAttribute('aria-selected')).toBe('true');
     expect(thumbnails[1].getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('preloads the primary image but lazy-loads thumbnails at thumbnail size', () => {
+    const { container } = render(<ProductGallery primaryImage={primaryImage} gallery={gallery} productName="Test" />);
+    // Thumbnails use alt="" (presentation role), so query the DOM directly.
+    const imgs = Array.from(container.querySelectorAll('img'));
+    const [primary, ...thumbs] = imgs;
+    expect(imgs.length).toBe(4); // 1 primary + 3 thumbnails (primary is also a tab)
+    expect(primary.getAttribute('loading')).toBeNull();
+    expect(thumbs.length).toBe(3);
+    for (const thumb of thumbs) {
+      expect(thumb.getAttribute('loading')).toBe('lazy');
+      expect(thumb.getAttribute('sizes')).toBe('4rem');
+    }
   });
 });
 

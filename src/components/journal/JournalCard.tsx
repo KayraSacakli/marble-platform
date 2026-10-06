@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { JournalSummary } from '@/types/api';
 
 interface JournalCardProps {
@@ -17,14 +18,7 @@ export function JournalCard({ article, priority = false }: JournalCardProps) {
       </a>
       <div className="journal-card__image-wrap">
         {article.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={article.coverImage.src}
-            alt={article.coverImage.alt}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <Media src={article.coverImage.src} alt={article.coverImage.alt} priority={priority} />
         ) : (
           <div
             style={{

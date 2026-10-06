@@ -13,6 +13,9 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
     "test": "vitest run",
     "test:watch": "vitest",
+    "migrate:deploy": "prisma migrate deploy",
+    "backup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backup.ps1",
+    "restore": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restore.ps1",
     "postinstall": "prisma generate"
   },
   "dependencies": {

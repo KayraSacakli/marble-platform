@@ -52,7 +52,7 @@ export function createApiHandler<T = HandledResponse, P extends Record<string, s
         return result as unknown as NextResponse;
       }
 
-      return NextResponse.json({ data: result }, { status: 200 });
+      return NextResponse.json({ data: result }, { status: 200, headers: { 'x-request-id': requestId } });
     } catch (error) {
       if (isAppError(error)) {
         return createErrorResponse(error, requestId);

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getProduct } from '@/lib/data/products';
@@ -8,7 +9,7 @@ import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd, ProductJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -34,15 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: product.primaryImage ? [{ url: product.primaryImage.src, alt: product.primaryImage.alt, width: product.primaryImage.width, height: product.primaryImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/products/${product.slug}`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/products/${product.slug}`])
-          ),
-          'x-default': `${SITE_URL}/tr/products/${product.slug}`,
-        },
-      },
+      alternates: buildPageAlternates(locale, `/products/${product.slug}`),
     };
   } catch {
     return {};
@@ -59,8 +52,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
   let product;
   try {
     product = await getProduct(locale, slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (

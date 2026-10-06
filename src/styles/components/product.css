@@ -274,6 +274,7 @@
 }
 
 .product-hero__thumbnail {
+  position: relative;
   flex-shrink: 0;
   width: 4rem;
   height: 4rem;

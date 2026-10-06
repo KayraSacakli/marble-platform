@@ -98,6 +98,13 @@ class ApiClient {
         cache: options?.cache,
       };
 
+      // Next.js extends fetch with `next: { revalidate }` (RequestInit
+      // augmentation) — forward it so callers can opt into ISR instead of
+      // the option being silently dropped (Phase 18D-4).
+      if (options?.revalidate !== undefined) {
+        fetchInit.next = { revalidate: options.revalidate };
+      }
+
       if (options?.body) {
         fetchInit.body = JSON.stringify(options.body);
       }

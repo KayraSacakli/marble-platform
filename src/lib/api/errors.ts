@@ -95,9 +95,13 @@ export class ValidationError extends AppError {
 }
 
 export class RateLimitError extends AppError {
-  constructor(message = 'Too many requests. Please try again later.') {
+  /** Seconds until the client may retry; surfaced as the `Retry-After` header. */
+  public readonly retryAfterSeconds?: number;
+
+  constructor(message = 'Too many requests. Please try again later.', retryAfterSeconds?: number) {
     super(message, 429, 'RATE_LIMITED');
     this.name = 'RateLimitError';
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -119,7 +123,14 @@ export function createErrorResponse(error: AppError, requestId?: string): NextRe
       ...(requestId ? { requestId } : {}),
     },
   };
-  return NextResponse.json(body, { status: error.statusCode });
+  const headers = new Headers();
+  if (requestId) {
+    headers.set('x-request-id', requestId);
+  }
+  if (error instanceof RateLimitError && error.retryAfterSeconds !== undefined) {
+    headers.set('Retry-After', String(error.retryAfterSeconds));
+  }
+  return NextResponse.json(body, { status: error.statusCode, headers });
 }
 
 // ============================================================

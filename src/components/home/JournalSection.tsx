@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { JournalSummary } from '@/types/api';
 import { Container } from '@/components/ui/Container';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -38,15 +39,12 @@ function JournalCard({ article, featured, locale }: { article: JournalSummary; f
       <a href={href} className="card-link-overlay" aria-label={article.title}>
         <span className="sr-only">{article.title}</span>
       </a>
-      <div className="journal-card__image-wrap">
+      <div className="journal-card__image-wrap" style={{ position: 'relative' }}>
         {article.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Media
             src={article.coverImage.src}
             alt={article.coverImage.alt}
             loading="lazy"
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />

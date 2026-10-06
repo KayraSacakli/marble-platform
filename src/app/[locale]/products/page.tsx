@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getProducts } from '@/lib/data/products';
@@ -6,6 +7,7 @@ import { ProductGrid } from '@/components/product/ProductGrid';
 import { Pagination } from '@/components/product/Pagination';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -32,15 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/products`,
-      languages: {
-        ...Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${l}/products`])
-        ),
-        'x-default': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/tr/products`,
-      },
-    },
+    alternates: buildPageAlternates(locale, '/products'),
   };
 }
 
@@ -58,8 +52,8 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
   let result;
   try {
     result = await getProducts(locale, { page, pageSize });
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   const { data: products, meta } = result;

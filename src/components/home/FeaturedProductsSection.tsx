@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { ProductSummary } from '@/types/api';
 import { Container } from '@/components/ui/Container';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -38,15 +39,15 @@ function ProductCard({ product, featured, locale }: { product: ProductSummary; f
       <a href={href} className="card-link-overlay" aria-label={product.name}>
         <span className="sr-only">{product.name}</span>
       </a>
-      <div className={`product-card__image-wrap ${featured ? 'product-card__image-wrap--large' : ''}`}>
+      <div
+        className={`product-card__image-wrap ${featured ? 'product-card__image-wrap--large' : ''}`}
+        style={{ position: 'relative' }}
+      >
         {product.primaryImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Media
             src={product.primaryImage.src}
             alt={product.primaryImage.alt}
-            loading={featured ? 'eager' : 'lazy'}
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            priority={featured}
           />
         ) : (
           <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />

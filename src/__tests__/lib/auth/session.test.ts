@@ -1,11 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAdminSessionUser, requireAdminSession, requireAdminRole } from '@/lib/auth/session';
+import { createHash } from 'node:crypto';
+import {
+  createAdminSession,
+  getAdminSessionUser,
+  requireAdminSession,
+  requireAdminRole,
+} from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     adminSession: {
+      create: vi.fn(),
       findUnique: vi.fn(),
       delete: vi.fn(),
     },
@@ -104,10 +111,36 @@ describe('requireAdminSession / requireAdminRole', () => {
 
   it('never trusts client-provided roles: roles come from the session user object', () => {
     // The helper only reads roles off the server-resolved user; there is no
-    // code path that accepts roles from request input.
+    // code path that accepts role information from request input.
     const user = { id: 'u', email: 'e', name: null, roles: [] as string[] };
     expect(() => requireAdminRole(user, 'ADMIN', 'EDITOR')).toThrowError(
       expect.objectContaining({ statusCode: 403 })
     );
+  });
+});
+
+describe('createAdminSession token entropy & rotation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(prisma.adminSession.create).mockResolvedValue({} as never);
+  });
+
+  it('issues a fresh 256-bit random token per login and persists only its sha256 hash', async () => {
+    const first = await createAdminSession('u-1');
+    const second = await createAdminSession('u-1');
+
+    // randomBytes(32) rendered as hex → 64 hex chars = 256 bits of entropy.
+    expect(first.token).toMatch(/^[0-9a-f]{64}$/);
+    expect(second.token).toMatch(/^[0-9a-f]{64}$/);
+
+    // Rotation: every login gets a fresh, unrelated token.
+    expect(first.token).not.toBe(second.token);
+
+    // Only the hash is stored — the raw token never reaches the database.
+    const stored = vi.mocked(prisma.adminSession.create).mock.calls[0][0].data;
+    expect(stored.tokenHash).toBe(createHash('sha256').update(first.token).digest('hex'));
+    expect(stored.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(JSON.stringify(stored)).not.toContain(first.token);
+    expect(stored.expiresAt.getTime()).toBeGreaterThan(Date.now());
   });
 });

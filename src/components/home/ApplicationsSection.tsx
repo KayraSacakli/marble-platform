@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { ApplicationSummary } from '@/types/api';
 import { Container } from '@/components/ui/Container';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -38,15 +39,12 @@ function ApplicationCard({ application, locale }: { application: ApplicationSumm
       <a href={href} className="card-link-overlay" aria-label={application.name}>
         <span className="sr-only">{application.name}</span>
       </a>
-      <div className="application-card__image-wrap">
+      <div className="application-card__image-wrap" style={{ position: 'relative' }}>
         {application.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Media
             src={application.coverImage.src}
             alt={application.coverImage.alt}
             loading="lazy"
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />

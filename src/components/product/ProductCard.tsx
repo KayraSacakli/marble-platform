@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { ProductSummary } from '@/types/api';
 
 interface ProductCardProps {
@@ -20,14 +21,7 @@ export function ProductCard({ product, priority = false, locale }: ProductCardPr
       </a>
       <div className="product-card__image-wrap">
         {product.primaryImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={product.primaryImage.src}
-            alt={product.primaryImage.alt}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <Media src={product.primaryImage.src} alt={product.primaryImage.alt} priority={priority} />
         ) : (
           <div
             style={{

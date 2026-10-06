@@ -45,3 +45,6 @@ dist/
 
 # local dev media uploads (phase 17C, never commit uploaded bytes)
 storage/
+
+# database backups (phase 18D-3, never commit dumps)
+/backups/

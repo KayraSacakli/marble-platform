@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getProject } from '@/lib/data/projects';
+import { Media } from '@/components/media/Media';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -32,15 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: project.heroImage ? [{ url: project.heroImage.src, alt: project.heroImage.alt, width: project.heroImage.width, height: project.heroImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/projects/${project.slug}`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/projects/${project.slug}`])
-          ),
-          'x-default': `${SITE_URL}/tr/projects/${project.slug}`,
-        },
-      },
+      alternates: buildPageAlternates(locale, `/projects/${project.slug}`),
     };
   } catch {
     return {};
@@ -57,8 +51,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   let project;
   try {
     project = await getProject(locale, slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (
@@ -101,13 +95,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
           {project.heroImage && (
             <div className="project-hero__media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Media
                 src={project.heroImage.src}
                 alt={project.heroImage.alt}
                 loading="eager"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           )}
@@ -121,13 +112,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <div className="project-gallery__grid">
               {project.gallery.map((image) => (
                 <div key={image.id} className="project-gallery__item">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Media
                     src={image.src}
                     alt={image.alt}
                     loading="lazy"
-                    decoding="async"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>
               ))}

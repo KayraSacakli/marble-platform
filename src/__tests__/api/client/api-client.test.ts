@@ -208,4 +208,31 @@ describe('ApiClient', () => {
       expect(result.data.name).toBe('Product 1');
     });
   });
+
+  describe('revalidate forwarding (Phase 18D-4)', () => {
+    beforeEach(() => {
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: {} }),
+      });
+    });
+
+    it('forwards revalidate under next when provided', async () => {
+      await client.get('tr', '/products', undefined, { revalidate: 60 });
+      const init = fetchSpy.mock.calls[0][1] as RequestInit;
+      expect(init.next).toEqual({ revalidate: 60 });
+    });
+
+    it('forwards revalidate: false (never revalidate)', async () => {
+      await client.get('tr', '/products', undefined, { revalidate: false });
+      const init = fetchSpy.mock.calls[0][1] as RequestInit;
+      expect(init.next).toEqual({ revalidate: false });
+    });
+
+    it('omits next entirely when revalidate is not provided', async () => {
+      await client.get('tr', '/products');
+      const init = fetchSpy.mock.calls[0][1] as RequestInit;
+      expect(init.next).toBeUndefined();
+    });
+  });
 });

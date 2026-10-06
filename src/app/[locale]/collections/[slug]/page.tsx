@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getCollection } from '@/lib/data/collections';
+import { Media } from '@/components/media/Media';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -32,15 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: collection.coverImage ? [{ url: collection.coverImage.src, alt: collection.coverImage.alt, width: collection.coverImage.width, height: collection.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/collections/${collection.slug}`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/collections/${collection.slug}`])
-          ),
-          'x-default': `${SITE_URL}/tr/collections/${collection.slug}`,
-        },
-      },
+      alternates: buildPageAlternates(locale, `/collections/${collection.slug}`),
     };
   } catch {
     return {};
@@ -57,8 +51,8 @@ export default async function CollectionDetailPage({ params }: PageProps) {
   let collection;
   try {
     collection = await getCollection(locale, slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (
@@ -90,13 +84,10 @@ export default async function CollectionDetailPage({ params }: PageProps) {
 
           {collection.coverImage && (
             <div className="collection-hero__media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Media
                 src={collection.coverImage.src}
                 alt={collection.coverImage.alt}
                 loading="eager"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           )}

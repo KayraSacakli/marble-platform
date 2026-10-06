@@ -80,3 +80,27 @@ describe('public repository publication gates (PUBLISHED + ACTIVE)', () => {
     expect(count.mock.calls[0][0]?.where).toEqual(where);
   });
 });
+
+/**
+ * Regression for the production Journal 500 (Phase 18 recon): Prisma 6
+ * rejects multi-field ordering given as one object with two keys
+ * (`{ name: 'asc', createdAt: 'desc' }` — "Expected [...], provided Object")
+ * and requires an array of single-field objects instead. The invalid form
+ * threw PrismaClientValidationError at runtime; mocked service-level tests
+ * never exercised Prisma, so it went unnoticed.
+ */
+describe('journal list orderBy shape', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    count.mockResolvedValue(0);
+    findMany.mockResolvedValue([] as never);
+  });
+
+  it('listJournalArticles passes multi-field orderBy as a Prisma array', async () => {
+    await contentRepository.listJournalArticles('en', { page: 1, pageSize: 10 });
+    expect(findMany).toHaveBeenCalledTimes(1);
+    const orderBy = findMany.mock.calls[0][0]?.orderBy;
+    expect(Array.isArray(orderBy)).toBe(true);
+    expect(orderBy).toEqual([{ name: 'asc' }, { createdAt: 'desc' }]);
+  });
+});

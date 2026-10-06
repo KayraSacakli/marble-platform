@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { CollectionSummary } from '@/types/api';
 import { Container } from '@/components/ui/Container';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -38,15 +39,12 @@ function CollectionCard({ collection, locale }: { collection: CollectionSummary;
       <a href={href} className="card-link-overlay" aria-label={collection.name}>
         <span className="sr-only">{collection.name}</span>
       </a>
-      <div className="collection-card__image-wrap">
+      <div className="collection-card__image-wrap" style={{ position: 'relative' }}>
         {collection.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Media
             src={collection.coverImage.src}
             alt={collection.coverImage.alt}
             loading="lazy"
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />

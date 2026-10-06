@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createErrorResponse, isAppError, mapPrismaError, InternalError } from '@/lib/api/errors';
+import { generateRequestId } from '@/lib/api/request-id';
 import { requireAdminSession, requireAdminRole, type AdminRole, type AdminSessionUser } from '@/lib/auth/session';
 
 // ============================================================
@@ -26,6 +27,7 @@ export function withAdminAuth<T = unknown, P extends Record<string, string> = Re
   options?: { roles?: AdminRole[] }
 ) {
   return async (request: NextRequest, context: AdminRouteContext<P>): Promise<NextResponse> => {
+    const requestId = generateRequestId();
     try {
       const admin = await requireAdminSession();
       if (options?.roles && options.roles.length > 0) {
@@ -33,22 +35,25 @@ export function withAdminAuth<T = unknown, P extends Record<string, string> = Re
       }
       const result = await handler(request, context, admin);
       if (result instanceof Response) {
+        if (!result.headers.get('x-request-id')) {
+          result.headers.set('x-request-id', requestId);
+        }
         return result as unknown as NextResponse;
       }
-      return NextResponse.json({ data: result }, { status: 200 });
+      return NextResponse.json({ data: result }, { status: 200, headers: { 'x-request-id': requestId } });
     } catch (error) {
-      return handleAdminError(error);
+      return handleAdminError(error, requestId);
     }
   };
 }
 
 /** Map thrown errors to JSON error responses (shared with public handlers). */
-export function handleAdminError(error: unknown): NextResponse {
+export function handleAdminError(error: unknown, requestId?: string): NextResponse {
   if (isAppError(error)) {
-    return createErrorResponse(error);
+    return createErrorResponse(error, requestId);
   }
   if (error && typeof error === 'object' && 'code' in error) {
-    return createErrorResponse(mapPrismaError(error));
+    return createErrorResponse(mapPrismaError(error), requestId);
   }
-  return createErrorResponse(new InternalError());
+  return createErrorResponse(new InternalError(), requestId);
 }

@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getHomepage } from '@/lib/data/homepage';
 import { Homepage } from '@/components/home/Homepage';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -32,15 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title,
       description,
     },
-    alternates: {
-      canonical: `${SITE_URL}/${locale}`,
-      languages: {
-        ...Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}`])
-        ),
-        'x-default': `${SITE_URL}/tr`,
-      },
-    },
+    alternates: buildPageAlternates(locale, ''),
   };
 }
 
@@ -54,8 +47,8 @@ export default async function LocalePage({ params }: PageProps) {
   let data;
   try {
     data = await getHomepage(locale);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return <Homepage data={data} locale={locale} />;

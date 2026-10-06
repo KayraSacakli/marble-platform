@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { ProjectSummary } from '@/types/api';
 import { Container } from '@/components/ui/Container';
 import { SectionHeader } from '@/components/ui/SectionHeader';
@@ -40,15 +41,12 @@ function ProjectCard({ project, featured, locale }: { project: ProjectSummary; f
       <a href={href} className="card-link-overlay" aria-label={project.name}>
         <span className="sr-only">{project.name}</span>
       </a>
-      <div className="project-card__image-wrap">
+      <div className="project-card__image-wrap" style={{ position: 'relative' }}>
         {project.heroImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Media
             src={project.heroImage.src}
             alt={project.heroImage.alt}
             loading="lazy"
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         ) : (
           <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />

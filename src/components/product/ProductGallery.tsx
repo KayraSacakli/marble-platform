@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Media } from '@/components/media/Media';
 import type { MediaPresentation } from '@/types/api';
 
 interface ProductGalleryProps {
@@ -39,14 +40,7 @@ export function ProductGallery({ primaryImage, gallery, productName }: ProductGa
   return (
     <div className="product-hero__gallery">
       <div className="product-hero__primary-image">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={activeImage.src}
-          alt={activeImage.alt}
-          loading="eager"
-          decoding="async"
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
+        <Media src={activeImage.src} alt={activeImage.alt} priority />
       </div>
       {allImages.length > 1 && (
         <div className="product-hero__thumbnails" role="tablist" aria-label="Product images">
@@ -60,14 +54,7 @@ export function ProductGallery({ primaryImage, gallery, productName }: ProductGa
               className={`product-hero__thumbnail ${index === activeIndex ? 'product-hero__thumbnail--active' : ''}`}
               onClick={() => setActiveIndex(index)}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={image.src}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+              <Media src={image.src} alt="" sizes="4rem" loading="lazy" />
             </button>
           ))}
         </div>

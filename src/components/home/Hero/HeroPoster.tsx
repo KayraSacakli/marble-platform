@@ -1,3 +1,5 @@
+import { Media } from '@/components/media/Media';
+
 interface HeroPosterProps {
   src: string;
   alt: string;
@@ -9,18 +11,11 @@ export function HeroPoster({ src, alt, hasVideo, isReady }: HeroPosterProps) {
   const isHidden = hasVideo && isReady;
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Media
       src={src}
       alt={alt}
       className={`hero__poster ${isHidden ? 'hero__poster--hidden' : ''}`}
-      loading="eager"
-      decoding="async"
-      style={{
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-      }}
+      priority
     />
   );
 }

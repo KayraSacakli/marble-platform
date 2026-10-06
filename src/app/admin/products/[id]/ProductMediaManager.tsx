@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface MediaRow {
   rowId: string;
@@ -240,8 +241,13 @@ export function ProductMediaManager({ base }: { base: string }) {
           setEdits((prev) => ({ ...prev, [row.assetId]: { ...edit, ...patch } }));
         return (
           <div key={row.assetId} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', borderTop: '1px solid #eee', padding: '0.75rem 0' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={row.src} alt="" width={120} style={{ objectFit: 'cover', background: '#f0f0f0' }} />
+            <Image
+              src={row.src}
+              alt=""
+              width={120}
+              height={row.width && row.height ? Math.max(1, Math.round((120 * row.height) / row.width)) : 90}
+              style={{ objectFit: 'cover', background: '#f0f0f0' }}
+            />
             <div style={{ display: 'grid', gap: '0.5rem', flex: 1 }}>
               <span>
                 <code>{row.role}</code> · order{' '}

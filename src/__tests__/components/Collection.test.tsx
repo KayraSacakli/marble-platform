@@ -52,7 +52,7 @@ describe('CollectionCard', () => {
   it('renders image when available', () => {
     render(<CollectionCard collection={mockCollectionSummaryWithImage} />);
     const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('src', '/images/collection.jpg');
+    expect(decodeURIComponent(img.getAttribute('src') ?? '')).toContain('/images/collection.jpg');
     expect(img).toHaveAttribute('alt', 'Test collection image');
   });
 
@@ -76,7 +76,8 @@ describe('CollectionCard', () => {
   it('loads image eagerly when priority', () => {
     render(<CollectionCard collection={mockCollectionSummaryWithImage} priority />);
     const img = screen.getByRole('img');
-    expect(img).toHaveAttribute('loading', 'eager');
+    // next/image omits the loading attribute for priority images (eager + preload).
+    expect(img.getAttribute('loading')).toBeNull();
   });
 
   it('loads image lazily when not priority', () => {
@@ -113,9 +114,10 @@ describe('CollectionGrid', () => {
     ];
     render(<CollectionGrid collections={collections} />);
     const images = screen.getAllByRole('img');
-    expect(images[0]).toHaveAttribute('loading', 'eager');
-    expect(images[1]).toHaveAttribute('loading', 'eager');
-    expect(images[2]).toHaveAttribute('loading', 'eager');
+    // Priority images never carry loading="lazy"; Next omits the attribute.
+    expect(images[0].getAttribute('loading')).toBeNull();
+    expect(images[1].getAttribute('loading')).toBeNull();
+    expect(images[2].getAttribute('loading')).toBeNull();
     expect(images[3]).toHaveAttribute('loading', 'lazy');
   });
 });

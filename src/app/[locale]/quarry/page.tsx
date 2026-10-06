@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getQuarry } from '@/lib/data/company';
+import { Media } from '@/components/media/Media';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -31,15 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: quarry.coverImage ? [{ url: quarry.coverImage.src, alt: quarry.coverImage.alt, width: quarry.coverImage.width, height: quarry.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/quarry`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/quarry`])
-          ),
-          'x-default': `${SITE_URL}/tr/quarry`,
-        },
-      },
+      alternates: buildPageAlternates(locale, '/quarry'),
     };
   } catch {
     return {};
@@ -56,8 +50,8 @@ export default async function QuarryPage({ params }: PageProps) {
   let quarry;
   try {
     quarry = await getQuarry(locale);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (
@@ -98,13 +92,10 @@ export default async function QuarryPage({ params }: PageProps) {
 
           {quarry.coverImage && (
             <div className="company-hero__media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Media
                 src={quarry.coverImage.src}
                 alt={quarry.coverImage.alt}
                 loading="eager"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           )}

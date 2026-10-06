@@ -17,8 +17,6 @@ export interface SecurityHeadersConfig {
 }
 
 const DEFAULT_SECURITY_HEADERS: SecurityHeadersConfig = {
-  contentSecurityPolicy:
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none';",
   xFrameOptions: 'DENY',
   xContentTypeOptions: 'nosniff',
   referrerPolicy: 'strict-origin-when-cross-origin',
@@ -28,13 +26,33 @@ const DEFAULT_SECURITY_HEADERS: SecurityHeadersConfig = {
 };
 
 /**
+ * CSP is computed per call so the NODE_ENV-dependent script-src is always
+ * current. Production drops `'unsafe-eval'` (Phase 18D-4 exit criterion);
+ * development keeps it for HMR/tooling.
+ */
+function buildContentSecurityPolicy(): string {
+  const scriptSrc =
+    process.env.NODE_ENV === 'production'
+      ? "script-src 'self' 'unsafe-inline';"
+      : "script-src 'self' 'unsafe-inline' 'unsafe-eval';";
+  return `default-src 'self'; ${scriptSrc} style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none';`;
+}
+
+function defaultSecurityHeaders(): SecurityHeadersConfig {
+  return {
+    ...DEFAULT_SECURITY_HEADERS,
+    contentSecurityPolicy: buildContentSecurityPolicy(),
+  };
+}
+
+/**
  * Apply security headers to a NextResponse.
  */
 export function applySecurityHeaders(
   response: NextResponse,
-  config: SecurityHeadersConfig = DEFAULT_SECURITY_HEADERS
+  config?: SecurityHeadersConfig
 ): NextResponse {
-  const headers = { ...DEFAULT_SECURITY_HEADERS, ...config };
+  const headers = { ...defaultSecurityHeaders(), ...config };
 
   if (headers.contentSecurityPolicy) {
     response.headers.set('Content-Security-Policy', headers.contentSecurityPolicy);
@@ -65,9 +83,9 @@ export function applySecurityHeaders(
  * Get security headers as a plain object (for middleware usage).
  */
 export function getSecurityHeaders(
-  config: SecurityHeadersConfig = DEFAULT_SECURITY_HEADERS
+  config?: SecurityHeadersConfig
 ): Record<string, string> {
-  const headers = { ...DEFAULT_SECURITY_HEADERS, ...config };
+  const headers = { ...defaultSecurityHeaders(), ...config };
   const result: Record<string, string> = {};
 
   if (headers.contentSecurityPolicy) {

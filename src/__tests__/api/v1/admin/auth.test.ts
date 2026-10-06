@@ -109,6 +109,33 @@ describe('POST /api/v1/admin/auth/login', () => {
     expect(res.status).toBe(422);
     expect(vi.mocked(loginAdmin)).not.toHaveBeenCalled();
   });
+
+  it('logs every login attempt with request id, email, ip, and outcome', async () => {
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      vi.mocked(loginAdmin).mockResolvedValue({ user: adminUser, token: 'raw-token', expiresAt: new Date() });
+      await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', {
+        email: 'admin@marble-platform.local',
+        password: 'Admin123!ChangeMe',
+      }));
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/^\[\S+\] admin\.login\.success email=admin@marble-platform\.local ip=/)
+      );
+
+      vi.mocked(loginAdmin).mockRejectedValue(new UnauthorizedError('Invalid email or password.'));
+      await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', {
+        email: 'admin@marble-platform.local',
+        password: 'wrong',
+      }));
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/^\[\S+\] admin\.login\.failure email=admin@marble-platform\.local ip=\S+ reason=UnauthorizedError$/)
+      );
+    } finally {
+      logSpy.mockRestore();
+      warnSpy.mockRestore();
+    }
+  });
 });
 
 describe('POST /api/v1/admin/auth/logout', () => {

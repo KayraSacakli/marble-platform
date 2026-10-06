@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { ApplicationSummary } from '@/types/api';
 
 interface ApplicationCardProps {
@@ -17,14 +18,7 @@ export function ApplicationCard({ application, priority = false }: ApplicationCa
       </a>
       <div className="application-card__image-wrap">
         {application.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={application.coverImage.src}
-            alt={application.coverImage.alt}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <Media src={application.coverImage.src} alt={application.coverImage.alt} priority={priority} />
         ) : (
           <div
             style={{

@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { ProjectSummary } from '@/types/api';
 
 interface ProjectCardProps {
@@ -17,14 +18,7 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
       </a>
       <div className="project-card__image-wrap">
         {project.heroImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={project.heroImage.src}
-            alt={project.heroImage.alt}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <Media src={project.heroImage.src} alt={project.heroImage.alt} priority={priority} />
         ) : (
           <div
             style={{

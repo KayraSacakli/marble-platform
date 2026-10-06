@@ -1,3 +1,4 @@
+import { Media } from '@/components/media/Media';
 import type { CollectionSummary } from '@/types/api';
 
 interface CollectionCardProps {
@@ -17,14 +18,7 @@ export function CollectionCard({ collection, priority = false }: CollectionCardP
       </a>
       <div className="collection-card__image-wrap">
         {collection.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={collection.coverImage.src}
-            alt={collection.coverImage.alt}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
+          <Media src={collection.coverImage.src} alt={collection.coverImage.alt} priority={priority} />
         ) : (
           <div
             style={{

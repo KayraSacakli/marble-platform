@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getJournalArticle } from '@/lib/data/journal';
+import { Media } from '@/components/media/Media';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd, ArticleJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -33,15 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: article.coverImage ? [{ url: article.coverImage.src, alt: article.coverImage.alt, width: article.coverImage.width, height: article.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/journal/${article.slug}`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/journal/${article.slug}`])
-          ),
-          'x-default': `${SITE_URL}/tr/journal/${article.slug}`,
-        },
-      },
+      alternates: buildPageAlternates(locale, `/journal/${article.slug}`),
     };
   } catch {
     return {};
@@ -58,8 +52,8 @@ export default async function JournalDetailPage({ params }: PageProps) {
   let article;
   try {
     article = await getJournalArticle(locale, slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (
@@ -114,13 +108,10 @@ export default async function JournalDetailPage({ params }: PageProps) {
 
           {article.coverImage && (
             <div className="journal-article__hero">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Media
                 src={article.coverImage.src}
                 alt={article.coverImage.alt}
                 loading="eager"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           )}

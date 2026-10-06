@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getApplication } from '@/lib/data/applications';
+import { Media } from '@/components/media/Media';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -32,15 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: application.coverImage ? [{ url: application.coverImage.src, alt: application.coverImage.alt, width: application.coverImage.width, height: application.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: {
-        canonical: `${SITE_URL}/${locale}/applications/${application.slug}`,
-        languages: {
-          ...Object.fromEntries(
-            ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/applications/${application.slug}`])
-          ),
-          'x-default': `${SITE_URL}/tr/applications/${application.slug}`,
-        },
-      },
+      alternates: buildPageAlternates(locale, `/applications/${application.slug}`),
     };
   } catch {
     return {};
@@ -57,8 +51,8 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
   let application;
   try {
     application = await getApplication(locale, slug);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   return (
@@ -90,13 +84,10 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
 
           {application.coverImage && (
             <div className="application-hero__media">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Media
                 src={application.coverImage.src}
                 alt={application.coverImage.alt}
                 loading="eager"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
           )}

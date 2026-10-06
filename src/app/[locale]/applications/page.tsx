@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation';
+import { notFoundOnlyWhenMissing } from '@/lib/api/page-errors';
 import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getApplications } from '@/lib/data/applications';
 import { ApplicationGrid } from '@/components/application/ApplicationGrid';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
+import { buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -30,15 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/applications`,
-      languages: {
-        ...Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${l}/applications`])
-        ),
-        'x-default': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/tr/applications`,
-      },
-    },
+    alternates: buildPageAlternates(locale, '/applications'),
   };
 }
 
@@ -52,8 +46,8 @@ export default async function ApplicationsPage({ params }: PageProps) {
   let result;
   try {
     result = await getApplications(locale);
-  } catch {
-    notFound();
+  } catch (error) {
+    notFoundOnlyWhenMissing(error);
   }
 
   const { data: applications } = result;

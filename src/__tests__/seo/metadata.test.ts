@@ -87,7 +87,7 @@ vi.mock('@/lib/data/company', () => ({
 }));
 
 describe('Products List Page Metadata', () => {
-  it('generates correct metadata with 7-locale hreflang and x-default', async () => {
+  it('generates correct metadata with tr/en hreflang and x-default', async () => {
     const { generateMetadata } = await import('@/app/[locale]/products/page');
     const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr' }) });
 
@@ -100,7 +100,7 @@ describe('Products List Page Metadata', () => {
     expect(metadata.twitter?.card).toBe('summary_large_image');
 
     const langs = metadata.alternates?.languages as Record<string, string>;
-    expect(Object.keys(langs)).toHaveLength(8);
+    expect(Object.keys(langs).sort()).toEqual(['en', 'tr', 'x-default']);
     expect(langs['tr']).toBe(`${SITE_URL}/tr/products`);
     expect(langs['en']).toBe(`${SITE_URL}/en/products`);
   });

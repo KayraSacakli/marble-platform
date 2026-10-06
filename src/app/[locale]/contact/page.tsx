@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -27,15 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: {
-      canonical: `${SITE_URL}/${locale}/contact`,
-      languages: {
-        ...Object.fromEntries(
-          ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'].map((l) => [l, `${SITE_URL}/${l}/contact`])
-        ),
-        'x-default': `${SITE_URL}/tr/contact`,
-      },
-    },
+    alternates: buildPageAlternates(locale, '/contact'),
   };
 }
 

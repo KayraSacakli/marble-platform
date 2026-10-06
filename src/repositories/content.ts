@@ -77,7 +77,7 @@ export class ContentRepository extends BaseRepository {
     contentType?: ContentType;
     locale: Locale;
     pagination: PaginationInput;
-    orderBy?: Record<string, string>;
+    orderBy?: Record<string, string> | Array<Record<string, string>>;
   }) {
     const { contentType, locale, pagination, orderBy } = options;
     const { page, pageSize, skip } = this.normalizePagination(pagination);
@@ -137,7 +137,12 @@ export class ContentRepository extends BaseRepository {
   }
 
   async listJournalArticles(locale: Locale, pagination: PaginationInput) {
-    return this.listPublished({ contentType: 'JOURNAL_ARTICLE', locale, pagination, orderBy: { name: 'asc', createdAt: 'desc' } });
+    return this.listPublished({
+      contentType: 'JOURNAL_ARTICLE',
+      locale,
+      pagination,
+      orderBy: [{ name: 'asc' }, { createdAt: 'desc' }],
+    });
   }
 
   async countPublished(contentType: ContentType, locale: Locale): Promise<number> {
