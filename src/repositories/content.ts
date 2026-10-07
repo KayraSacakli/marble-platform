@@ -1,5 +1,6 @@
 import { BaseRepository } from './base';
-import type { Locale } from '@/types/locale';
+import { SUPPORTED_LOCALES, type Locale } from '@/types/locale';
+import type { SeoAvailability, SeoSection, SeoCompanyPage } from '@/types/seo';
 import type { PaginationInput } from '@/lib/api/validation';
 import type { ContentType, ContentAggregateState, VariantLifecycle } from '@prisma/client';
 
@@ -181,6 +182,53 @@ export class ContentRepository extends BaseRepository {
         },
       },
     });
+  }
+
+  /**
+   * Published-content availability per locale for every public section and
+   * company page. Single pass over ACTIVE published variants, so public SEO
+   * gates (noindex, hreflang, sitemap) stay data-driven instead of hardcoded.
+   */
+  async seoAvailability(): Promise<SeoAvailability> {
+    const rows = await this.db.contentVariant.findMany({
+      where: {
+        contentItem: { aggregateState: 'ACTIVE' as ContentAggregateState },
+        lifecycleState: 'PUBLISHED' as VariantLifecycle,
+        locale: { in: [...SUPPORTED_LOCALES] },
+      },
+      select: {
+        locale: true,
+        contentItem: { select: { type: true, companyContent: { select: { kind: true } } } },
+      },
+    });
+
+    const sectionByType: Partial<Record<ContentType, SeoSection>> = {
+      PRODUCT: 'products',
+      COLLECTION: 'collections',
+      APPLICATION: 'applications',
+      PROJECT: 'projects',
+      JOURNAL_ARTICLE: 'journal',
+    };
+    const companyByKind: Record<string, SeoCompanyPage> = { ABOUT: 'about', QUARRY: 'quarry', FACTORY: 'factory' };
+
+    const sections: SeoAvailability['sections'] = { products: [], collections: [], applications: [], projects: [], journal: [] };
+    const company: SeoAvailability['company'] = { about: [], quarry: [], factory: [] };
+
+    for (const row of rows) {
+      const locale = row.locale as Locale;
+      const section = sectionByType[row.contentItem.type];
+      if (section && !sections[section].includes(locale)) sections[section].push(locale);
+      const companyKind = row.contentItem.companyContent?.kind;
+      const page = companyKind ? companyByKind[companyKind] : undefined;
+      if (page && !company[page].includes(locale)) company[page].push(locale);
+    }
+
+    const localeOrder = [...SUPPORTED_LOCALES];
+    const sort = (a: Locale, b: Locale) => localeOrder.indexOf(a) - localeOrder.indexOf(b);
+    for (const list of Object.values(sections)) list.sort(sort);
+    for (const list of Object.values(company)) list.sort(sort);
+
+    return { sections, company };
   }
 
   // ============================================================

@@ -7,7 +7,8 @@ import { Media } from '@/components/media/Media';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { companyLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: about.coverImage ? [{ url: about.coverImage.src, alt: about.coverImage.alt, width: about.coverImage.width, height: about.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: buildPageAlternates(locale, '/about'),
+      ...gatedMetadata(locale, '/about', companyLocales(await getSeoAvailability(), 'about')),
     };
   } catch {
     return {};

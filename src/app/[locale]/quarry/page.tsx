@@ -7,7 +7,8 @@ import { Media } from '@/components/media/Media';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { companyLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: quarry.coverImage ? [{ url: quarry.coverImage.src, alt: quarry.coverImage.alt, width: quarry.coverImage.width, height: quarry.coverImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: buildPageAlternates(locale, '/quarry'),
+      ...gatedMetadata(locale, '/quarry', companyLocales(await getSeoAvailability(), 'quarry')),
     };
   } catch {
     return {};

@@ -3,9 +3,10 @@ import { CollectionCard } from './CollectionCard';
 
 interface CollectionGridProps {
   collections: CollectionSummary[];
+  locale: string;
 }
 
-export function CollectionGrid({ collections }: CollectionGridProps) {
+export function CollectionGrid({ collections, locale }: CollectionGridProps) {
   if (collections.length === 0) return null;
 
   return (
@@ -14,6 +15,7 @@ export function CollectionGrid({ collections }: CollectionGridProps) {
         <CollectionCard
           key={collection.id}
           collection={collection}
+          locale={locale}
           priority={index < 3}
         />
       ))}

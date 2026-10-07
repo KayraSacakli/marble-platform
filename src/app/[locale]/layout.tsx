@@ -6,7 +6,8 @@ import { SkipNavigation } from '@/components/navigation/SkipNavigation';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
-import { SITE_URL, getOGLocale, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL, getOGLocale } from '@/lib/seo/constants';
+import { anyContentLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
 import './globals.css';
 
 type LayoutProps = {
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       template: `%s | ${siteName}`,
     },
     description,
-    alternates: buildPageAlternates(locale, ''),
+    ...gatedMetadata(locale, '', anyContentLocales(await getSeoAvailability())),
     openGraph: {
       type: 'website',
       locale: getOGLocale(locale),

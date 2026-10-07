@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { NotFoundError, ConflictError, ValidationError } from '@/lib/api/errors';
 import { writeAudit } from '@/services/adminAudit';
+import type { SeoRobotsValue } from '@/lib/api/validation';
+import { SUPPORTED_LOCALES, type Locale } from '@/types/locale';
 
 // ============================================================
 // Admin publishing / review workflow (products, per locale)
@@ -27,6 +29,7 @@ export interface DraftSnapshot {
   seoTitle?: string | null;
   seoDescription?: string | null;
   seoCanonical?: string | null;
+  seoRobots?: SeoRobotsValue | null;
   isFeatured?: boolean;
   featuredOrder?: number | null;
   displayOrder?: number | null;
@@ -65,7 +68,7 @@ export interface WorkflowRevision {
 }
 
 export interface LocaleWorkflow {
-  locale: 'tr' | 'en';
+  locale: Locale;
   lifecycleState: string;
   openRevision: WorkflowRevision | null;
   publishedRevisionNumber: number | null;
@@ -168,6 +171,7 @@ export function snapshotFromVariant(
     seoTitle: string | null;
     seoDescription: string | null;
     seoCanonical: string | null;
+    seoRobots?: SeoRobotsValue | null;
     isFeatured: boolean;
     featuredOrder: number | null;
     displayOrder: number | null;
@@ -199,6 +203,7 @@ export function snapshotFromVariant(
     seoTitle: variant.seoTitle,
     seoDescription: variant.seoDescription,
     seoCanonical: variant.seoCanonical,
+    seoRobots: variant.seoRobots ?? null,
     isFeatured: variant.isFeatured,
     featuredOrder: variant.featuredOrder,
     displayOrder: variant.displayOrder,
@@ -494,6 +499,7 @@ export async function publishRevision(revisionId: string, actorId: string, allow
         seoTitle: snapshot.seoTitle ?? null,
         seoDescription: snapshot.seoDescription ?? null,
         seoCanonical: snapshot.seoCanonical ?? null,
+        seoRobots: snapshot.seoRobots ?? null,
         isFeatured: snapshot.isFeatured ?? false,
         featuredOrder: snapshot.featuredOrder ?? null,
         displayOrder: snapshot.displayOrder ?? null,
@@ -518,14 +524,14 @@ export async function publishRevision(revisionId: string, actorId: string, allow
   return getContentWorkflow(revision.contentVariant.contentItemId, revision.contentVariant.contentItem.type as ManagedContentType);
 }
 
-export async function unpublishProduct(productId: string, locale: 'tr' | 'en', actorId: string) {
+export async function unpublishProduct(productId: string, locale: Locale, actorId: string) {
   return unpublishContent(productId, 'PRODUCT', locale, actorId);
 }
 
 export async function unpublishContent(
   contentId: string,
   contentType: ManagedContentType,
-  locale: 'tr' | 'en',
+  locale: Locale,
   actorId: string
 ) {
   const item = await prisma.contentItem.findUnique({
@@ -564,11 +570,11 @@ export async function getContentWorkflow(contentId: string, contentType: Managed
   }
   const locales: Record<string, LocaleWorkflow> = {};
   for (const variant of item.variants) {
-    if (variant.locale !== 'tr' && variant.locale !== 'en') continue;
+    if (!SUPPORTED_LOCALES.includes(variant.locale as Locale)) continue;
     const open = variant.revisions.find((r) => (OPEN_STATUSES as string[]).includes(r.status)) ?? null;
     const published = variant.revisions.filter((r) => r.status === 'PUBLISHED').sort((a, b) => b.revisionNumber - a.revisionNumber)[0] ?? null;
     locales[variant.locale] = {
-      locale: variant.locale,
+      locale: variant.locale as Locale,
       lifecycleState: variant.lifecycleState,
       openRevision: open ? toWorkflowRevision(open) : null,
       publishedRevisionNumber: published?.revisionNumber ?? null,
@@ -577,11 +583,11 @@ export async function getContentWorkflow(contentId: string, contentType: Managed
   return { productId: contentId, locales };
 }
 
-export async function listProductRevisions(productId: string, locale?: 'tr' | 'en') {
+export async function listProductRevisions(productId: string, locale?: Locale) {
   return listContentRevisions(productId, 'PRODUCT', locale);
 }
 
-export async function listContentRevisions(contentId: string, contentType: ManagedContentType, locale?: 'tr' | 'en') {
+export async function listContentRevisions(contentId: string, contentType: ManagedContentType, locale?: Locale) {
   const item = await prisma.contentItem.findUnique({
     where: { id: contentId },
     include: { variants: { select: { id: true, locale: true } } },
@@ -590,7 +596,7 @@ export async function listContentRevisions(contentId: string, contentType: Manag
     throw new NotFoundError('Content not found.');
   }
   const variantIds = item.variants
-    .filter((v) => (locale ? v.locale === locale : v.locale === 'tr' || v.locale === 'en'))
+    .filter((v) => (locale ? v.locale === locale : SUPPORTED_LOCALES.includes(v.locale as Locale)))
     .map((v) => v.id);
   const revisions = await prisma.contentRevision.findMany({
     where: { contentVariantId: { in: variantIds } },

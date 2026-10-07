@@ -90,8 +90,8 @@ Impact: Affects root URL indexing and crawl budget allocation.
 Language switch navigates to the equivalent variant of the same conceptual entity:
 
 ```
-/tr/marbles/{tr-slug} → /en/marbles/{en-slug}
-/en/marbles/{en-slug} → /tr/marbles/{tr-slug}
+/tr/products/{tr-slug} → /en/products/{en-slug}
+/en/products/{en-slug} → /tr/products/{tr-slug}
 ```
 
 If the target variant is not publication-eligible:
@@ -104,8 +104,8 @@ If the target variant is not publication-eligible:
 Each language variant has its own localized URL path. TR and EN slugs are independent and may differ.
 
 ```
-/tr/marbles/beyaz-mermer
-/en/marbles/white-marble
+/tr/products/beyaz-mermer
+/en/products/white-marble
 ```
 
 The same ContentItem UUID underlies both URLs, but the public URL identifiers are language-specific.
@@ -128,8 +128,8 @@ An approved language exception may allow publication with one variant, but:
 | Page | URL Pattern | Indexable | Notes |
 |---|---|---|---|
 | Homepage | `/{locale}/` | Yes | Language-specific homepage |
-| Product listing | `/{locale}/marbles` | Yes | Paginated: `?page=2` |
-| Product detail | `/{locale}/marbles/{slug}` | Yes | Localized slug per variant |
+| Product listing | `/{locale}/products` | Yes | Paginated: `?page=2` |
+| Product detail | `/{locale}/products/{slug}` | Yes | Localized slug per variant |
 | Collections listing | `/{locale}/collections` | Yes | Paginated |
 | Collection detail | `/{locale}/collections/{slug}` | Yes | Localized slug per variant |
 | Applications listing | `/{locale}/applications` | Yes | Paginated |
@@ -149,7 +149,7 @@ An approved language exception may allow publication with one variant, but:
 
 ```
 /{locale}/
-├── marbles
+├── products
 │   └── {product-slug}
 ├── collections
 │   └── {collection-slug}
@@ -170,7 +170,7 @@ An approved language exception may allow publication with one variant, but:
 
 | Segment | TR | EN | Notes |
 |---|---|---|---|
-| Product listing | marbles | marbles | Consistent across locales |
+| Product listing | products | products | Consistent across locales |
 | Collections | collections | collections | Consistent |
 | Applications | applications | applications | Consistent |
 | Projects | projects | projects | Consistent |
@@ -208,8 +208,8 @@ Rationale:
 ### 6.2 Product listing
 
 ```
-/tr/marbles
-/en/marbles
+/tr/products
+/en/products
 ```
 
 - Paginated: `?page=2`, `?page=3`, etc.
@@ -221,8 +221,8 @@ Rationale:
 ### 6.3 Product detail
 
 ```
-/tr/marbles/{tr-product-slug}
-/en/marbles/{en-product-slug}
+/tr/products/{tr-product-slug}
+/en/products/{en-product-slug}
 ```
 
 - Localized slug per variant
@@ -377,8 +377,8 @@ Each ContentVariant owns its localized slug. The slug is:
 UNIQUE(slug, locale, content_type)
 ```
 
-- `beyaz-mermer` in `/tr/marbles/` is unique among TR product slugs
-- `white-marble` in `/en/marbles/` is unique among EN product slugs
+- `beyaz-mermer` in `/tr/products/` is unique among TR product slugs
+- `white-marble` in `/en/products/` is unique among EN product slugs
 - Same slug may exist in different content types (e.g., collection slug vs product slug)
 - Same slug may exist in different locales
 
@@ -445,7 +445,7 @@ When a product is unpublished:
 | Normalization | Lowercase, hyphenated, ASCII-safe |
 | Allowed characters | `a-z`, `0-9`, `-` (hyphen) |
 | Transliteration | Turkish characters transliterated (ı→i, ö→o, ü→u, ç→c, ş→s, ğ→g) |
-| Reserved words | `admin`, `api`, `public`, `auth`, `login`, `quote`, `contact`, `about`, `quarry`, `factory`, `journal`, `projects`, `applications`, `collections`, `marbles` (top-level segments) |
+| Reserved words | `admin`, `api`, `public`, `auth`, `login`, `quote`, `contact`, `about`, `quarry`, `factory`, `journal`, `projects`, `applications`, `collections`, `products` (top-level segments) |
 | Collision handling | CMS detects and prevents; Author/Editor must resolve |
 | Case sensitivity | Case-insensitive (lowercase canonical) |
 | Trailing slash | No trailing slash (consistent normalization) |
@@ -607,7 +607,7 @@ Impact: Affects link equity preservation and user experience for old URLs.
 ### 10.5 Localized slug changes
 
 When a localized slug changes:
-1. Old URL (e.g., `/tr/marbles/eski-slug`) receives 301 to new URL (`/tr/marbles/yeni-slug`)
+1. Old URL (e.g., `/tr/products/eski-slug`) receives 301 to new URL (`/tr/products/yeni-slug`)
 2. Other locale URL unchanged unless also modified
 3. Hreflang updated to reflect new URLs
 
@@ -620,8 +620,8 @@ When a localized slug changes:
 Every public page has a canonical URL pointing to itself:
 
 ```
-/tr/marbles/beyaz-mermer → canonical: /tr/marbles/beyaz-mermer
-/en/marbles/white-marble → canonical: /en/marbles/white-marble
+/tr/products/beyaz-mermer → canonical: /tr/products/beyaz-mermer
+/en/products/white-marble → canonical: /en/products/white-marble
 ```
 
 ### 11.2 Language-specific canonicals
@@ -629,8 +629,8 @@ Every public page has a canonical URL pointing to itself:
 TR and EN variants have independent canonical URLs. They are not canonical duplicates of each other.
 
 ```
-/tr/marbles/beyaz-mermer → canonical: /tr/marbles/beyaz-mermer
-/en/marbles/white-marble → canonical: /en/marbles/white-marble
+/tr/products/beyaz-mermer → canonical: /tr/products/beyaz-mermer
+/en/products/white-marble → canonical: /en/products/white-marble
 ```
 
 The hreflang relationship connects them, not canonical.
@@ -664,8 +664,8 @@ Duplicate URLs may arise from:
 Each paginated page has its own canonical URL:
 
 ```
-/tr/marbles?page=1 → canonical: /tr/marbles?page=1
-/tr/marbles?page=2 → canonical: /tr/marbles?page=2
+/tr/products?page=1 → canonical: /tr/products?page=1
+/tr/products?page=2 → canonical: /tr/products?page=2
 ```
 
 Paginated pages are indexable and contain rel="prev" and rel="next" links where supported.
@@ -679,15 +679,15 @@ Paginated pages are indexable and contain rel="prev" and rel="next" links where 
 Every published public page with TR and EN variants must include reciprocal hreflang tags:
 
 ```html
-<!-- On /tr/marbles/beyaz-mermer -->
-<link rel="alternate" hreflang="tr" href="https://example.com/tr/marbles/beyaz-mermer" />
-<link rel="alternate" hreflang="en" href="https://example.com/en/marbles/white-marble" />
-<link rel="alternate" hreflang="x-default" href="https://example.com/tr/marbles/beyaz-mermer" />
+<!-- On /tr/products/beyaz-mermer -->
+<link rel="alternate" hreflang="tr" href="https://example.com/tr/products/beyaz-mermer" />
+<link rel="alternate" hreflang="en" href="https://example.com/en/products/white-marble" />
+<link rel="alternate" hreflang="x-default" href="https://example.com/tr/products/beyaz-mermer" />
 
-<!-- On /en/marbles/white-marble -->
-<link rel="alternate" hreflang="tr" href="https://example.com/tr/marbles/beyaz-mermer" />
-<link rel="alternate" hreflang="en" href="https://example.com/en/marbles/white-marble" />
-<link rel="alternate" hreflang="x-default" href="https://example.com/tr/marbles/beyaz-mermer" />
+<!-- On /en/products/white-marble -->
+<link rel="alternate" hreflang="tr" href="https://example.com/tr/products/beyaz-mermer" />
+<link rel="alternate" hreflang="en" href="https://example.com/en/products/white-marble" />
+<link rel="alternate" hreflang="x-default" href="https://example.com/tr/products/beyaz-mermer" />
 ```
 
 ### 12.2 Language-region codes
@@ -920,23 +920,23 @@ Per `01_MASTER_INFORMATION_ARCHITECTURE.md`:
 ### 16.2 Pagination URL pattern
 
 ```
-/tr/marbles          (page 1)
-/tr/marbles?page=2   (page 2)
-/tr/marbles?page=3   (page 3)
+/tr/products          (page 1)
+/tr/products?page=2   (page 2)
+/tr/products?page=3   (page 3)
 ```
 
 ### 16.3 Pagination indexability
 
 - All paginated pages are indexable
 - Each page has unique canonical URL
-- Page 1 canonical: `/tr/marbles?page=1` (or `/tr/marbles` without query)
-- Subsequent pages: `/tr/marbles?page=N`
+- Page 1 canonical: `/tr/products?page=1` (or `/tr/products` without query)
+- Subsequent pages: `/tr/products?page=N`
 
 **OPEN DECISION:** Whether page 1 canonical should include `?page=1` or be clean URL.
 
 Options:
-- `/tr/marbles` (clean) — avoids duplicate with `/tr/marbles?page=1`
-- `/tr/marbles?page=1` (explicit) — consistent with other pages
+- `/tr/products` (clean) — avoids duplicate with `/tr/products?page=1`
+- `/tr/products?page=1` (explicit) — consistent with other pages
 
 Impact: Minor; affects crawl efficiency and duplicate detection.
 
@@ -1244,7 +1244,7 @@ None. The SEO URL architecture supports all approved V1 behavior.
 
 2. **x-default hreflang behavior.** Whether x-default points to TR homepage, EN homepage, or language detection page. Impact: search engine language preference handling.
 
-3. **Page 1 canonical URL format.** Whether `/tr/marbles` or `/tr/marbles?page=1` is canonical. Impact: minor duplicate detection.
+3. **Page 1 canonical URL format.** Whether `/tr/products` or `/tr/products?page=1` is canonical. Impact: minor duplicate detection.
 
 4. **Redirect retention period.** How long redirects are maintained after permanent removal. Impact: link equity preservation.
 
@@ -1367,7 +1367,7 @@ SEO URL ARCHITECTURE STATUS [READY FOR INTERNAL LINK GRAPH]
 
 1. **Default locale for root redirect** — Whether `/` redirects to `/tr/` or `/en/` affects root URL indexing.
 2. **x-default hreflang** — Whether x-default points to TR, EN, or language detection affects search engine language handling.
-3. **Page 1 canonical format** — Whether `/tr/marbles` or `/tr/marbles?page=1` is canonical.
+3. **Page 1 canonical format** — Whether `/tr/products` or `/tr/products?page=1` is canonical.
 4. **Redirect retention period** — How long redirects are maintained after permanent removal.
 5. **Slug cooldown period** — How long before removed slugs can be reused.
 6. **Image sitemap in V1** — Whether image sitemap is included in V1 scope.

@@ -7,7 +7,9 @@ import {
   parseQueryString,
   toValidationDetails,
   adminRelationAttachSchema,
+  localeSchema,
 } from '@/lib/api/validation';
+import type { Locale } from '@/types/locale';
 import {
   listAdminTaxonomy,
   createAdminTaxonomy,
@@ -37,7 +39,7 @@ export type { TaxonomyKind };
 // ============================================================
 
 const idParam = z.string().uuid();
-const localeParam = z.enum(['tr', 'en']);
+const localeParam = localeSchema;
 
 function badId(label: string): never {
   throw new BadRequestError(`Invalid ${label} id.`);
@@ -163,7 +165,7 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
     async (req: NextRequest, { params }) => {
       const { id } = await params;
       const localeRaw = new URL(req.url).searchParams.get('locale') ?? undefined;
-      let locale: 'tr' | 'en' | undefined;
+      let locale: Locale | undefined;
       if (localeRaw !== undefined) {
         const parsed = localeParam.safeParse(localeRaw);
         if (!parsed.success) throw new BadRequestError('Invalid locale.');

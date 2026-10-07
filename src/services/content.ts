@@ -1,5 +1,5 @@
 import { contentRepository } from '../repositories/content';
-import type { Locale } from '@/types/locale';
+import { SUPPORTED_LOCALES, getLocaleNativeName, type Locale } from '@/types/locale';
 import type {
   ProductSummary,
   ContentSummary,
@@ -14,8 +14,14 @@ import type {
 } from '@/types/api';
 import { NotFoundError } from '@/lib/api/errors';
 import { buildSEOData, buildCanonical } from '@/lib/api/seo';
+import type { PaginationInput } from '@/lib/api/validation';
+import type { SeoAvailability } from '@/types/seo';
+import { DEFAULT_PAGE_SIZE } from '@/types/api';
 
 const SITE_NAME = 'Premium Turkish Marble';
+
+/** Default list pagination when a caller does not specify one. */
+const DEFAULT_PAGINATION: PaginationInput = { page: 1, pageSize: DEFAULT_PAGE_SIZE };
 
 // ============================================================
 // Helpers to extract published variant from a content item
@@ -332,8 +338,8 @@ function buildSEO(
 // ============================================================
 
 class ContentService {
-  async getProductList(locale: Locale) {
-    const result = await contentRepository.listProducts(locale, { page: 1, pageSize: 20 });
+  async getProductList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
+    const result = await contentRepository.listProducts(locale, pagination);
     return {
       data: result.items.map((v) => {
         const cv = findPublishedVariant(v.contentItem, locale);
@@ -408,8 +414,8 @@ class ContentService {
     };
   }
 
-  async getCollectionList(locale: Locale) {
-    const result = await contentRepository.listCollections(locale, { page: 1, pageSize: 20 });
+  async getCollectionList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
+    const result = await contentRepository.listCollections(locale, pagination);
     return {
       data: result.items.map((v) => {
         const cv = findPublishedVariant(v.contentItem, locale);
@@ -460,8 +466,8 @@ class ContentService {
     };
   }
 
-  async getApplicationList(locale: Locale) {
-    const result = await contentRepository.listApplications(locale, { page: 1, pageSize: 20 });
+  async getApplicationList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
+    const result = await contentRepository.listApplications(locale, pagination);
     return {
       data: result.items.map((v) => {
         const cv = findPublishedVariant(v.contentItem, locale);
@@ -519,8 +525,8 @@ class ContentService {
     };
   }
 
-  async getProjectList(locale: Locale) {
-    const result = await contentRepository.listProjects(locale, { page: 1, pageSize: 20 });
+  async getProjectList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
+    const result = await contentRepository.listProjects(locale, pagination);
     return {
       data: result.items.map((v) => {
         const cv = findPublishedVariant(v.contentItem, locale);
@@ -580,8 +586,8 @@ class ContentService {
     };
   }
 
-  async getJournalList(locale: Locale) {
-    const result = await contentRepository.listJournalArticles(locale, { page: 1, pageSize: 20 });
+  async getJournalList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
+    const result = await contentRepository.listJournalArticles(locale, pagination);
     return {
       data: result.items.map((v) => {
         const cv = findPublishedVariant(v.contentItem, locale);
@@ -659,6 +665,10 @@ class ContentService {
       description: cv.description ?? '',
       coverImage: findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY'),
     };
+  }
+
+  async getSeoAvailability(): Promise<SeoAvailability> {
+    return contentRepository.seoAvailability();
   }
 
   async getHomepage(locale: Locale): Promise<HomepageContent> {
@@ -835,10 +845,12 @@ class ContentService {
 
     const legal: Array<{ label: string; href: string; visible: boolean }> = [];
 
-    const language = [
-      { label: 'Türkçe', href: '/tr', active: locale === 'tr', available: true },
-      { label: 'English', href: '/en', active: locale === 'en', available: true },
-    ];
+    const language = SUPPORTED_LOCALES.map((code) => ({
+      label: getLocaleNativeName(code),
+      href: `/${code}`,
+      active: locale === code,
+      available: true,
+    }));
 
     const copyright = `${new Date().getFullYear()} ${SITE_NAME}. ${locale === 'tr' ? 'Tüm hakları saklıdır.' : 'All rights reserved.'}`;
 

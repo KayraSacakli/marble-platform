@@ -3,14 +3,15 @@ import type { JournalSummary } from '@/types/api';
 
 interface JournalCardProps {
   article: JournalSummary;
+  locale: string;
   priority?: boolean;
 }
 
-export function JournalCard({ article, priority = false }: JournalCardProps) {
+export function JournalCard({ article, locale, priority = false }: JournalCardProps) {
   return (
     <article className="journal-card">
       <a
-        href={`/journal/${article.slug}`}
+        href={`/${locale}/journal/${article.slug}`}
         className="card-link-overlay"
         aria-label={article.title}
       >

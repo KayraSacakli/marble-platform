@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { anyContentLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: buildPageAlternates(locale, '/contact'),
+    ...gatedMetadata(locale, '/contact', anyContentLocales(await getSeoAvailability())),
   };
 }
 

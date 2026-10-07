@@ -3,14 +3,15 @@ import type { ApplicationSummary } from '@/types/api';
 
 interface ApplicationCardProps {
   application: ApplicationSummary;
+  locale: string;
   priority?: boolean;
 }
 
-export function ApplicationCard({ application, priority = false }: ApplicationCardProps) {
+export function ApplicationCard({ application, locale, priority = false }: ApplicationCardProps) {
   return (
     <article className="application-card">
       <a
-        href={`/applications/${application.slug}`}
+        href={`/${locale}/applications/${application.slug}`}
         className="card-link-overlay"
         aria-label={application.name}
       >

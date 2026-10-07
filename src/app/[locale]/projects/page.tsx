@@ -4,12 +4,15 @@ import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getProjects } from '@/lib/data/projects';
 import { ProjectGrid } from '@/components/project/ProjectGrid';
+import { Pagination } from '@/components/product/Pagination';
+import { DEFAULT_PAGE_SIZE } from '@/types/api';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
-import { buildPageAlternates } from '@/lib/seo/constants';
+import { gatedMetadata, getSeoAvailability, sectionLocales } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -32,25 +35,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: buildPageAlternates(locale, '/projects'),
+    ...gatedMetadata(locale, '/projects', sectionLocales(await getSeoAvailability(), 'projects')),
   };
 }
 
-export default async function ProjectsPage({ params }: PageProps) {
+export default async function ProjectsPage({ params, searchParams }: PageProps) {
   const { locale } = await params;
+  const { page: pageParam } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
   }
 
+  const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
+  const pageSize = DEFAULT_PAGE_SIZE;
+
   let result;
   try {
-    result = await getProjects(locale);
+    result = await getProjects(locale, { page, pageSize });
   } catch (error) {
     notFoundOnlyWhenMissing(error);
   }
 
-  const { data: projects } = result;
+  const { data: projects, meta } = result;
 
   return (
     <main className="project-page">
@@ -94,7 +101,15 @@ export default async function ProjectsPage({ params }: PageProps) {
             </a>
           </div>
         ) : (
-          <ProjectGrid projects={projects} />
+          <>
+            <ProjectGrid projects={projects} locale={locale} />
+            <Pagination
+              currentPage={meta.page}
+              totalPages={meta.totalPages}
+              locale={locale}
+              basePath="/projects"
+            />
+          </>
         )}
       </Container>
     </main>

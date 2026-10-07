@@ -48,8 +48,8 @@ No query-parameter locale, no subdomain locale, no cookie-based locale for publi
 | Page | Turkish URL | English URL | Indexable |
 |---|---|---|---|
 | Homepage | `/tr/` | `/en/` | Yes |
-| Product listing | `/tr/marbles` | `/en/marbles` | Yes |
-| Product detail | `/tr/marbles/{tr-slug}` | `/en/marbles/{en-slug}` | Yes |
+| Product listing | `/tr/products` | `/en/products` | Yes |
+| Product detail | `/tr/products/{tr-slug}` | `/en/products/{en-slug}` | Yes |
 | Collection listing | `/tr/collections` | `/en/collections` | Yes |
 | Collection detail | `/tr/collections/{tr-slug}` | `/en/collections/{en-slug}` | Yes |
 | Application listing | `/tr/applications` | `/en/applications` | Yes |
@@ -69,7 +69,7 @@ No query-parameter locale, no subdomain locale, no cookie-based locale for publi
 
 | Segment | Value | Notes |
 |---|---|---|
-| Products | `marbles` | Consistent across TR/EN |
+| Products | `products` | Consistent across TR/EN |
 | Collections | `collections` | Consistent |
 | Applications | `applications` | Consistent |
 | Projects | `projects` | Consistent |
@@ -99,8 +99,8 @@ Content-type segments are NOT localized. Only slugs are localized.
 | URL | Canonical Form | Notes |
 |---|---|---|
 | Homepage | `/tr/` (with trailing slash) | Root always has trailing slash |
-| Listing pages | `/tr/marbles` (without trailing slash) | Consistent; no trailing slash |
-| Detail pages | `/tr/marbles/beyaz-mermer` (without trailing slash) | Consistent |
+| Listing pages | `/tr/products` (without trailing slash) | Consistent; no trailing slash |
+| Detail pages | `/tr/products/beyaz-mermer` (without trailing slash) | Consistent |
 | Single pages | `/tr/about` (without trailing slash) | Consistent |
 
 Trailing slash variants redirect to canonical form (301).
@@ -182,8 +182,8 @@ Slugs are created in the CMS by content editors. They are NOT auto-generated fro
 ### 6.5 TR slug vs EN slug
 
 ```
-TR: /tr/marbles/beyaz-mermer
-EN: /en/marbles/white-marble
+TR: /tr/products/beyaz-mermer
+EN: /en/products/white-marble
 ```
 
 Slugs are independent. TR slug does not need to be a romanization of EN slug.
@@ -224,8 +224,8 @@ Slugs are independent. TR slug does not need to be a romanization of EN slug.
 | Page | Canonical |
 |---|---|
 | Homepage | `https://example.com/tr/` or `https://example.com/en/` |
-| Product listing | `https://example.com/tr/marbles` |
-| Product detail | `https://example.com/tr/marbles/{slug}` |
+| Product listing | `https://example.com/tr/products` |
+| Product detail | `https://example.com/tr/products/{slug}` |
 | Collection listing | `https://example.com/tr/collections` |
 | Collection detail | `https://example.com/tr/collections/{slug}` |
 | Application listing | `https://example.com/tr/applications` |
@@ -249,7 +249,7 @@ Slugs are independent. TR slug does not need to be a romanization of EN slug.
 
 ### 7.4 Trailing slash variants
 
-- `https://example.com/tr/marbles/` → canonical `https://example.com/tr/marbles`
+- `https://example.com/tr/products/` → canonical `https://example.com/tr/products`
 - 301 redirect to canonical form
 
 ### 7.5 Old slugs
@@ -259,8 +259,8 @@ Slugs are independent. TR slug does not need to be a romanization of EN slug.
 
 ### 7.6 Language variants
 
-- TR canonical: `https://example.com/tr/marbles/beyaz-mermer`
-- EN canonical: `https://example.com/en/marbles/white-marble`
+- TR canonical: `https://example.com/tr/products/beyaz-mermer`
+- EN canonical: `https://example.com/en/products/white-marble`
 - Never cross-canonicalize between languages
 
 ### 7.7 Query parameters
@@ -281,14 +281,14 @@ Every translated indexable page has reciprocal hreflang:
 
 ```html
 <!-- On TR page -->
-<link rel="alternate" hreflang="tr" href="https://example.com/tr/marbles/beyaz-mermer" />
-<link rel="alternate" hreflang="en" href="https://example.com/en/marbles/white-marble" />
-<link rel="alternate" hreflang="x-default" href="https://example.com/tr/marbles/beyaz-mermer" />
+<link rel="alternate" hreflang="tr" href="https://example.com/tr/products/beyaz-mermer" />
+<link rel="alternate" hreflang="en" href="https://example.com/en/products/white-marble" />
+<link rel="alternate" hreflang="x-default" href="https://example.com/tr/products/beyaz-mermer" />
 
 <!-- On EN page -->
-<link rel="alternate" hreflang="tr" href="https://example.com/tr/marbles/beyaz-mermer" />
-<link rel="alternate" hreflang="en" href="https://example.com/en/marbles/white-marble" />
-<link rel="alternate" hreflang="x-default" href="https://example.com/tr/marbles/beyaz-mermer" />
+<link rel="alternate" hreflang="tr" href="https://example.com/tr/products/beyaz-mermer" />
+<link rel="alternate" hreflang="en" href="https://example.com/en/products/white-marble" />
+<link rel="alternate" hreflang="x-default" href="https://example.com/tr/products/beyaz-mermer" />
 ```
 
 ### 8.2 Hreflang rules
@@ -499,7 +499,7 @@ Only output if real organization data is approved. OPEN DECISION: exact organiza
   "url": "https://example.com",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://example.com/tr/marbles?q={search_term_string}",
+    "target": "https://example.com/tr/products?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -566,13 +566,13 @@ Only output if real article data exists. Author omitted if no author approved.
       "@type": "ListItem",
       "position": 2,
       "name": "Marbles",
-      "item": "https://example.com/tr/marbles"
+      "item": "https://example.com/tr/products"
     },
     {
       "@type": "ListItem",
       "position": 3,
       "name": "Beyaz Mermer",
-      "item": "https://example.com/tr/marbles/beyaz-mermer"
+      "item": "https://example.com/tr/products/beyaz-mermer"
     }
   ]
 }
@@ -695,7 +695,7 @@ Breadcrumb labels are localized:
 
 ```xml
 <url>
-  <loc>https://example.com/tr/marbles/beyaz-mermer</loc>
+  <loc>https://example.com/tr/products/beyaz-mermer</loc>
   <lastmod>2026-01-10</lastmod>
   <changefreq>monthly</changefreq>
   <priority>0.8</priority>
@@ -773,9 +773,9 @@ Disallow: /*?page=
 
 | Page | Canonical |
 |---|---|
-| Page 1 | `https://example.com/tr/marbles` (base URL) |
-| Page 2 | `https://example.com/tr/marbles` (base URL, same as page 1) |
-| Page N | `https://example.com/tr/marbles` (base URL) |
+| Page 1 | `https://example.com/tr/products` (base URL) |
+| Page 2 | `https://example.com/tr/products` (base URL, same as page 1) |
+| Page N | `https://example.com/tr/products` (base URL) |
 
 All paginated pages canonicalize to the base URL.
 
@@ -783,15 +783,15 @@ All paginated pages canonicalize to the base URL.
 
 ```html
 <!-- Page 1 -->
-<link rel="prev" href="https://example.com/tr/marbles" />
-<link rel="next" href="https://example.com/tr/marbles?page=2" />
+<link rel="prev" href="https://example.com/tr/products" />
+<link rel="next" href="https://example.com/tr/products?page=2" />
 
 <!-- Page 2 -->
-<link rel="prev" href="https://example.com/tr/marbles" />
-<link rel="next" href="https://example.com/tr/marbles?page=3" />
+<link rel="prev" href="https://example.com/tr/products" />
+<link rel="next" href="https://example.com/tr/products?page=3" />
 
 <!-- Last page -->
-<link rel="prev" href="https://example.com/tr/marbles?page=N-1" />
+<link rel="prev" href="https://example.com/tr/products?page=N-1" />
 ```
 
 ### 15.4 Crawlability
@@ -906,10 +906,10 @@ Every published indexable page should have at least one sensible internal discov
 
 | Scenario | From | To |
 |---|---|---|
-| Slug changed | `/tr/marbles/old-slug` | `/tr/marbles/new-slug` |
-| Trailing slash | `/tr/marbles/` | `/tr/marbles` |
-| Case variant | `/tr/Marbles/` | `/tr/marbles` |
-| Wrong locale root | `/en/marbles/beyaz-mermer` | `/en/marbles/white-marble` (if slug was TR on EN) |
+| Slug changed | `/tr/products/old-slug` | `/tr/products/new-slug` |
+| Trailing slash | `/tr/products/` | `/tr/products` |
+| Case variant | `/tr/Products/` | `/tr/products` |
+| Wrong locale root | `/en/products/beyaz-mermer` | `/en/products/white-marble` (if slug was TR on EN) |
 
 ### 18.2 404 (not found)
 
@@ -928,12 +928,12 @@ Every published indexable page should have at least one sensible internal discov
 
 ### 18.4 Wrong-language slug
 
-- Request: `/tr/marbles/white-marble` (EN slug on TR page)
+- Request: `/tr/products/white-marble` (EN slug on TR page)
 - Behavior: 404 (slug does not exist for this locale)
 
 ### 18.5 Malformed URL
 
-- Request: `/tr/marbles/beyaz mermer` (space in slug)
+- Request: `/tr/products/beyaz mermer` (space in slug)
 - Behavior: 404 (slug format invalid)
 
 ### 18.6 Redirect chains
@@ -1319,16 +1319,16 @@ Search engines must receive meaningful page content without relying solely on cl
 
 | From | To | Reason |
 |---|---|---|
-| `/tr/marbles/old-slug` | `/tr/marbles/new-slug` | Slug changed |
-| `/tr/marbles/` | `/tr/marbles` | Trailing slash removal |
-| `/tr/Marbles` | `/tr/marbles` | Case normalization |
-| `/tr/Marbles/` | `/tr/marbles` | Case + trailing slash |
+| `/tr/products/old-slug` | `/tr/products/new-slug` | Slug changed |
+| `/tr/products/` | `/tr/products` | Trailing slash removal |
+| `/tr/Products` | `/tr/products` | Case normalization |
+| `/tr/Products/` | `/tr/products` | Case + trailing slash |
 
 ### 27.2 No redirect
 
 | From | To | Reason |
 |---|---|---|
-| `/tr/marbles/white-marble` | 404 | Wrong locale slug |
+| `/tr/products/white-marble` | 404 | Wrong locale slug |
 | `/tr/nonexistent` | 404 | Unknown URL |
 | `/admin/` | 401/403 | Private path |
 

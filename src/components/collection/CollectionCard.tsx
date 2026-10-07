@@ -3,14 +3,15 @@ import type { CollectionSummary } from '@/types/api';
 
 interface CollectionCardProps {
   collection: CollectionSummary;
+  locale: string;
   priority?: boolean;
 }
 
-export function CollectionCard({ collection, priority = false }: CollectionCardProps) {
+export function CollectionCard({ collection, locale, priority = false }: CollectionCardProps) {
   return (
     <article className="collection-card">
       <a
-        href={`/collections/${collection.slug}`}
+        href={`/${locale}/collections/${collection.slug}`}
         className="card-link-overlay"
         aria-label={collection.name}
       >

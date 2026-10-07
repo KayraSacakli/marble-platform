@@ -6,7 +6,13 @@ import {
   parseLocale,
   normalizePagination,
   buildPaginationMeta,
+  parsePagination,
   parseQueryInt,
+  SEO_ROBOTS_VALUES,
+  adminContentVariantSchema,
+  adminProductCreateSchema,
+  adminProductUpdateSchema,
+  adminJournalCreateSchema,
 } from '../api/validation';
 
 describe('localeSchema', () => {
@@ -148,5 +154,84 @@ describe('parseQueryInt', () => {
 
   it('returns default for negative', () => {
     expect(parseQueryInt('-1', 10)).toBe(10);
+  });
+});
+
+describe('parsePagination', () => {
+  it('defaults when params are absent', () => {
+    expect(parsePagination(new URLSearchParams())).toEqual({ page: 1, pageSize: 24 });
+    expect(parsePagination(undefined)).toEqual({ page: 1, pageSize: 24 });
+    expect(parsePagination(null)).toEqual({ page: 1, pageSize: 24 });
+  });
+
+  it('treats empty values as absent', () => {
+    expect(parsePagination(new URLSearchParams('page=&pageSize='))).toEqual({ page: 1, pageSize: 24 });
+  });
+
+  it('parses explicit page and pageSize', () => {
+    expect(parsePagination(new URLSearchParams('page=3&pageSize=10'))).toEqual({ page: 3, pageSize: 10 });
+  });
+
+  it('rejects a non-numeric page', () => {
+    expect(() => parsePagination(new URLSearchParams('page=abc'))).toThrow();
+  });
+
+  it('rejects a non-positive page', () => {
+    expect(() => parsePagination(new URLSearchParams('page=0'))).toThrow();
+  });
+
+  it('rejects pageSize above the maximum', () => {
+    expect(() => parsePagination(new URLSearchParams('pageSize=1000'))).toThrow(/fewer/);
+  });
+
+  it('ignores unrelated query params', () => {
+    expect(parsePagination(new URLSearchParams('q=marble&page=2'))).toEqual({ page: 2, pageSize: 24 });
+  });
+});
+
+describe('admin locale variant schemas (Phase 19A)', () => {
+  const variant = { slug: 'carrara', name: 'Carrara' };
+
+  it('accepts every SEO robots value', () => {
+    for (const robots of SEO_ROBOTS_VALUES) {
+      expect(adminContentVariantSchema.safeParse({ ...variant, seoRobots: robots }).success).toBe(true);
+    }
+  });
+
+  it('rejects an unknown SEO robots value', () => {
+    expect(adminContentVariantSchema.safeParse({ ...variant, seoRobots: 'KEEP' }).success).toBe(false);
+    expect(adminContentVariantSchema.safeParse({ ...variant, seoRobots: 'index' }).success).toBe(false);
+  });
+
+  it('requires TR and EN on create and accepts the other five locales when supplied', () => {
+    expect(adminProductCreateSchema.safeParse({ tr: variant }).success).toBe(false);
+    expect(adminProductCreateSchema.safeParse({ tr: variant, en: variant }).success).toBe(true);
+    expect(
+      adminProductCreateSchema.safeParse({
+        tr: variant,
+        en: variant,
+        es: variant,
+        fr: variant,
+        de: variant,
+        it: variant,
+        ar: variant,
+      }).success
+    ).toBe(true);
+  });
+
+  it('accepts an SEO robots override on a non-TR/EN locale', () => {
+    const parsed = adminProductUpdateSchema.safeParse({ es: { seoRobots: 'NOINDEX' } });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) {
+      expect(parsed.data.es).toEqual({ seoRobots: 'NOINDEX' });
+    }
+  });
+
+  it('accepts a DE journal variant alongside the required TR/EN and publication date', () => {
+    expect(
+      adminJournalCreateSchema.safeParse({ publicationDate: '2026-01-01', tr: variant, en: variant, de: variant })
+        .success
+    ).toBe(true);
+    expect(adminJournalCreateSchema.safeParse({ publicationDate: '2026-01-01', de: variant }).success).toBe(false);
   });
 });

@@ -954,7 +954,7 @@ interface NavigationItem {
 
 | Item | Label (TR) | Label (EN) | URL | Visible |
 |---|---|---|---|---|
-| Marbles | Mermerler | Marbles | `/{locale}/marbles` | Always |
+| Marbles | Mermerler | Marbles | `/{locale}/products` | Always |
 | Collections | Koleksiyonlar | Collections | `/{locale}/collections` | Always |
 | Applications | Uygulamalar | Applications | `/{locale}/applications` | Always |
 | Projects | Projeler | Projects | `/{locale}/projects` | Conditional |
@@ -1042,8 +1042,8 @@ interface LanguageLink {
 Locale is ALWAYS determined from the URL path segment:
 
 ```
-/tr/marbles/beyaz-mermer  → locale = tr
-/en/marbles/white-marble  → locale = en
+/tr/products/beyaz-mermer  → locale = tr
+/en/products/white-marble  → locale = en
 ```
 
 No other mechanism is used for public content:
@@ -1087,9 +1087,9 @@ Every indexable page response includes:
 ```json
 {
   "hreflang": [
-    { "lang": "tr", "href": "/tr/marbles/beyaz-mermer" },
-    { "lang": "en", "href": "/en/marbles/white-marble" },
-    { "lang": "x-default", "href": "/tr/marbles/beyaz-mermer" }
+    { "lang": "tr", "href": "/tr/products/beyaz-mermer" },
+    { "lang": "en", "href": "/en/products/white-marble" },
+    { "lang": "x-default", "href": "/tr/products/beyaz-mermer" }
   ]
 }
 ```

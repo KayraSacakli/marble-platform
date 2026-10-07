@@ -1,0 +1,36 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["docs/00_PROJECT_RULES.md"],
+  "permission": {
+    "edit": {
+      "*": "allow",
+      "prisma/schema.prisma": "ask",
+      "prisma/migrations/**": "ask",
+      ".env*": "ask",
+      "opencode.json": "ask",
+      "package.json": "ask",
+      "package-lock.json": "ask"
+    },
+    "bash": {
+      "*": "ask",
+      "npm run *": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "rm *": "deny",
+      "Remove-Item*": "deny",
+      "del *": "deny",
+      "rmdir *": "deny",
+      "rd *": "deny",
+      "git clean*": "deny",
+      "git reset --hard*": "deny"
+    }
+  },
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp"],
+      "enabled": false
+    }
+  }
+}

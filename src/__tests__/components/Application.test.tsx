@@ -40,48 +40,48 @@ const mockApplicationSummaryNoImage = {
 
 describe('ApplicationCard', () => {
   it('renders application name', () => {
-    render(<ApplicationCard application={mockApplicationSummary} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummary} />);
     expect(screen.getByRole('heading', { name: 'Test Application' })).toBeInTheDocument();
   });
 
   it('renders application description', () => {
-    render(<ApplicationCard application={mockApplicationSummary} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummary} />);
     expect(screen.getByText('A test application')).toBeInTheDocument();
   });
 
   it('renders image when available', () => {
-    render(<ApplicationCard application={mockApplicationSummaryWithImage} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummaryWithImage} />);
     const img = screen.getByRole('img');
     expect(decodeURIComponent(img.getAttribute('src') ?? '')).toContain('/images/application.jpg');
     expect(img).toHaveAttribute('alt', 'Test application image');
   });
 
   it('renders fallback when no image', () => {
-    render(<ApplicationCard application={mockApplicationSummaryNoImage} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummaryNoImage} />);
     expect(screen.getAllByText('Application Without Image').length).toBeGreaterThanOrEqual(1);
   });
 
   it('links to application detail', () => {
-    render(<ApplicationCard application={mockApplicationSummary} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummary} />);
     const link = screen.getByRole('link', { name: 'Test Application' });
-    expect(link).toHaveAttribute('href', '/applications/test-application');
+    expect(link).toHaveAttribute('href', '/en/applications/test-application');
   });
 
   it('has accessible name', () => {
-    render(<ApplicationCard application={mockApplicationSummary} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummary} />);
     const link = screen.getByRole('link', { name: 'Test Application' });
     expect(link).toBeInTheDocument();
   });
 
   it('loads image eagerly when priority', () => {
-    render(<ApplicationCard application={mockApplicationSummaryWithImage} priority />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummaryWithImage} priority />);
     const img = screen.getByRole('img');
     // next/image omits the loading attribute for priority images (eager + preload).
     expect(img.getAttribute('loading')).toBeNull();
   });
 
   it('loads image lazily when not priority', () => {
-    render(<ApplicationCard application={mockApplicationSummaryWithImage} />);
+    render(<ApplicationCard locale="en" application={mockApplicationSummaryWithImage} />);
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('loading', 'lazy');
   });
@@ -89,19 +89,19 @@ describe('ApplicationCard', () => {
 
 describe('ApplicationGrid', () => {
   it('renders application cards', () => {
-    render(<ApplicationGrid applications={[mockApplicationSummary, mockApplicationSummaryNoImage]} />);
+    render(<ApplicationGrid locale="en" applications={[mockApplicationSummary, mockApplicationSummaryNoImage]} />);
     expect(screen.getByRole('heading', { name: 'Test Application' })).toBeInTheDocument();
     expect(screen.getAllByText('Application Without Image').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders correct number of cards', () => {
-    render(<ApplicationGrid applications={[mockApplicationSummary, mockApplicationSummaryNoImage]} />);
+    render(<ApplicationGrid locale="en" applications={[mockApplicationSummary, mockApplicationSummaryNoImage]} />);
     const links = screen.getAllByRole('link', { name: /test application|application without/i });
     expect(links.length).toBe(2);
   });
 
   it('returns null for empty array', () => {
-    const { container } = render(<ApplicationGrid applications={[]} />);
+    const { container } = render(<ApplicationGrid locale="en" applications={[]} />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -112,7 +112,7 @@ describe('ApplicationGrid', () => {
       { ...mockApplicationSummary, id: '3', name: 'Application 3' },
       { ...mockApplicationSummary, id: '4', name: 'Application 4' },
     ];
-    render(<ApplicationGrid applications={applications} />);
+    render(<ApplicationGrid locale="en" applications={applications} />);
     const images = screen.getAllByRole('img');
     // Priority images never carry loading="lazy"; Next omits the attribute.
     expect(images[0].getAttribute('loading')).toBeNull();

@@ -15,6 +15,7 @@ import type {
   AdminProductUpdateInput,
   AdminProductVariantInput,
 } from '@/lib/api/validation';
+import { SUPPORTED_LOCALES, type Locale } from '@/types/locale';
 
 // ============================================================
 // Admin product management (server-side, session-guarded callers)
@@ -30,6 +31,7 @@ export interface AdminProductVariant {
   seoTitle: string | null;
   seoDescription: string | null;
   seoCanonical: string | null;
+  seoRobots: string | null;
   isFeatured: boolean;
   featuredOrder: number | null;
   displayOrder: number | null;
@@ -51,6 +53,7 @@ export interface AdminProduct {
   updatedAt: string;
   tr: AdminProductVariant | null;
   en: AdminProductVariant | null;
+  variants: Partial<Record<Locale, AdminProductVariant>>;
 }
 
 type VariantRow = {
@@ -63,6 +66,7 @@ type VariantRow = {
   seoTitle: string | null;
   seoDescription: string | null;
   seoCanonical: string | null;
+  seoRobots: string | null;
   isFeatured: boolean;
   featuredOrder: number | null;
   displayOrder: number | null;
@@ -86,10 +90,11 @@ type ProductWithVariants = {
 };
 
 function toAdminProduct(item: ProductWithVariants): AdminProduct {
-  const byLocale = (locale: string): AdminProductVariant | null => {
+  const variants: Partial<Record<Locale, AdminProductVariant>> = {};
+  for (const locale of SUPPORTED_LOCALES) {
     const v = item.variants.find((variant) => variant.locale === locale);
-    if (!v) return null;
-    return {
+    if (!v) continue;
+    variants[locale] = {
       id: v.id,
       locale: v.locale,
       slug: v.slug,
@@ -99,13 +104,14 @@ function toAdminProduct(item: ProductWithVariants): AdminProduct {
       seoTitle: v.seoTitle,
       seoDescription: v.seoDescription,
       seoCanonical: v.seoCanonical,
+      seoRobots: v.seoRobots,
       isFeatured: v.isFeatured,
       featuredOrder: v.featuredOrder,
       displayOrder: v.displayOrder,
       lifecycleState: v.lifecycleState,
       draft: null,
     };
-  };
+  }
   return {
     id: item.id,
     aggregateState: item.aggregateState,
@@ -117,8 +123,9 @@ function toAdminProduct(item: ProductWithVariants): AdminProduct {
     applicableStandards: item.product?.applicableStandards ?? null,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
-    tr: byLocale('tr'),
-    en: byLocale('en'),
+    tr: variants.tr ?? null,
+    en: variants.en ?? null,
+    variants,
   };
 }
 
@@ -142,7 +149,7 @@ async function assertSlugAvailable(locale: string, slug: string, excludeContentI
 }
 
 function variantData(
-  locale: 'tr' | 'en',
+  locale: Locale,
   input: AdminProductVariantInput,
   isNew: boolean,
   lifecycleState: 'PUBLISHED' | 'DRAFT' = 'PUBLISHED'
@@ -157,6 +164,7 @@ function variantData(
     seoTitle: input.seoTitle ?? undefined,
     seoDescription: input.seoDescription ?? undefined,
     seoCanonical: input.seoCanonical ?? undefined,
+    seoRobots: input.seoRobots ?? undefined,
     isFeatured: input.isFeatured ?? (isNew ? false : undefined),
     featuredOrder: input.featuredOrder ?? undefined,
     displayOrder: input.displayOrder ?? undefined,
@@ -226,8 +234,8 @@ export async function getAdminProduct(id: string): Promise<AdminProduct> {
   const product = toAdminProduct(item as unknown as ProductWithVariants);
   // Overlay open (unpublished) draft snapshots so the editor sees the
   // pending content while the published row stays intact.
-  for (const locale of ['tr', 'en'] as const) {
-    const view = product[locale];
+  for (const locale of SUPPORTED_LOCALES) {
+    const view = product.variants[locale];
     if (!view) continue;
     const variant = (item as unknown as ProductWithVariants).variants.find((v) => v.locale === locale);
     if (!variant) continue;
@@ -241,6 +249,7 @@ export async function getAdminProduct(id: string): Promise<AdminProduct> {
     if (snapshot.seoTitle !== undefined) view.seoTitle = snapshot.seoTitle ?? null;
     if (snapshot.seoDescription !== undefined) view.seoDescription = snapshot.seoDescription ?? null;
     if (snapshot.seoCanonical !== undefined) view.seoCanonical = snapshot.seoCanonical ?? null;
+    if (snapshot.seoRobots !== undefined) view.seoRobots = snapshot.seoRobots ?? null;
     if (snapshot.isFeatured !== undefined) view.isFeatured = snapshot.isFeatured;
     if (snapshot.featuredOrder !== undefined) view.featuredOrder = snapshot.featuredOrder;
     if (snapshot.displayOrder !== undefined) view.displayOrder = snapshot.displayOrder;
@@ -257,8 +266,12 @@ export async function getAdminProduct(id: string): Promise<AdminProduct> {
 }
 
 export async function createAdminProduct(input: AdminProductCreateInput, actorId: string): Promise<AdminProduct> {
-  await assertSlugAvailable('tr', input.tr.slug);
-  await assertSlugAvailable('en', input.en.slug);
+  const locales = SUPPORTED_LOCALES.filter((l) => input[l]);
+  for (const locale of locales) {
+    const localeInput = input[locale];
+    if (!localeInput) continue;
+    await assertSlugAvailable(locale, localeInput.slug);
+  }
 
   const item = await prisma.contentItem.create({
     data: {
@@ -268,7 +281,10 @@ export async function createAdminProduct(input: AdminProductCreateInput, actorId
       aggregateState: 'DRAFT',
       product: { create: extensionData(input) },
       variants: {
-        create: [variantData('tr', input.tr, true, 'DRAFT'), variantData('en', input.en, true, 'DRAFT')],
+        create: locales.flatMap((locale) => {
+          const localeInput = input[locale];
+          return localeInput ? [variantData(locale, localeInput, true, 'DRAFT')] : [];
+        }),
       },
     },
     include: {
@@ -279,7 +295,8 @@ export async function createAdminProduct(input: AdminProductCreateInput, actorId
 
   // Initial DRAFT revision per locale, snapshotted from the input.
   for (const variant of item.variants) {
-    const localeInput = variant.locale === 'en' ? input.en : input.tr;
+    const localeInput = input[variant.locale as Locale];
+    if (!localeInput) continue;
     const revisionNumber = 1;
     const created = await prisma.contentRevision.create({
       data: {
@@ -297,6 +314,7 @@ export async function createAdminProduct(input: AdminProductCreateInput, actorId
               seoTitle: localeInput.seoTitle ?? null,
               seoDescription: localeInput.seoDescription ?? null,
               seoCanonical: localeInput.seoCanonical ?? null,
+              seoRobots: localeInput.seoRobots ?? null,
               isFeatured: localeInput.isFeatured ?? false,
               featuredOrder: localeInput.featuredOrder ?? null,
               displayOrder: localeInput.displayOrder ?? null,
@@ -340,11 +358,11 @@ export async function updateAdminProduct(
   const item = await findProductItemOrThrow(id);
   const typed = item as unknown as ProductWithVariants;
 
-  if (input.tr?.slug) {
-    await assertSlugAvailable('tr', input.tr.slug, id);
-  }
-  if (input.en?.slug) {
-    await assertSlugAvailable('en', input.en.slug, id);
+  for (const locale of SUPPORTED_LOCALES) {
+    const localeInput = input[locale];
+    if (localeInput?.slug) {
+      await assertSlugAvailable(locale, localeInput.slug, id);
+    }
   }
 
   const extPatch: Record<string, string | null | undefined> = {};
@@ -355,7 +373,7 @@ export async function updateAdminProduct(
   }
   const hasExtPatch = Object.keys(extPatch).length > 0;
 
-  for (const locale of ['tr', 'en'] as const) {
+  for (const locale of SUPPORTED_LOCALES) {
     const patch = input[locale];
     const variant = typed.variants.find((v) => v.locale === locale);
     if (!variant) continue;
@@ -366,7 +384,7 @@ export async function updateAdminProduct(
       const draft = await ensureDraftRevision(variant.id, actorId);
       const snapshotPatch: DraftSnapshot = {};
       if (patch) {
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -397,6 +415,7 @@ export async function updateAdminProduct(
           ...(patch.seoTitle !== undefined ? { seoTitle: patch.seoTitle } : {}),
           ...(patch.seoDescription !== undefined ? { seoDescription: patch.seoDescription } : {}),
           ...(patch.seoCanonical !== undefined ? { seoCanonical: patch.seoCanonical } : {}),
+          ...(patch.seoRobots !== undefined ? { seoRobots: patch.seoRobots } : {}),
           ...(patch.isFeatured !== undefined ? { isFeatured: patch.isFeatured } : {}),
           ...(patch.featuredOrder !== undefined ? { featuredOrder: patch.featuredOrder } : {}),
           ...(patch.displayOrder !== undefined ? { displayOrder: patch.displayOrder } : {}),
@@ -406,7 +425,7 @@ export async function updateAdminProduct(
       const open = await findOpenRevision(variant.id);
       if (open && open.status === 'DRAFT') {
         const snapshotPatch: DraftSnapshot = {};
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -421,7 +440,7 @@ export async function updateAdminProduct(
     }
   }
 
-  await writeAudit(actorId, 'PRODUCT_UPDATE', id, { patchedLocales: ['tr', 'en'].filter((l) => input[l as 'tr' | 'en']) });
+  await writeAudit(actorId, 'PRODUCT_UPDATE', id, { patchedLocales: SUPPORTED_LOCALES.filter((l) => input[l]) });
 
   const updated = await findProductItemOrThrow(id);
   void updated;

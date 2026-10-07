@@ -337,3 +337,33 @@ describe('public API never leaks unpublished content', () => {
     expect(where.locale).toBe('en');
   });
 });
+
+describe('7-locale admin API (Phase 19A)', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mockSession(ADMIN);
+  });
+
+  it('lists revisions for a non-TR/EN locale and rejects unsupported ones', async () => {
+    vi.mocked(prisma.contentItem.findUnique).mockResolvedValue({
+      id: PROD_ID,
+      type: 'PRODUCT',
+      variants: [{ id: 'v-de', locale: 'de' }],
+    } as never);
+    vi.mocked(prisma.contentRevision.findMany).mockResolvedValue([] as never);
+
+    const ok = await REVISIONS(new Request('http://localhost/x?locale=de') as never, ctx({ id: PROD_ID }));
+    expect(ok.status).toBe(200);
+
+    const bad = await REVISIONS(new Request('http://localhost/x?locale=xx') as never, ctx({ id: PROD_ID }));
+    expect(bad.status).toBe(400);
+  });
+
+  it('validates the unpublish locale against all seven supported locales', async () => {
+    const accepted = await UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'de' }), ctx({ id: PROD_ID }));
+    expect(accepted.status).toBe(404); // locale accepted; no variant matched in the mocked database
+
+    const rejected = await UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'xx' }), ctx({ id: PROD_ID }));
+    expect(rejected.status).toBe(422);
+  });
+});

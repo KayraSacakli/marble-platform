@@ -39,7 +39,7 @@ describe('GET /api/v1/public/[locale]/applications', () => {
 
     const res = await callHandler(GET, 'http://localhost/api/v1/public/en/applications', { locale: 'en' });
     expect(res.status).toBe(200);
-    expect(contentService.getApplicationList).toHaveBeenCalledWith('en');
+    expect(contentService.getApplicationList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
   });
 
   it('returns 400 for invalid locale', async () => {

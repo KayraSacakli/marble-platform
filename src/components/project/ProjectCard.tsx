@@ -3,14 +3,15 @@ import type { ProjectSummary } from '@/types/api';
 
 interface ProjectCardProps {
   project: ProjectSummary;
+  locale: string;
   priority?: boolean;
 }
 
-export function ProjectCard({ project, priority = false }: ProjectCardProps) {
+export function ProjectCard({ project, locale, priority = false }: ProjectCardProps) {
   return (
     <article className="project-card">
       <a
-        href={`/projects/${project.slug}`}
+        href={`/${locale}/projects/${project.slug}`}
         className="card-link-overlay"
         aria-label={project.name}
       >

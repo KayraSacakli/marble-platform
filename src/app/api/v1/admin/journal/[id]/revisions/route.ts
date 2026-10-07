@@ -4,10 +4,12 @@ import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
 import { listContentRevisions, ensureDraftRevision, getContentWorkflow } from '@/services/adminWorkflow';
 import { prisma } from '@/lib/prisma';
+import { localeSchema } from '@/lib/api/validation';
+import type { Locale } from '@/types/locale';
 
 const KIND = 'JOURNAL_ARTICLE' as const;
 const idParam = z.string().uuid('Invalid journal id.');
-const localeParam = z.enum(['tr', 'en']);
+const localeParam = localeSchema;
 
 function parseId(id: string): string {
   const parsed = idParam.safeParse(id);
@@ -20,7 +22,7 @@ export const GET = withAdminAuth(
   async (req: NextRequest, { params }) => {
     const { id } = await params;
     const localeRaw = new URL(req.url).searchParams.get('locale') ?? undefined;
-    let locale: 'tr' | 'en' | undefined;
+    let locale: Locale | undefined;
     if (localeRaw !== undefined) {
       const parsed = localeParam.safeParse(localeRaw);
       if (!parsed.success) throw new BadRequestError('Invalid locale.');
@@ -43,7 +45,7 @@ export const POST = withAdminAuth(
       throw new ValidationError('Invalid JSON body', []);
     }
     const parsed = localeParam.safeParse((body as { locale?: unknown })?.locale);
-    if (!parsed.success) throw new ValidationError('A valid locale (tr|en) is required.', []);
+    if (!parsed.success) throw new ValidationError('A valid locale is required.', []);
     const item = await prisma.contentItem.findUnique({
       where: { id: contentId },
       include: { variants: { where: { locale: parsed.data } } },

@@ -56,7 +56,7 @@ describe('GET /api/v1/public/[locale]/products', () => {
 
     const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
     expect(res.status).toBe(200);
-    expect(contentService.getProductList).toHaveBeenCalledWith('tr');
+    expect(contentService.getProductList).toHaveBeenCalledWith('tr', { page: 1, pageSize: 24 });
   });
 
   it('returns 200 with EN locale', async () => {
@@ -67,7 +67,36 @@ describe('GET /api/v1/public/[locale]/products', () => {
 
     const res = await callHandler(GET, 'http://localhost/api/v1/public/en/products', { locale: 'en' });
     expect(res.status).toBe(200);
-    expect(contentService.getProductList).toHaveBeenCalledWith('en');
+    expect(contentService.getProductList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
+  });
+
+  it('passes page and pageSize from the query string', async () => {
+    (contentService.getProductList as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: [],
+      meta: { page: 2, pageSize: 10, total: 15, totalPages: 2 },
+    });
+
+    const res = await callHandler(
+      GET,
+      'http://localhost/api/v1/public/tr/products?page=2&pageSize=10',
+      { locale: 'tr' }
+    );
+    expect(res.status).toBe(200);
+    expect(contentService.getProductList).toHaveBeenCalledWith('tr', { page: 2, pageSize: 10 });
+  });
+
+  it('returns 400 for an invalid page', async () => {
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products?page=abc', { locale: 'tr' });
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.error.code).toBe('BAD_REQUEST');
+    expect(contentService.getProductList).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 for a pageSize above the maximum', async () => {
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products?pageSize=1000', { locale: 'tr' });
+    expect(res.status).toBe(400);
   });
 
   it('returns 400 for invalid locale', async () => {

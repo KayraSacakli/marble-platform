@@ -5,7 +5,8 @@ import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { QuoteForm } from '@/components/quote/QuoteForm';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { anyContentLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
 import { getProject } from '@/lib/data/projects';
 import { getProduct } from '@/lib/data/products';
 import { getApplication } from '@/lib/data/applications';
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title,
     description,
+    robots: { index: false, follow: true },
     openGraph: {
       title,
       description,
@@ -34,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: buildPageAlternates(locale, '/quote'),
+    ...gatedMetadata(locale, '/quote', anyContentLocales(await getSeoAvailability())),
   };
 }
 

@@ -39,8 +39,8 @@ Does not define code, framework, build system, API implementation, or CMS backen
 | # | Route | Page Name | TR Name | EN Name | Page Type | Primary Purpose | Primary Audience | Primary CTA | Secondary CTA | SEO Importance | Indexability | Status |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | `/{locale}/` | Homepage | Ana Sayfa | Home | Landing | Brand orientation, discovery, trust | All | Explore Marbles | Request Quote | High | Yes | Defined |
-| 2 | `/{locale}/marbles` | Product Catalogue | Mermer Kataloğu | Marble Catalogue | Listing | Browse full product catalogue | Architect, Buyer | View Product | Request Quote | High | Yes | Defined |
-| 3 | `/{locale}/marbles/{slug}` | Product Detail | Ürün Detayı | Product Detail | Detail | Evaluate one material in depth | Architect, Buyer, Project Company, Local Customer | Request Quote | Contact | High | Yes | Defined |
+| 2 | `/{locale}/products` | Product Catalogue | Mermer Kataloğu | Marble Catalogue | Listing | Browse full product catalogue | Architect, Buyer | View Product | Request Quote | High | Yes | Defined |
+| 3 | `/{locale}/products/{slug}` | Product Detail | Ürün Detayı | Product Detail | Detail | Evaluate one material in depth | Architect, Buyer, Project Company, Local Customer | Request Quote | Contact | High | Yes | Defined |
 | 4 | `/{locale}/collections` | Collection Listing | Koleksiyonlar | Collections | Listing | Browse curated product groupings | Architect, Buyer, Local Customer | View Collection | Request Quote | High | Yes | Defined |
 | 5 | `/{locale}/collections/{slug}` | Collection Detail | Koleksiyon Detayı | Collection Detail | Detail | Explore curated product grouping | Architect, Buyer, Local Customer | View Products | Request Quote | High | Yes | Defined |
 | 6 | `/{locale}/applications` | Application Listing | Uygulamalar | Applications | Listing | Browse material-use contexts | Architect, Project Company | View Application | Request Quote | High | Yes | Defined |
@@ -326,7 +326,7 @@ Request Quote → Quote Request (general)
 
 ### 6.6 Route
 
-`/{locale}/marbles`
+`/{locale}/products`
 
 ### 6.7 Breadcrumb
 
@@ -467,7 +467,7 @@ Contact
 
 ### 7.6 Route
 
-`/{locale}/marbles/{slug}`
+`/{locale}/products/{slug}`
 
 ### 7.7 Breadcrumb
 
@@ -2021,7 +2021,7 @@ Persistent top navigation bar. Contains brand, navigation, language switch, glob
 SiteHeader
 ├── BrandLogo → Homepage
 ├── DesktopNavigation
-│   ├── Marbles → /{locale}/marbles
+│   ├── Marbles → /{locale}/products
 │   ├── Collections → /{locale}/collections
 │   ├── Applications → /{locale}/applications
 │   ├── Projects → /{locale}/projects (conditional)
@@ -2093,7 +2093,7 @@ SiteFooter
 │   │   ├── Factory → /{locale}/factory
 │   │   └── Contact → /{locale}/contact
 │   ├── FooterCatalogueLinks
-│   │   ├── Marbles → /{locale}/marbles
+│   │   ├── Marbles → /{locale}/products
 │   │   ├── Collections → /{locale}/collections
 │   │   ├── Applications → /{locale}/applications
 │   │   ├── Projects → /{locale}/projects (conditional)
@@ -2262,8 +2262,8 @@ SiteFooter
 | Page | URL | Title pattern | Meta description pattern | H1 | Canonical | Hreflang | Structured data |
 |---|---|---|---|---|---|---|---|
 | Homepage | `/{locale}/` | `{Brand} — Premium Turkish Marble` | Approved brand statement | Brand/hero heading | Self-referencing | Reciprocal TR/EN | Organization, WebSite |
-| Product Catalogue | `/{locale}/marbles` | `Marble Collection — {Brand}` | Approved intro text | Page title | Self-referencing | Reciprocal TR/EN | ItemList |
-| Product Detail | `/{locale}/marbles/{slug}` | `{Product Name} — Premium Turkish Marble — {Brand}` | Approved product description | Product name | Self-referencing | Reciprocal TR/EN | Product |
+| Product Catalogue | `/{locale}/products` | `Marble Collection — {Brand}` | Approved intro text | Page title | Self-referencing | Reciprocal TR/EN | ItemList |
+| Product Detail | `/{locale}/products/{slug}` | `{Product Name} — Premium Turkish Marble — {Brand}` | Approved product description | Product name | Self-referencing | Reciprocal TR/EN | Product |
 | Collection Listing | `/{locale}/collections` | `Collections — {Brand}` | Approved intro text | Page title | Self-referencing | Reciprocal TR/EN | — |
 | Collection Detail | `/{locale}/collections/{slug}` | `{Collection Name} — {Brand}` | Approved description | Collection name | Self-referencing | Reciprocal TR/EN | — |
 | Application Listing | `/{locale}/applications` | `Applications — {Brand}` | Approved intro text | Page title | Self-referencing | Reciprocal TR/EN | — |

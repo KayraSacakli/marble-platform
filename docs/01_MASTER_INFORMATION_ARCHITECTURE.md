@@ -211,8 +211,8 @@ A language switch must take users to the equivalent variant of the same conceptu
 Localized navigation, forms, validation/error text, metadata, and applicable structured public metadata are required. The conceptual hierarchy is locale-first, for example:
 
 ```text
-/{locale}/marbles
-/{locale}/marbles/{localized-product-identifier}
+/{locale}/products
+/{locale}/products/{localized-product-identifier}
 /{locale}/collections/{localized-collection-identifier}
 /{locale}/applications/{localized-application-identifier}
 /{locale}/projects/{localized-project-identifier}

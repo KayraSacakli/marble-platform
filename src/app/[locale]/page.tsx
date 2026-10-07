@@ -4,7 +4,8 @@ import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getHomepage } from '@/lib/data/homepage';
 import { Homepage } from '@/components/home/Homepage';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { anyContentLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title,
       description,
     },
-    alternates: buildPageAlternates(locale, ''),
+    ...gatedMetadata(locale, '', anyContentLocales(await getSeoAvailability())),
   };
 }
 

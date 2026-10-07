@@ -291,7 +291,7 @@ INTERNAL LINKS
 - Conversion: Request Quote accessible from navigation
 
 SEO / CONTENT DEPENDENCIES
-- URL: /{locale}/marbles
+- URL: /{locale}/products
 - Canonical: self-referencing (with ?page=N for paginated pages)
 - Hreflang: reciprocal TR/EN
 - Indexable: Yes
@@ -420,7 +420,7 @@ INTERNAL LINKS
 - Conversion: Request Quote (with product context), Contact
 
 SEO / CONTENT DEPENDENCIES
-- URL: /{locale}/marbles/{slug}
+- URL: /{locale}/products/{slug}
 - Canonical: self-referencing
 - Hreflang: reciprocal TR/EN
 - Indexable: Yes

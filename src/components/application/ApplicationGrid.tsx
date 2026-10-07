@@ -3,9 +3,10 @@ import { ApplicationCard } from './ApplicationCard';
 
 interface ApplicationGridProps {
   applications: ApplicationSummary[];
+  locale: string;
 }
 
-export function ApplicationGrid({ applications }: ApplicationGridProps) {
+export function ApplicationGrid({ applications, locale }: ApplicationGridProps) {
   if (applications.length === 0) return null;
 
   return (
@@ -14,6 +15,7 @@ export function ApplicationGrid({ applications }: ApplicationGridProps) {
         <ApplicationCard
           key={application.id}
           application={application}
+          locale={locale}
           priority={index < 3}
         />
       ))}

@@ -41,7 +41,7 @@ describe('GET /api/v1/public/[locale]/journal', () => {
 
     const res = await callHandler(GET, 'http://localhost/api/v1/public/en/journal', { locale: 'en' });
     expect(res.status).toBe(200);
-    expect(contentService.getJournalList).toHaveBeenCalledWith('en');
+    expect(contentService.getJournalList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
   });
 
   it('returns 400 for invalid locale', async () => {

@@ -11,6 +11,7 @@ export interface ProductFormVariant {
   seoTitle: string;
   seoDescription: string;
   seoCanonical: string;
+  seoRobots: string;
   isFeatured: boolean;
   featuredOrder: string;
   displayOrder: string;
@@ -35,6 +36,7 @@ const emptyVariant: ProductFormVariant = {
   seoTitle: '',
   seoDescription: '',
   seoCanonical: '',
+  seoRobots: '',
   isFeatured: false,
   featuredOrder: '',
   displayOrder: '',
@@ -67,6 +69,7 @@ function variantPayload(v: ProductFormVariant) {
     seoTitle: v.seoTitle || undefined,
     seoDescription: v.seoDescription || undefined,
     seoCanonical: v.seoCanonical || undefined,
+    seoRobots: v.seoRobots || undefined,
     isFeatured: v.isFeatured,
     featuredOrder: toNumberOrUndefined(v.featuredOrder) ?? null,
     displayOrder: toNumberOrUndefined(v.displayOrder) ?? null,
@@ -97,6 +100,15 @@ function LocaleFields({
         <label>SEO title<input value={value.seoTitle} onChange={(e) => set('seoTitle', e.target.value)} style={inputStyle} /></label>
         <label>SEO description<input value={value.seoDescription} onChange={(e) => set('seoDescription', e.target.value)} style={inputStyle} /></label>
         <label>SEO canonical<input value={value.seoCanonical} onChange={(e) => set('seoCanonical', e.target.value)} style={inputStyle} /></label>
+        <label>SEO robots
+          <select value={value.seoRobots} onChange={(e) => set('seoRobots', e.target.value)} style={inputStyle}>
+            <option value="">(default)</option>
+            <option value="INDEX">INDEX</option>
+            <option value="NOINDEX">NOINDEX</option>
+            <option value="FOLLOW">FOLLOW</option>
+            <option value="NOFOLLOW">NOFOLLOW</option>
+          </select>
+        </label>
         <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <input type="checkbox" checked={value.isFeatured} onChange={(e) => set('isFeatured', e.target.checked)} /> Featured
         </label>

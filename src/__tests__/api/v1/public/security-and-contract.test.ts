@@ -193,7 +193,7 @@ describe('Locale Handling', () => {
     });
 
     await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
-    expect(contentService.getProductList).toHaveBeenCalledWith('tr');
+    expect(contentService.getProductList).toHaveBeenCalledWith('tr', { page: 1, pageSize: 24 });
   });
 
   it('EN locale passes correctly to service', async () => {
@@ -203,7 +203,7 @@ describe('Locale Handling', () => {
     });
 
     await callHandler(GET, 'http://localhost/api/v1/public/en/products', { locale: 'en' });
-    expect(contentService.getProductList).toHaveBeenCalledWith('en');
+    expect(contentService.getProductList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
   });
 
   it('returns 400 for invalid locale', async () => {

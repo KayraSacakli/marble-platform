@@ -419,3 +419,11 @@ RESUME POINT for a future session:
 1. Read this file top-to-bottom (§1 source of truth) and `git log -1`.
 2. No Phase 18 work remains. A future **Phase 19 is not yet defined** — candidates already parked in §9 DEFER (distributed rate limiting, structured logging, HTML sanitizer, ISR/CDN strategy, `middleware`→`proxy` rename, CORS) require an explicit new scope decision before any work.
 3. Temp servers are closed (ports 3000/3100 free); restart the temp API copy from `%TEMP%\opencode\marble-api-copy` if a build-time data source is needed.
+
+---
+
+## TOOLING NOTE - Playwright MCP (deferred, not run yet)
+
+- `opencode.json` (project root) defines `mcp.playwright` (`npx -y @playwright/mcp`) with **`enabled: false`**. Keep it disabled until seed data is ready.
+- Before enabling, run once: `npx playwright install chromium` (downloads Chromium; not executed yet, deferred by decision).
+- Also pending a decision: adding `"formatter": true` and `"lsp": true` to `opencode.json` after inspecting `opencode debug config` defaults.

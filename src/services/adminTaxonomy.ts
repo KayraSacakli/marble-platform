@@ -14,7 +14,9 @@ import type {
   AdminCollectionUpdateInput,
   AdminApplicationCreateInput,
   AdminApplicationUpdateInput,
+  SeoRobotsValue,
 } from '@/lib/api/validation';
+import { SUPPORTED_LOCALES, type Locale } from '@/types/locale';
 
 // ============================================================
 // Admin Collection / Application management (server-side,
@@ -65,6 +67,7 @@ export interface AdminTaxonomyVariant {
   seoTitle: string | null;
   seoDescription: string | null;
   seoCanonical: string | null;
+  seoRobots: string | null;
   isFeatured: boolean;
   featuredOrder: number | null;
   displayOrder: number | null;
@@ -80,6 +83,7 @@ export interface AdminTaxonomy {
   updatedAt: string;
   tr: AdminTaxonomyVariant | null;
   en: AdminTaxonomyVariant | null;
+  variants: Partial<Record<Locale, AdminTaxonomyVariant>>;
 }
 
 export interface AttachedProduct {
@@ -100,6 +104,7 @@ type VariantRow = {
   seoTitle: string | null;
   seoDescription: string | null;
   seoCanonical: string | null;
+  seoRobots: string | null;
   isFeatured: boolean;
   featuredOrder: number | null;
   displayOrder: number | null;
@@ -115,19 +120,21 @@ type ItemWithVariants = {
 };
 
 function toAdminTaxonomy(kind: TaxonomyKind, item: ItemWithVariants): AdminTaxonomy {
-  const byLocale = (locale: string): AdminTaxonomyVariant | null => {
+  const variants: Partial<Record<Locale, AdminTaxonomyVariant>> = {};
+  for (const locale of SUPPORTED_LOCALES) {
     const v = item.variants.find((variant) => variant.locale === locale);
-    if (!v) return null;
-    return { ...v, draft: null };
-  };
+    if (!v) continue;
+    variants[locale] = { ...v, draft: null };
+  }
   return {
     id: item.id,
     kind,
     aggregateState: item.aggregateState,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
-    tr: byLocale('tr'),
-    en: byLocale('en'),
+    tr: variants.tr ?? null,
+    en: variants.en ?? null,
+    variants,
   };
 }
 
@@ -164,12 +171,13 @@ type VariantInput = {
   seoTitle?: string;
   seoDescription?: string;
   seoCanonical?: string;
+  seoRobots?: SeoRobotsValue;
   isFeatured?: boolean;
   featuredOrder?: number | null;
   displayOrder?: number | null;
 };
 
-function variantCreateData(locale: 'tr' | 'en', input: VariantInput) {
+function variantCreateData(locale: Locale, input: VariantInput) {
   return {
     locale,
     lifecycleState: 'DRAFT' as const,
@@ -180,6 +188,7 @@ function variantCreateData(locale: 'tr' | 'en', input: VariantInput) {
     seoTitle: input.seoTitle ?? undefined,
     seoDescription: input.seoDescription ?? undefined,
     seoCanonical: input.seoCanonical ?? undefined,
+    seoRobots: input.seoRobots ?? undefined,
     isFeatured: input.isFeatured ?? false,
     featuredOrder: input.featuredOrder ?? undefined,
     displayOrder: input.displayOrder ?? undefined,
@@ -195,6 +204,7 @@ function snapshotInput(localeInput: VariantInput): DraftSnapshot {
     seoTitle: localeInput.seoTitle ?? null,
     seoDescription: localeInput.seoDescription ?? null,
     seoCanonical: localeInput.seoCanonical ?? null,
+    seoRobots: localeInput.seoRobots ?? null,
     isFeatured: localeInput.isFeatured ?? false,
     featuredOrder: localeInput.featuredOrder ?? null,
     displayOrder: localeInput.displayOrder ?? null,
@@ -235,8 +245,8 @@ export async function listAdminTaxonomy(kind: TaxonomyKind, options: { page?: nu
 export async function getAdminTaxonomy(kind: TaxonomyKind, id: string): Promise<AdminTaxonomy> {
   const item = await findItemOrThrow(kind, id);
   const view = toAdminTaxonomy(kind, item as unknown as ItemWithVariants);
-  for (const locale of ['tr', 'en'] as const) {
-    const cell = view[locale];
+  for (const locale of SUPPORTED_LOCALES) {
+    const cell = view.variants[locale];
     if (!cell) continue;
     const variant = (item as unknown as ItemWithVariants).variants.find((v) => v.locale === locale);
     if (!variant) continue;
@@ -250,6 +260,7 @@ export async function getAdminTaxonomy(kind: TaxonomyKind, id: string): Promise<
     if (snapshot.seoTitle !== undefined) cell.seoTitle = snapshot.seoTitle ?? null;
     if (snapshot.seoDescription !== undefined) cell.seoDescription = snapshot.seoDescription ?? null;
     if (snapshot.seoCanonical !== undefined) cell.seoCanonical = snapshot.seoCanonical ?? null;
+    if (snapshot.seoRobots !== undefined) cell.seoRobots = snapshot.seoRobots ?? null;
     if (snapshot.isFeatured !== undefined) cell.isFeatured = snapshot.isFeatured;
     if (snapshot.featuredOrder !== undefined) cell.featuredOrder = snapshot.featuredOrder;
     if (snapshot.displayOrder !== undefined) cell.displayOrder = snapshot.displayOrder;
@@ -261,8 +272,12 @@ export async function getAdminTaxonomy(kind: TaxonomyKind, id: string): Promise<
 type CreateInput = AdminCollectionCreateInput | AdminApplicationCreateInput;
 
 export async function createAdminTaxonomy(kind: TaxonomyKind, input: CreateInput, actorId: string): Promise<AdminTaxonomy> {
-  await assertSlugAvailable('tr', input.tr.slug);
-  await assertSlugAvailable('en', input.en.slug);
+  const locales = SUPPORTED_LOCALES.filter((l) => input[l]);
+  for (const locale of locales) {
+    const localeInput = input[locale];
+    if (!localeInput) continue;
+    await assertSlugAvailable(locale, localeInput.slug);
+  }
 
   const item = await prisma.contentItem.create({
     data: {
@@ -270,14 +285,18 @@ export async function createAdminTaxonomy(kind: TaxonomyKind, input: CreateInput
       aggregateState: 'DRAFT',
       ...(kind === 'COLLECTION' ? { collection: { create: {} } } : { application: { create: {} } }),
       variants: {
-        create: [variantCreateData('tr', input.tr), variantCreateData('en', input.en)],
+        create: locales.flatMap((locale) => {
+          const localeInput = input[locale];
+          return localeInput ? [variantCreateData(locale, localeInput)] : [];
+        }),
       },
     },
     include: { variants: { orderBy: { locale: 'asc' as const } } },
   });
 
   for (const variant of item.variants) {
-    const localeInput = variant.locale === 'en' ? input.en : input.tr;
+    const localeInput = input[variant.locale as Locale];
+    if (!localeInput) continue;
     const created = await prisma.contentRevision.create({
       data: {
         contentVariantId: variant.id,
@@ -315,14 +334,14 @@ export async function updateAdminTaxonomy(
   const item = await findItemOrThrow(kind, id);
   const typed = item as unknown as ItemWithVariants;
 
-  if (input.tr?.slug) {
-    await assertSlugAvailable('tr', input.tr.slug, id);
-  }
-  if (input.en?.slug) {
-    await assertSlugAvailable('en', input.en.slug, id);
+  for (const locale of SUPPORTED_LOCALES) {
+    const localeInput = input[locale];
+    if (localeInput?.slug) {
+      await assertSlugAvailable(locale, localeInput.slug, id);
+    }
   }
 
-  for (const locale of ['tr', 'en'] as const) {
+  for (const locale of SUPPORTED_LOCALES) {
     const patch = input[locale];
     const variant = typed.variants.find((v) => v.locale === locale);
     if (!variant) continue;
@@ -331,7 +350,7 @@ export async function updateAdminTaxonomy(
       const draft = await ensureDraftRevision(variant.id, actorId);
       const snapshotPatch: DraftSnapshot = {};
       if (patch) {
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -354,6 +373,7 @@ export async function updateAdminTaxonomy(
           ...(patch.seoTitle !== undefined ? { seoTitle: patch.seoTitle } : {}),
           ...(patch.seoDescription !== undefined ? { seoDescription: patch.seoDescription } : {}),
           ...(patch.seoCanonical !== undefined ? { seoCanonical: patch.seoCanonical } : {}),
+          ...(patch.seoRobots !== undefined ? { seoRobots: patch.seoRobots } : {}),
           ...(patch.isFeatured !== undefined ? { isFeatured: patch.isFeatured } : {}),
           ...(patch.featuredOrder !== undefined ? { featuredOrder: patch.featuredOrder } : {}),
           ...(patch.displayOrder !== undefined ? { displayOrder: patch.displayOrder } : {}),
@@ -362,7 +382,7 @@ export async function updateAdminTaxonomy(
       const open = await findOpenRevision(variant.id);
       if (open && open.status === 'DRAFT') {
         const snapshotPatch: DraftSnapshot = {};
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -375,7 +395,7 @@ export async function updateAdminTaxonomy(
   }
 
   await writeAudit(actorId, KINDS[kind].updateAction, id, {
-    patchedLocales: ['tr', 'en'].filter((l) => input[l as 'tr' | 'en']),
+    patchedLocales: SUPPORTED_LOCALES.filter((l) => input[l]),
   });
 
   return getAdminTaxonomy(kind, id);

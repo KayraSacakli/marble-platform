@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
 import { unpublishContent } from '@/services/adminWorkflow';
+import { localeSchema } from '@/lib/api/validation';
 
 const KIND = 'PROJECT' as const;
 
@@ -18,8 +19,8 @@ export const POST = withAdminAuth(
     } catch {
       throw new ValidationError('Invalid JSON body', []);
     }
-    const parsedLocale = z.enum(['tr', 'en']).safeParse((body as { locale?: unknown })?.locale);
-    if (!parsedLocale.success) throw new ValidationError('A valid locale (tr|en) is required.', []);
+    const parsedLocale = localeSchema.safeParse((body as { locale?: unknown })?.locale);
+    if (!parsedLocale.success) throw new ValidationError('A valid locale is required.', []);
     return { workflow: await unpublishContent(parsedId.data, KIND, parsedLocale.data, admin.id) };
   },
   { roles: ['ADMIN'] }

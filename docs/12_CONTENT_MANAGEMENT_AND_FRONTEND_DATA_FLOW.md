@@ -541,9 +541,9 @@ ContentItem (one conceptual entity)
 ### 11.7 Language switch behavior
 
 ```
-TR Product (/tr/marbles/beyaz-mermer)
+TR Product (/tr/products/beyaz-mermer)
   → Language Switch
-EN Product (/en/marbles/white-marble)
+EN Product (/en/products/white-marble)
 ```
 
 - Navigates to equivalent variant of same ContentItem.
@@ -1337,7 +1337,7 @@ From `02_DOMAIN_MODEL.md`:
 
 ```typescript
 // Product listing URL
-/tr/marbles?page=2
+/tr/products?page=2
 
 // Journal listing URL
 /tr/journal?page=3
@@ -1367,8 +1367,8 @@ GET /public/journal?locale=en&page=1&pageSize=24
 ### 22.6 SEO-friendly catalogue
 
 - Pagination uses `?page=N` query parameters.
-- Page 1 canonical: `/tr/marbles` (no `?page=1`).
-- Page N canonical: `/tr/marbles` (canonical points to base, not paginated).
+- Page 1 canonical: `/tr/products` (no `?page=1`).
+- Page N canonical: `/tr/products` (canonical points to base, not paginated).
 - Hreflang: reciprocal across paginated pages.
 - Breadcrumb: Home → Marbles (same for all pages).
 

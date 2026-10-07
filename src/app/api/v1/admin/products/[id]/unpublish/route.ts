@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
 import { unpublishProduct } from '@/services/adminWorkflow';
+import { localeSchema } from '@/lib/api/validation';
 
 // POST /api/v1/admin/products/[id]/unpublish { locale } — ADMIN only
 export const POST = withAdminAuth(
@@ -15,8 +16,8 @@ export const POST = withAdminAuth(
     } catch {
       throw new ValidationError('Invalid JSON body', []);
     }
-    const parsedLocale = z.enum(['tr', 'en']).safeParse((body as { locale?: unknown })?.locale);
-    if (!parsedLocale.success) throw new ValidationError('A valid locale (tr|en) is required.', []);
+    const parsedLocale = localeSchema.safeParse((body as { locale?: unknown })?.locale);
+    if (!parsedLocale.success) throw new ValidationError('A valid locale is required.', []);
     return { workflow: await unpublishProduct(parsedId.data, parsedLocale.data, admin.id) };
   },
   { roles: ['ADMIN'] }

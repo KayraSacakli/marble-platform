@@ -15,14 +15,23 @@ vi.mock('@/lib/fonts', () => ({
 
 vi.mock('@/lib/data/products', () => ({
   getProducts: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getProduct: vi.fn().mockResolvedValue({
+  getProduct: vi.fn(async (locale: string, slug: string) => ({
     id: 'prod-001',
     name: 'Calacatta Gold',
     slug: 'calacatta-gold',
     tagline: 'Premium Italian marble',
     description: 'A luxury marble',
     primaryImage: { src: '/images/calacatta.jpg', alt: 'Calacatta', width: 1200, height: 800 },
-    seo: { metaDescription: 'Calacatta Gold marble' },
+    seo: {
+      metaDescription: 'Calacatta Gold marble',
+      canonical: `${SITE_URL}/${locale}/products/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/products/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/products/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/products/${slug}` },
+      ],
+    },
     collections: [],
     applications: [],
     projects: [],
@@ -30,25 +39,34 @@ vi.mock('@/lib/data/products', () => ({
     journalArticles: [],
     gallery: [],
     quoteContextIdentifier: 'product:prod-001',
-  }),
+  })),
 }));
 
 vi.mock('@/lib/data/collections', () => ({
   getCollections: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getCollection: vi.fn().mockResolvedValue({
+  getCollection: vi.fn(async (locale: string, slug: string) => ({
     id: 'coll-001',
     name: 'Classic Collection',
     slug: 'classic-collection',
     description: 'Timeless classics',
     products: [],
     applications: [],
-    seo: { metaDescription: 'Classic marble collection' },
-  }),
+    seo: {
+      metaDescription: 'Classic marble collection',
+      canonical: `${SITE_URL}/${locale}/collections/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/collections/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/collections/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/collections/${slug}` },
+      ],
+    },
+  })),
 }));
 
 vi.mock('@/lib/data/applications', () => ({
   getApplications: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getApplication: vi.fn().mockResolvedValue({
+  getApplication: vi.fn(async (locale: string, slug: string) => ({
     id: 'app-001',
     name: 'Flooring',
     slug: 'flooring',
@@ -56,26 +74,44 @@ vi.mock('@/lib/data/applications', () => ({
     products: [],
     projects: [],
     journalArticles: [],
-    seo: { metaDescription: 'Marble flooring' },
-  }),
+    seo: {
+      metaDescription: 'Marble flooring',
+      canonical: `${SITE_URL}/${locale}/applications/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/applications/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/applications/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/applications/${slug}` },
+      ],
+    },
+  })),
 }));
 
 vi.mock('@/lib/data/projects', () => ({
   getProjects: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getProject: vi.fn().mockResolvedValue({
+  getProject: vi.fn(async (locale: string, slug: string) => ({
     id: 'proj-001',
     name: 'Marriott Hotel',
     slug: 'marriott-hotel',
     description: 'Hotel lobby project',
     products: [],
     applications: [],
-    seo: { metaDescription: 'Marriott hotel project' },
-  }),
+    seo: {
+      metaDescription: 'Marriott hotel project',
+      canonical: `${SITE_URL}/${locale}/projects/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/projects/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/projects/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/projects/${slug}` },
+      ],
+    },
+  })),
 }));
 
 vi.mock('@/lib/data/journal', () => ({
   getJournal: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getJournalArticle: vi.fn().mockResolvedValue({
+  getJournalArticle: vi.fn(async (locale: string, slug: string) => ({
     id: 'journ-001',
     title: 'Marble Trends 2026',
     slug: 'marble-trends-2026',
@@ -83,13 +119,22 @@ vi.mock('@/lib/data/journal', () => ({
     body: 'Full article body',
     publicationDate: '2026-01-15T00:00:00.000Z',
     author: 'Test Author',
-    seo: { metaDescription: 'Marble trends' },
+    seo: {
+      metaDescription: 'Marble trends',
+      canonical: `${SITE_URL}/${locale}/journal/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/journal/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/journal/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/journal/${slug}` },
+      ],
+    },
     coverImage: null,
     relatedProducts: [],
     relatedApplications: [],
     relatedProjects: [],
     relatedArticles: [],
-  }),
+  })),
 }));
 
 vi.mock('@/lib/data/company', () => ({
@@ -99,10 +144,6 @@ vi.mock('@/lib/data/company', () => ({
 }));
 
 import sitemap from '@/app/sitemap';
-
-const UNSUPPORTED_LOCALES = SUPPORTED_LOCALES.filter(
-  (l) => !(SEO_LOCALES as readonly string[]).includes(l)
-);
 
 const EXPECTED_STATIC_PATHS = [
   '',
@@ -115,7 +156,6 @@ const EXPECTED_STATIC_PATHS = [
   '/quarry',
   '/factory',
   '/contact',
-  '/quote',
 ];
 
 function localeOf(url: string): string {
@@ -139,26 +179,29 @@ describe('Sitemap advertises only supported content locales', () => {
     entries = await sitemap();
   });
 
-  it('contains TR and EN localized URLs', () => {
+  it('contains TR and EN localized URLs (the locales with content)', () => {
     const urls = entries.map((e) => e.url);
-    for (const locale of SEO_LOCALES) {
+    for (const locale of ['tr', 'en']) {
       expect(urls).toContain(`${SITE_URL}/${locale}`);
       expect(urls).toContain(`${SITE_URL}/${locale}/products`);
       expect(urls).toContain(`${SITE_URL}/${locale}/journal`);
-      expect(urls).toContain(`${SITE_URL}/${locale}/quote`);
+      expect(urls).toContain(`${SITE_URL}/${locale}/about`);
     }
+    // the quote form is noindex and never advertised
+    expect(urls.some((url) => url.endsWith('/quote'))).toBe(false);
   });
 
-  it('contains no unsupported locale URLs', () => {
+  it('contains no URLs for locales without content', () => {
     const locales = new Set(entries.map((e) => localeOf(e.url)));
-    expect(locales).toEqual(new Set(SEO_LOCALES));
-    for (const unsupported of UNSUPPORTED_LOCALES) {
-      expect(urlsFor(entries, unsupported)).toHaveLength(0);
+    expect(locales).toEqual(new Set(['tr', 'en']));
+    for (const withoutContent of SUPPORTED_LOCALES.filter((l) => l !== 'tr' && l !== 'en')) {
+      expect(urlsFor(entries, withoutContent)).toHaveLength(0);
     }
   });
 
   it('preserves existing non-locale sitemap behavior', () => {
-    expect(entries).toHaveLength(SEO_LOCALES.length * EXPECTED_STATIC_PATHS.length);
+    // 10 static paths, advertised only for the TR/EN content locales.
+    expect(entries).toHaveLength(2 * EXPECTED_STATIC_PATHS.length);
 
     const paths = new Set(entries.map((e) => staticPathOf(e.url)));
     expect([...paths].sort()).toEqual([...EXPECTED_STATIC_PATHS].sort());
@@ -184,36 +227,35 @@ function urlsFor(entries: SitemapEntries, locale: string): string[] {
 }
 
 describe('SEO locale source', () => {
-  it('is exactly the locales with real content', () => {
-    expect([...SEO_LOCALES]).toEqual(['tr', 'en']);
+  it('covers every supported locale and keeps TR as the default', () => {
+    expect([...SEO_LOCALES]).toEqual(['tr', 'en', 'es', 'fr', 'de', 'it', 'ar']);
     expect(DEFAULT_LOCALE).toBe('tr');
-    expect(isSeoLocale('tr')).toBe(true);
-    expect(isSeoLocale('en')).toBe(true);
-    for (const unsupported of UNSUPPORTED_LOCALES) {
-      expect(isSeoLocale(unsupported)).toBe(false);
+    for (const supported of SUPPORTED_LOCALES) {
+      expect(isSeoLocale(supported)).toBe(true);
     }
+    expect(isSeoLocale('xx')).toBe(false);
   });
 });
 
 describe('Hreflang / alternates', () => {
   const paths = ['', '/products', '/products/calacatta-gold', '/journal/marble-trends-2026', '/quote'];
 
-  it('emits exactly tr, en and x-default for every localized path', () => {
+  it('emits every supported locale plus x-default for every localized path', () => {
     for (const path of paths) {
       const languages = buildFullAlternates(path);
-      expect(Object.keys(languages).sort()).toEqual(['en', 'tr', 'x-default']);
+      expect(new Set(Object.keys(languages))).toEqual(new Set([...SUPPORTED_LOCALES, 'x-default']));
       expect(languages['tr']).toBe(`${SITE_URL}/tr${path}`);
       expect(languages['en']).toBe(`${SITE_URL}/en${path}`);
       expect(languages['x-default']).toBe(`${SITE_URL}/${DEFAULT_LOCALE}${path}`);
     }
   });
 
-  it('never advertises unsupported locales in alternates', () => {
+  it('never advertises unknown locales in alternates', () => {
     for (const path of paths) {
       const languages = buildFullAlternates(path);
-      for (const unsupported of UNSUPPORTED_LOCALES) {
-        expect(languages[unsupported]).toBeUndefined();
-        expect(Object.keys(languages)).not.toContain(unsupported);
+      expect(Object.keys(languages)).not.toContain('xx');
+      for (const supported of SUPPORTED_LOCALES) {
+        expect(languages[supported]).toBe(`${SITE_URL}/${supported}${path}`);
       }
     }
   });
@@ -235,11 +277,31 @@ describe('Canonical generation', () => {
     expect(buildPageAlternates('en', '')?.canonical).toBe(`${SITE_URL}/en`);
   });
 
-  it('does not generate canonical or alternates for unsupported locales', () => {
-    for (const unsupported of UNSUPPORTED_LOCALES) {
-      expect(buildPageAlternates(unsupported, '/products')).toBeUndefined();
-      expect(buildPageAlternates(unsupported, '')).toBeUndefined();
-    }
+  it('does not generate canonical or alternates for unknown locales', () => {
+    expect(buildPageAlternates('xx', '/products')).toBeUndefined();
+    expect(buildPageAlternates('xx', '')).toBeUndefined();
+  });
+
+  it('only advertises locales with content and points canonical at one that has', () => {
+    const contentLocales = ['tr', 'en'];
+    const expectedLanguages = {
+      tr: `${SITE_URL}/tr/products`,
+      en: `${SITE_URL}/en/products`,
+      'x-default': `${SITE_URL}/tr/products`,
+    };
+
+    expect(buildPageAlternates('tr', '/products', contentLocales)).toEqual({
+      canonical: `${SITE_URL}/tr/products`,
+      languages: expectedLanguages,
+    });
+
+    // a locale without content keeps indexable alternates but canonicals a locale with content
+    expect(buildPageAlternates('es', '/products', contentLocales)).toEqual({
+      canonical: `${SITE_URL}/tr/products`,
+      languages: expectedLanguages,
+    });
+
+    expect(buildPageAlternates('es', '/products', ['en'])?.canonical).toBe(`${SITE_URL}/en/products`);
   });
 });
 
@@ -290,12 +352,30 @@ describe('Public pages still generate metadata with tr/en only', () => {
     expect(Object.keys(languages).sort()).toEqual(['en', 'tr', 'x-default']);
   });
 
-  it.each(LOCALIZED_PAGES)('$module does not advertise unsupported locales', async ({ module: mod, params }) => {
-    const { generateMetadata } = await import(mod);
-    const metadata = await generateMetadata({
-      params: Promise.resolve({ ...params, locale: 'es' }),
-    });
+  const GATED_PAGES = LOCALIZED_PAGES.filter((entry) => !entry.module.includes('[slug]'));
 
-    expect(metadata.alternates).toBeUndefined();
+  it.each(GATED_PAGES)(
+    '$module noindexes locales without content and canonicals a locale with content',
+    async ({ module: mod, path, params }) => {
+      const { generateMetadata } = await import(mod);
+      const metadata = await generateMetadata({
+        params: Promise.resolve({ ...params, locale: 'es' }),
+      });
+
+      expect(metadata.robots).toEqual({ index: false, follow: true });
+      expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr${path}`);
+
+      const languages = metadata.alternates?.languages as Record<string, string>;
+      expect(new Set(Object.keys(languages))).toEqual(new Set(['tr', 'en', 'x-default']));
+      expect(languages['es']).toBeUndefined();
+    }
+  );
+
+  it('keeps the quote form noindex in every locale', async () => {
+    const { generateMetadata } = await import('@/app/[locale]/quote/page');
+    const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr' }) });
+
+    expect(metadata.robots).toEqual({ index: false, follow: true });
+    expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr/quote`);
   });
 });

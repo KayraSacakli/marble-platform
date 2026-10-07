@@ -5,9 +5,10 @@ import { isLocale } from '@/types/locale';
 import { getProducts } from '@/lib/data/products';
 import { ProductGrid } from '@/components/product/ProductGrid';
 import { Pagination } from '@/components/product/Pagination';
+import { DEFAULT_PAGE_SIZE } from '@/types/api';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
-import { buildPageAlternates } from '@/lib/seo/constants';
+import { gatedMetadata, getSeoAvailability, sectionLocales } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: buildPageAlternates(locale, '/products'),
+    ...gatedMetadata(locale, '/products', sectionLocales(await getSeoAvailability(), 'products')),
   };
 }
 
@@ -47,7 +48,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
   }
 
   const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
-  const pageSize = 24;
+  const pageSize = DEFAULT_PAGE_SIZE;
 
   let result;
   try {

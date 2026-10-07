@@ -62,9 +62,9 @@ describe('Sitemap detail URLs (Phase 18D-4)', () => {
     entries = await sitemap();
   });
 
-  it('advertises every product/collection/application/project/journal slug per SEO locale', () => {
+  it('advertises every product/collection/application/project/journal slug per locale with content', () => {
     const urls = entries.map((e) => e.url);
-    for (const locale of SEO_LOCALES) {
+    for (const locale of ['tr', 'en']) {
       expect(urls).toContain(`${SITE_URL}/${locale}/products/demo-dark-stone`);
       expect(urls).toContain(`${SITE_URL}/${locale}/products/demo-white-stone`);
       expect(urls).toContain(`${SITE_URL}/${locale}/products/demo-gold-stone`); // page 2
@@ -75,12 +75,12 @@ describe('Sitemap detail URLs (Phase 18D-4)', () => {
     }
   });
 
-  it('keeps all 22 static entries alongside the detail entries', () => {
-    // 22 static + (3 products + 1 collection + 1 application + 1 project + 1 journal) × 2 locales = 36
-    expect(entries).toHaveLength(36);
+  it('keeps all 20 static entries alongside the detail entries', () => {
+    // 20 static (10 paths × the TR/EN content locales) + 7 detail slugs × 2 locales = 34
+    expect(entries).toHaveLength(34);
 
     const staticOnes = entries.filter((e) => !/\/(products|collections|applications|projects|journal)\/[^/]+$/.test(new URL(e.url).pathname));
-    expect(staticOnes).toHaveLength(22);
+    expect(staticOnes).toHaveLength(20);
   });
 
   it('only advertises SEO locales on detail URLs', () => {

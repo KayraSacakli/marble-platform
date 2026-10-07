@@ -3,14 +3,23 @@ import { SITE_URL } from '@/lib/seo/constants';
 
 vi.mock('@/lib/data/products', () => ({
   getProducts: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getProduct: vi.fn().mockResolvedValue({
+  getProduct: vi.fn(async (locale: string, slug: string) => ({
     id: 'prod-001',
     name: 'Calacatta Gold',
     slug: 'calacatta-gold',
     tagline: 'Premium Italian marble',
     description: 'A luxury marble',
     primaryImage: { src: '/images/calacatta.jpg', alt: 'Calacatta', width: 1200, height: 800 },
-    seo: { metaDescription: 'Calacatta Gold marble' },
+    seo: {
+      metaDescription: 'Calacatta Gold marble',
+      canonical: `${SITE_URL}/${locale}/products/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/products/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/products/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/products/${slug}` },
+      ],
+    },
     collections: [],
     applications: [],
     projects: [],
@@ -18,25 +27,34 @@ vi.mock('@/lib/data/products', () => ({
     journalArticles: [],
     gallery: [],
     quoteContextIdentifier: 'product:prod-001',
-  }),
+  })),
 }));
 
 vi.mock('@/lib/data/collections', () => ({
   getCollections: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getCollection: vi.fn().mockResolvedValue({
+  getCollection: vi.fn(async (locale: string, slug: string) => ({
     id: 'coll-001',
     name: 'Classic Collection',
     slug: 'classic-collection',
     description: 'Timeless classics',
     products: [],
     applications: [],
-    seo: { metaDescription: 'Classic marble collection' },
-  }),
+    seo: {
+      metaDescription: 'Classic marble collection',
+      canonical: `${SITE_URL}/${locale}/collections/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/collections/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/collections/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/collections/${slug}` },
+      ],
+    },
+  })),
 }));
 
 vi.mock('@/lib/data/applications', () => ({
   getApplications: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getApplication: vi.fn().mockResolvedValue({
+  getApplication: vi.fn(async (locale: string, slug: string) => ({
     id: 'app-001',
     name: 'Flooring',
     slug: 'flooring',
@@ -44,26 +62,44 @@ vi.mock('@/lib/data/applications', () => ({
     products: [],
     projects: [],
     journalArticles: [],
-    seo: { metaDescription: 'Marble flooring' },
-  }),
+    seo: {
+      metaDescription: 'Marble flooring',
+      canonical: `${SITE_URL}/${locale}/applications/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/applications/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/applications/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/applications/${slug}` },
+      ],
+    },
+  })),
 }));
 
 vi.mock('@/lib/data/projects', () => ({
   getProjects: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getProject: vi.fn().mockResolvedValue({
+  getProject: vi.fn(async (locale: string, slug: string) => ({
     id: 'proj-001',
     name: 'Marriott Hotel',
     slug: 'marriott-hotel',
     description: 'Hotel lobby project',
     products: [],
     applications: [],
-    seo: { metaDescription: 'Marriott hotel project' },
-  }),
+    seo: {
+      metaDescription: 'Marriott hotel project',
+      canonical: `${SITE_URL}/${locale}/projects/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/projects/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/projects/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/projects/${slug}` },
+      ],
+    },
+  })),
 }));
 
 vi.mock('@/lib/data/journal', () => ({
   getJournal: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
-  getJournalArticle: vi.fn().mockResolvedValue({
+  getJournalArticle: vi.fn(async (locale: string, slug: string) => ({
     id: 'journ-001',
     title: 'Marble Trends 2026',
     slug: 'marble-trends-2026',
@@ -71,13 +107,22 @@ vi.mock('@/lib/data/journal', () => ({
     body: 'Full article body',
     publicationDate: '2026-01-15T00:00:00.000Z',
     author: 'Test Author',
-    seo: { metaDescription: 'Marble trends' },
+    seo: {
+      metaDescription: 'Marble trends',
+      canonical: `${SITE_URL}/${locale}/journal/${slug}`,
+      robots: 'index',
+      hreflang: [
+        { lang: 'tr', href: `${SITE_URL}/tr/journal/${slug}` },
+        { lang: 'en', href: `${SITE_URL}/en/journal/${slug}` },
+        { lang: 'x-default', href: `${SITE_URL}/tr/journal/${slug}` },
+      ],
+    },
     coverImage: null,
     relatedProducts: [],
     relatedApplications: [],
     relatedProjects: [],
     relatedArticles: [],
-  }),
+  })),
 }));
 
 vi.mock('@/lib/data/company', () => ({

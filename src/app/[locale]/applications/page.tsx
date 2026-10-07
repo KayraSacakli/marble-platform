@@ -4,12 +4,15 @@ import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getApplications } from '@/lib/data/applications';
 import { ApplicationGrid } from '@/components/application/ApplicationGrid';
+import { Pagination } from '@/components/product/Pagination';
+import { DEFAULT_PAGE_SIZE } from '@/types/api';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
-import { buildPageAlternates } from '@/lib/seo/constants';
+import { gatedMetadata, getSeoAvailability, sectionLocales } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -32,25 +35,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: buildPageAlternates(locale, '/applications'),
+    ...gatedMetadata(locale, '/applications', sectionLocales(await getSeoAvailability(), 'applications')),
   };
 }
 
-export default async function ApplicationsPage({ params }: PageProps) {
+export default async function ApplicationsPage({ params, searchParams }: PageProps) {
   const { locale } = await params;
+  const { page: pageParam } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
   }
 
+  const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
+  const pageSize = DEFAULT_PAGE_SIZE;
+
   let result;
   try {
-    result = await getApplications(locale);
+    result = await getApplications(locale, { page, pageSize });
   } catch (error) {
     notFoundOnlyWhenMissing(error);
   }
 
-  const { data: applications } = result;
+  const { data: applications, meta } = result;
 
   return (
     <main className="application-page">
@@ -94,7 +101,15 @@ export default async function ApplicationsPage({ params }: PageProps) {
             </a>
           </div>
         ) : (
-          <ApplicationGrid applications={applications} />
+          <>
+            <ApplicationGrid applications={applications} locale={locale} />
+            <Pagination
+              currentPage={meta.page}
+              totalPages={meta.totalPages}
+              locale={locale}
+              basePath="/applications"
+            />
+          </>
         )}
       </Container>
     </main>

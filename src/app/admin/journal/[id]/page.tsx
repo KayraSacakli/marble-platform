@@ -19,6 +19,7 @@ function toFormValues(a: Awaited<ReturnType<typeof getAdminEditorial>>): Taxonom
     seoTitle: string | null;
     seoDescription: string | null;
     seoCanonical: string | null;
+    seoRobots: string | null;
     isFeatured: boolean;
     featuredOrder: number | null;
     displayOrder: number | null;
@@ -30,6 +31,7 @@ function toFormValues(a: Awaited<ReturnType<typeof getAdminEditorial>>): Taxonom
     seoTitle: v?.seoTitle ?? '',
     seoDescription: v?.seoDescription ?? '',
     seoCanonical: v?.seoCanonical ?? '',
+    seoRobots: v?.seoRobots ?? '',
     isFeatured: v?.isFeatured ?? false,
     featuredOrder: v?.featuredOrder != null ? String(v.featuredOrder) : '',
     displayOrder: v?.displayOrder != null ? String(v.displayOrder) : '',

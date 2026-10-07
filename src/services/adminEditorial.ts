@@ -14,7 +14,9 @@ import type {
   AdminProjectUpdateInput,
   AdminJournalCreateInput,
   AdminJournalUpdateInput,
+  SeoRobotsValue,
 } from '@/lib/api/validation';
+import { SUPPORTED_LOCALES, type Locale } from '@/types/locale';
 
 // ============================================================
 // Admin Project / JournalArticle management (server-side,
@@ -60,6 +62,7 @@ export interface AdminEditorialVariant {
   seoTitle: string | null;
   seoDescription: string | null;
   seoCanonical: string | null;
+  seoRobots: string | null;
   isFeatured: boolean;
   featuredOrder: number | null;
   displayOrder: number | null;
@@ -79,6 +82,7 @@ export interface AdminEditorial {
   updatedAt: string;
   tr: AdminEditorialVariant | null;
   en: AdminEditorialVariant | null;
+  variants: Partial<Record<Locale, AdminEditorialVariant>>;
 }
 
 type VariantRow = {
@@ -91,6 +95,7 @@ type VariantRow = {
   seoTitle: string | null;
   seoDescription: string | null;
   seoCanonical: string | null;
+  seoRobots: string | null;
   isFeatured: boolean;
   featuredOrder: number | null;
   displayOrder: number | null;
@@ -109,11 +114,12 @@ type ItemWithExt = {
 };
 
 function toAdminEditorial(kind: EditorialKind, item: ItemWithExt): AdminEditorial {
-  const byLocale = (locale: string): AdminEditorialVariant | null => {
+  const variants: Partial<Record<Locale, AdminEditorialVariant>> = {};
+  for (const locale of SUPPORTED_LOCALES) {
     const v = item.variants.find((variant) => variant.locale === locale);
-    if (!v) return null;
-    return { ...v, draft: null };
-  };
+    if (!v) continue;
+    variants[locale] = { ...v, draft: null };
+  }
   return {
     id: item.id,
     kind,
@@ -124,8 +130,9 @@ function toAdminEditorial(kind: EditorialKind, item: ItemWithExt): AdminEditoria
     authorName: item.journalArticle?.authorName ?? null,
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
-    tr: byLocale('tr'),
-    en: byLocale('en'),
+    tr: variants.tr ?? null,
+    en: variants.en ?? null,
+    variants,
   };
 }
 
@@ -161,12 +168,13 @@ type VariantInput = {
   seoTitle?: string;
   seoDescription?: string;
   seoCanonical?: string;
+  seoRobots?: SeoRobotsValue;
   isFeatured?: boolean;
   featuredOrder?: number | null;
   displayOrder?: number | null;
 };
 
-function variantCreateData(locale: 'tr' | 'en', input: VariantInput) {
+function variantCreateData(locale: Locale, input: VariantInput) {
   return {
     locale,
     lifecycleState: 'DRAFT' as const,
@@ -177,6 +185,7 @@ function variantCreateData(locale: 'tr' | 'en', input: VariantInput) {
     seoTitle: input.seoTitle ?? undefined,
     seoDescription: input.seoDescription ?? undefined,
     seoCanonical: input.seoCanonical ?? undefined,
+    seoRobots: input.seoRobots ?? undefined,
     isFeatured: input.isFeatured ?? false,
     featuredOrder: input.featuredOrder ?? undefined,
     displayOrder: input.displayOrder ?? undefined,
@@ -192,6 +201,7 @@ function snapshotInput(kind: EditorialKind, localeInput: VariantInput, ext: Reco
     seoTitle: localeInput.seoTitle ?? null,
     seoDescription: localeInput.seoDescription ?? null,
     seoCanonical: localeInput.seoCanonical ?? null,
+    seoRobots: localeInput.seoRobots ?? null,
     isFeatured: localeInput.isFeatured ?? false,
     featuredOrder: localeInput.featuredOrder ?? null,
     displayOrder: localeInput.displayOrder ?? null,
@@ -211,7 +221,7 @@ function snapshotInput(kind: EditorialKind, localeInput: VariantInput, ext: Reco
 }
 
 function mergeVariantPatch(target: DraftSnapshot, patch: Record<string, unknown>): void {
-  for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+  for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
     if (patch[key] !== undefined) {
       (target as Record<string, unknown>)[key] = patch[key];
     }
@@ -252,8 +262,8 @@ export async function listAdminEditorial(kind: EditorialKind, options: { page?: 
 export async function getAdminEditorial(kind: EditorialKind, id: string): Promise<AdminEditorial> {
   const item = await findItemOrThrow(kind, id);
   const view = toAdminEditorial(kind, item as unknown as ItemWithExt);
-  for (const locale of ['tr', 'en'] as const) {
-    const cell = view[locale];
+  for (const locale of SUPPORTED_LOCALES) {
+    const cell = view.variants[locale];
     if (!cell) continue;
     const variant = (item as unknown as ItemWithExt & { variants: Array<VariantRow & { id: string }> }).variants.find(
       (v) => v.locale === locale
@@ -269,6 +279,7 @@ export async function getAdminEditorial(kind: EditorialKind, id: string): Promis
     if (snapshot.seoTitle !== undefined) cell.seoTitle = snapshot.seoTitle ?? null;
     if (snapshot.seoDescription !== undefined) cell.seoDescription = snapshot.seoDescription ?? null;
     if (snapshot.seoCanonical !== undefined) cell.seoCanonical = snapshot.seoCanonical ?? null;
+    if (snapshot.seoRobots !== undefined) cell.seoRobots = snapshot.seoRobots ?? null;
     if (snapshot.isFeatured !== undefined) cell.isFeatured = snapshot.isFeatured;
     if (snapshot.featuredOrder !== undefined) cell.featuredOrder = snapshot.featuredOrder;
     if (snapshot.displayOrder !== undefined) cell.displayOrder = snapshot.displayOrder;
@@ -288,8 +299,12 @@ export async function getAdminEditorial(kind: EditorialKind, id: string): Promis
 type CreateInput = AdminProjectCreateInput | AdminJournalCreateInput;
 
 export async function createAdminEditorial(kind: EditorialKind, input: CreateInput, actorId: string): Promise<AdminEditorial> {
-  await assertSlugAvailable('tr', input.tr.slug);
-  await assertSlugAvailable('en', input.en.slug);
+  const locales = SUPPORTED_LOCALES.filter((l) => input[l]);
+  for (const locale of locales) {
+    const localeInput = input[locale];
+    if (!localeInput) continue;
+    await assertSlugAvailable(locale, localeInput.slug);
+  }
 
   const extCreate =
     kind === 'PROJECT'
@@ -316,7 +331,10 @@ export async function createAdminEditorial(kind: EditorialKind, input: CreateInp
       aggregateState: 'DRAFT',
       ...extCreate,
       variants: {
-        create: [variantCreateData('tr', input.tr), variantCreateData('en', input.en)],
+        create: locales.flatMap((locale) => {
+          const localeInput = input[locale];
+          return localeInput ? [variantCreateData(locale, localeInput)] : [];
+        }),
       },
     },
     include: { ...itemInclude, variants: { orderBy: { locale: 'asc' as const } } },
@@ -334,7 +352,8 @@ export async function createAdminEditorial(kind: EditorialKind, input: CreateInp
         };
 
   for (const variant of item.variants) {
-    const localeInput = variant.locale === 'en' ? input.en : input.tr;
+    const localeInput = input[variant.locale as Locale];
+    if (!localeInput) continue;
     const created = await prisma.contentRevision.create({
       data: {
         contentVariantId: variant.id,
@@ -372,21 +391,21 @@ export async function updateAdminEditorial(
   const item = await findItemOrThrow(kind, id);
   const typed = item as unknown as ItemWithExt & { variants: Array<VariantRow & { id: string }> };
 
-  if (input.tr?.slug) {
-    await assertSlugAvailable('tr', input.tr.slug, id);
-  }
-  if (input.en?.slug) {
-    await assertSlugAvailable('en', input.en.slug, id);
+  for (const locale of SUPPORTED_LOCALES) {
+    const localeInput = input[locale];
+    if (localeInput?.slug) {
+      await assertSlugAvailable(locale, localeInput.slug, id);
+    }
   }
 
   const extPatch: Record<string, unknown> = {};
-  for (const key of Object.keys(input).filter((k) => k !== 'tr' && k !== 'en')) {
+  for (const key of Object.keys(input).filter((k) => !SUPPORTED_LOCALES.includes(k as Locale))) {
     const value = (input as Record<string, unknown>)[key];
     if (value !== undefined) extPatch[key] = value === '' ? null : value;
   }
   const hasExtPatch = Object.keys(extPatch).length > 0;
 
-  for (const locale of ['tr', 'en'] as const) {
+  for (const locale of SUPPORTED_LOCALES) {
     const patch = (input[locale] ?? {}) as Record<string, unknown>;
     const variant = typed.variants.find((v) => v.locale === locale);
     if (!variant) continue;
@@ -439,6 +458,7 @@ export async function updateAdminEditorial(
           ...(patch.seoTitle !== undefined ? { seoTitle: patch.seoTitle } : {}),
           ...(patch.seoDescription !== undefined ? { seoDescription: patch.seoDescription } : {}),
           ...(patch.seoCanonical !== undefined ? { seoCanonical: patch.seoCanonical } : {}),
+          ...(patch.seoRobots !== undefined ? { seoRobots: patch.seoRobots } : {}),
           ...(patch.isFeatured !== undefined ? { isFeatured: patch.isFeatured as boolean } : {}),
           ...(patch.featuredOrder !== undefined ? { featuredOrder: patch.featuredOrder as number | null } : {}),
           ...(patch.displayOrder !== undefined ? { displayOrder: patch.displayOrder as number | null } : {}),
@@ -456,7 +476,7 @@ export async function updateAdminEditorial(
   }
 
   await writeAudit(actorId, KINDS[kind].updateAction, id, {
-    patchedLocales: ['tr', 'en'].filter((l) => (input as Record<string, unknown>)[l]),
+    patchedLocales: SUPPORTED_LOCALES.filter((l) => (input as Record<string, unknown>)[l]),
   });
 
   return getAdminEditorial(kind, id);

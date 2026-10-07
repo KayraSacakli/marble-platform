@@ -4,12 +4,15 @@ import type { Metadata } from 'next';
 import { isLocale } from '@/types/locale';
 import { getCollections } from '@/lib/data/collections';
 import { CollectionGrid } from '@/components/collection/CollectionGrid';
+import { Pagination } from '@/components/product/Pagination';
+import { DEFAULT_PAGE_SIZE } from '@/types/api';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
-import { buildPageAlternates } from '@/lib/seo/constants';
+import { gatedMetadata, getSeoAvailability, sectionLocales } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -32,25 +35,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    alternates: buildPageAlternates(locale, '/collections'),
+    ...gatedMetadata(locale, '/collections', sectionLocales(await getSeoAvailability(), 'collections')),
   };
 }
 
-export default async function CollectionsPage({ params }: PageProps) {
+export default async function CollectionsPage({ params, searchParams }: PageProps) {
   const { locale } = await params;
+  const { page: pageParam } = await searchParams;
 
   if (!isLocale(locale)) {
     notFound();
   }
 
+  const page = Math.max(1, parseInt(pageParam || '1', 10) || 1);
+  const pageSize = DEFAULT_PAGE_SIZE;
+
   let result;
   try {
-    result = await getCollections(locale);
+    result = await getCollections(locale, { page, pageSize });
   } catch (error) {
     notFoundOnlyWhenMissing(error);
   }
 
-  const { data: collections } = result;
+  const { data: collections, meta } = result;
 
   return (
     <main className="collection-page">
@@ -94,7 +101,15 @@ export default async function CollectionsPage({ params }: PageProps) {
             </a>
           </div>
         ) : (
-          <CollectionGrid collections={collections} />
+          <>
+            <CollectionGrid collections={collections} locale={locale} />
+            <Pagination
+              currentPage={meta.page}
+              totalPages={meta.totalPages}
+              locale={locale}
+              basePath="/collections"
+            />
+          </>
         )}
       </Container>
     </main>

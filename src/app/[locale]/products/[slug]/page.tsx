@@ -9,7 +9,8 @@ import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd, ProductJsonLd } from '@/components/seo';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { metadataFromSeoData } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: product.primaryImage ? [{ url: product.primaryImage.src, alt: product.primaryImage.alt, width: product.primaryImage.width, height: product.primaryImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: buildPageAlternates(locale, `/products/${product.slug}`),
+      ...metadataFromSeoData(product.seo),
     };
   } catch {
     return {};
@@ -95,7 +96,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             )}
 
             <div className="product-hero__cta">
-              <a href={`/quote?product=${product.quoteContextIdentifier}`} className="button button--primary button--lg">
+              <a href={`/${locale}/quote?product=${product.quoteContextIdentifier}`} className="button button--primary button--lg">
                 {locale === 'tr' ? 'Teklif İste' : 'Request a Quote'}
               </a>
             </div>
@@ -146,7 +147,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               ? 'Projeniz için doğru malzemeyi seçmenize yardımcı olalım.'
               : 'Let us help you choose the right material for your project.'}
           </p>
-          <a href={`/quote?product=${product.quoteContextIdentifier}`} className="button button--primary button--lg">
+          <a href={`/${locale}/quote?product=${product.quoteContextIdentifier}`} className="button button--primary button--lg">
             {locale === 'tr' ? 'Teklif İste' : 'Request a Quote'}
           </a>
         </section>

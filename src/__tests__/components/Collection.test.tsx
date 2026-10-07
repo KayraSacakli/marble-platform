@@ -40,48 +40,48 @@ const mockCollectionSummaryNoImage = {
 
 describe('CollectionCard', () => {
   it('renders collection name', () => {
-    render(<CollectionCard collection={mockCollectionSummary} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummary} />);
     expect(screen.getByRole('heading', { name: 'Test Collection' })).toBeInTheDocument();
   });
 
   it('renders collection description', () => {
-    render(<CollectionCard collection={mockCollectionSummary} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummary} />);
     expect(screen.getByText('A test collection')).toBeInTheDocument();
   });
 
   it('renders image when available', () => {
-    render(<CollectionCard collection={mockCollectionSummaryWithImage} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummaryWithImage} />);
     const img = screen.getByRole('img');
     expect(decodeURIComponent(img.getAttribute('src') ?? '')).toContain('/images/collection.jpg');
     expect(img).toHaveAttribute('alt', 'Test collection image');
   });
 
   it('renders fallback when no image', () => {
-    render(<CollectionCard collection={mockCollectionSummaryNoImage} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummaryNoImage} />);
     expect(screen.getAllByText('Collection Without Image').length).toBeGreaterThanOrEqual(1);
   });
 
   it('links to collection detail', () => {
-    render(<CollectionCard collection={mockCollectionSummary} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummary} />);
     const link = screen.getByRole('link', { name: 'Test Collection' });
-    expect(link).toHaveAttribute('href', '/collections/test-collection');
+    expect(link).toHaveAttribute('href', '/en/collections/test-collection');
   });
 
   it('has accessible name', () => {
-    render(<CollectionCard collection={mockCollectionSummary} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummary} />);
     const link = screen.getByRole('link', { name: 'Test Collection' });
     expect(link).toBeInTheDocument();
   });
 
   it('loads image eagerly when priority', () => {
-    render(<CollectionCard collection={mockCollectionSummaryWithImage} priority />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummaryWithImage} priority />);
     const img = screen.getByRole('img');
     // next/image omits the loading attribute for priority images (eager + preload).
     expect(img.getAttribute('loading')).toBeNull();
   });
 
   it('loads image lazily when not priority', () => {
-    render(<CollectionCard collection={mockCollectionSummaryWithImage} />);
+    render(<CollectionCard locale="en" collection={mockCollectionSummaryWithImage} />);
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('loading', 'lazy');
   });
@@ -89,19 +89,19 @@ describe('CollectionCard', () => {
 
 describe('CollectionGrid', () => {
   it('renders collection cards', () => {
-    render(<CollectionGrid collections={[mockCollectionSummary, mockCollectionSummaryNoImage]} />);
+    render(<CollectionGrid locale="en" collections={[mockCollectionSummary, mockCollectionSummaryNoImage]} />);
     expect(screen.getByRole('heading', { name: 'Test Collection' })).toBeInTheDocument();
     expect(screen.getAllByText('Collection Without Image').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders correct number of cards', () => {
-    render(<CollectionGrid collections={[mockCollectionSummary, mockCollectionSummaryNoImage]} />);
+    render(<CollectionGrid locale="en" collections={[mockCollectionSummary, mockCollectionSummaryNoImage]} />);
     const links = screen.getAllByRole('link', { name: /test collection|collection without/i });
     expect(links.length).toBe(2);
   });
 
   it('returns null for empty array', () => {
-    const { container } = render(<CollectionGrid collections={[]} />);
+    const { container } = render(<CollectionGrid locale="en" collections={[]} />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -112,7 +112,7 @@ describe('CollectionGrid', () => {
       { ...mockCollectionSummary, id: '3', name: 'Collection 3' },
       { ...mockCollectionSummary, id: '4', name: 'Collection 4' },
     ];
-    render(<CollectionGrid collections={collections} />);
+    render(<CollectionGrid locale="en" collections={collections} />);
     const images = screen.getAllByRole('img');
     // Priority images never carry loading="lazy"; Next omits the attribute.
     expect(images[0].getAttribute('loading')).toBeNull();

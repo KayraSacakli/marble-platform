@@ -53,8 +53,8 @@ A **node** is any publicly accessible content entity identified by its localized
 | Node Type | URL Pattern | Localized? | Lifecycle-gated? |
 |---|---|---|---|
 | Homepage | `/{locale}/` | Yes | Published |
-| Product | `/{locale}/marbles/{slug}` | Yes | Published + product gate |
-| Product Listing | `/{locale}/marbles` | Yes | At least one eligible product |
+| Product | `/{locale}/products/{slug}` | Yes | Published + product gate |
+| Product Listing | `/{locale}/products` | Yes | At least one eligible product |
 | Collection | `/{locale}/collections/{slug}` | Yes | Published |
 | Collection Listing | `/{locale}/collections` | Yes | At least one eligible collection |
 | Application | `/{locale}/applications/{slug}` | Yes | Published |
@@ -528,7 +528,7 @@ BreadcrumbList structured data is recommended for all hierarchical pages. Implem
 | Link | Target (TR) | Target (EN) | Conditional? |
 |---|---|---|---|
 | Homepage | `/tr/` | `/en/` | No |
-| Marbles | `/tr/marbles` | `/en/marbles` | No |
+| Marbles | `/tr/products` | `/en/products` | No |
 | Collections | `/tr/collections` | `/en/collections` | No |
 | Applications | `/tr/applications` | `/en/applications` | No |
 | Projects | `/tr/projects` | `/en/projects` | Yes (qualifying projects exist) |

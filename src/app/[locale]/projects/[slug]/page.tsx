@@ -8,7 +8,8 @@ import { ProductCard } from '@/components/product/ProductCard';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
-import { SITE_URL, buildPageAlternates } from '@/lib/seo/constants';
+import { SITE_URL } from '@/lib/seo/constants';
+import { metadataFromSeoData } from '@/lib/seo/gates';
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         images: project.heroImage ? [{ url: project.heroImage.src, alt: project.heroImage.alt, width: project.heroImage.width, height: project.heroImage.height }] : [],
       },
       twitter: { card: 'summary_large_image', title, description },
-      alternates: buildPageAlternates(locale, `/projects/${project.slug}`),
+      ...metadataFromSeoData(project.seo),
     };
   } catch {
     return {};

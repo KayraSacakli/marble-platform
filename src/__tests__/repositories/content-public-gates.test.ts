@@ -104,3 +104,39 @@ describe('journal list orderBy shape', () => {
     expect(orderBy).toEqual([{ name: 'asc' }, { createdAt: 'desc' }]);
   });
 });
+
+describe('seoAvailability content gates', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    findMany.mockResolvedValue([] as never);
+  });
+
+  it('reads only ACTIVE published variants of supported locales', async () => {
+    await contentRepository.seoAvailability();
+
+    expect(findMany.mock.calls[0][0]?.where).toEqual({
+      contentItem: { aggregateState: 'ACTIVE' },
+      lifecycleState: 'PUBLISHED',
+      locale: { in: ['tr', 'en', 'es', 'fr', 'de', 'it', 'ar'] },
+    });
+  });
+
+  it('groups published variants per section and company page in locale order', async () => {
+    findMany.mockResolvedValue([
+      { locale: 'en', contentItem: { type: 'PRODUCT', companyContent: null } },
+      { locale: 'tr', contentItem: { type: 'PRODUCT', companyContent: null } },
+      { locale: 'de', contentItem: { type: 'COMPANY_CONTENT', companyContent: { kind: 'FACTORY' } } },
+      { locale: 'fr', contentItem: { type: 'COMPANY_CONTENT', companyContent: { kind: 'ABOUT' } } },
+      { locale: 'tr', contentItem: { type: 'PROJECT', companyContent: null } },
+    ] as never);
+
+    const availability = await contentRepository.seoAvailability();
+
+    expect(availability.sections.products).toEqual(['tr', 'en']);
+    expect(availability.sections.projects).toEqual(['tr']);
+    expect(availability.sections.collections).toEqual([]);
+    expect(availability.company.about).toEqual(['fr']);
+    expect(availability.company.factory).toEqual(['de']);
+    expect(availability.company.quarry).toEqual([]);
+  });
+});

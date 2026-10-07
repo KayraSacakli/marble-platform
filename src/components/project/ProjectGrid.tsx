@@ -3,9 +3,10 @@ import { ProjectCard } from './ProjectCard';
 
 interface ProjectGridProps {
   projects: ProjectSummary[];
+  locale: string;
 }
 
-export function ProjectGrid({ projects }: ProjectGridProps) {
+export function ProjectGrid({ projects, locale }: ProjectGridProps) {
   if (projects.length === 0) return null;
 
   return (
@@ -14,6 +15,7 @@ export function ProjectGrid({ projects }: ProjectGridProps) {
         <ProjectCard
           key={project.id}
           project={project}
+          locale={locale}
           priority={index < 3}
         />
       ))}
