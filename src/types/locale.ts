@@ -44,7 +44,9 @@ export function isLocale(value: string): value is Locale {
 
 export function assertLocale(value: string): Locale {
   if (!isLocale(value)) {
-    throw new Error(`Invalid locale: "${value}". Supported locales: ${SUPPORTED_LOCALES.join(', ')}`);
+    throw new Error(
+      `Invalid locale: "${value}". Supported locales: ${SUPPORTED_LOCALES.join(', ')}`,
+    );
   }
   return value;
 }

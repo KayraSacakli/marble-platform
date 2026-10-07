@@ -34,7 +34,7 @@ describe('JSON-LD Components', () => {
         headline="Test Article"
         url="/tr/journal/test"
         datePublished="2026-01-15T00:00:00.000Z"
-      />
+      />,
     );
     const data = getLatestJsonLd();
 
@@ -54,12 +54,12 @@ describe('JSON-LD Components', () => {
           { name: 'Products', href: '/tr/products' },
           { name: 'Test' },
         ]}
-      />
+      />,
     );
     const data = getLatestJsonLd();
 
     expect(data['@type']).toBe('BreadcrumbList');
-    expect((data.itemListElement as unknown[])).toHaveLength(3);
+    expect(data.itemListElement as unknown[]).toHaveLength(3);
   });
 
   it('OrganizationJsonLd renders valid JSON', async () => {

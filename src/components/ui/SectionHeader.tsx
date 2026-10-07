@@ -20,7 +20,11 @@ export function SectionHeader({
       {eyebrow && (
         <span
           className="text-label"
-          style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+          style={{
+            color: 'var(--color-text-secondary)',
+            display: 'block',
+            marginBottom: 'var(--space-3)',
+          }}
         >
           {eyebrow}
         </span>

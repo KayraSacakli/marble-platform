@@ -132,7 +132,9 @@ export function QuoteForm({ locale, context }: QuoteFormProps) {
           }
         }
         setFieldErrors(newFieldErrors);
-        setGlobalError(errData.error?.message ?? (locale === 'tr' ? 'Bir hata oluştu.' : 'An error occurred.'));
+        setGlobalError(
+          errData.error?.message ?? (locale === 'tr' ? 'Bir hata oluştu.' : 'An error occurred.'),
+        );
         setStatus('error');
         return;
       }
@@ -142,7 +144,11 @@ export function QuoteForm({ locale, context }: QuoteFormProps) {
       setStatus('success');
       form.reset();
     } catch {
-      setGlobalError(locale === 'tr' ? 'Bağlantı hatası. Lütfen tekrar deneyin.' : 'Connection error. Please try again.');
+      setGlobalError(
+        locale === 'tr'
+          ? 'Bağlantı hatası. Lütfen tekrar deneyin.'
+          : 'Connection error. Please try again.',
+      );
       setStatus('error');
     }
   }
@@ -152,23 +158,35 @@ export function QuoteForm({ locale, context }: QuoteFormProps) {
       {globalError && (
         <div className="quote-errors" role="alert" aria-live="assertive" id={errorSummaryId}>
           <p className="quote-errors__title">
-            {locale === 'tr' ? 'Lütfen aşağıdaki hataları düzeltin:' : 'Please fix the following errors:'}
+            {locale === 'tr'
+              ? 'Lütfen aşağıdaki hataları düzeltin:'
+              : 'Please fix the following errors:'}
           </p>
           <p className="quote-errors__item">{globalError}</p>
         </div>
       )}
 
-      <form className="quote-form" onSubmit={handleSubmit} noValidate aria-describedby={globalError ? errorSummaryId : undefined}>
+      <form
+        className="quote-form"
+        onSubmit={handleSubmit}
+        noValidate
+        aria-describedby={globalError ? errorSummaryId : undefined}
+      >
         {context && (
           <div className="quote-form__context">
             <span className="quote-form__context-label">
-              {locale === 'tr' ? 'İlgili' : 'Related'}
-              {' '}
+              {locale === 'tr' ? 'İlgili' : 'Related'}{' '}
               {context.contextKind === 'PRODUCT'
-                ? locale === 'tr' ? 'Ürün' : 'Product'
+                ? locale === 'tr'
+                  ? 'Ürün'
+                  : 'Product'
                 : context.contextKind === 'PROJECT'
-                  ? locale === 'tr' ? 'Proje' : 'Project'
-                  : locale === 'tr' ? 'Uygulama' : 'Application'}
+                  ? locale === 'tr'
+                    ? 'Proje'
+                    : 'Project'
+                  : locale === 'tr'
+                    ? 'Uygulama'
+                    : 'Application'}
             </span>
             <span className="quote-form__context-value">{context.name}</span>
           </div>
@@ -243,7 +261,9 @@ export function QuoteForm({ locale, context }: QuoteFormProps) {
                 autoComplete="organization"
                 error={!!fieldErrors.company}
                 disabled={isSubmitting}
-                placeholder={locale === 'tr' ? 'Şirket adı (isteğe bağlı)' : 'Company name (optional)'}
+                placeholder={
+                  locale === 'tr' ? 'Şirket adı (isteğe bağlı)' : 'Company name (optional)'
+                }
               />
             </Field>
           </div>
@@ -285,8 +305,12 @@ export function QuoteForm({ locale, context }: QuoteFormProps) {
             style={{ width: '100%' }}
           >
             {isSubmitting
-              ? (locale === 'tr' ? 'Gönderiliyor...' : 'Submitting...')
-              : (locale === 'tr' ? 'Teklif Talebi Gönder' : 'Submit Quote Request')}
+              ? locale === 'tr'
+                ? 'Gönderiliyor...'
+                : 'Submitting...'
+              : locale === 'tr'
+                ? 'Teklif Talebi Gönder'
+                : 'Submit Quote Request'}
           </button>
         </div>
       </form>

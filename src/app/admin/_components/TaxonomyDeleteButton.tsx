@@ -3,7 +3,15 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export function TaxonomyDeleteButton({ base, id, name }: { base: string; id: string; name: string }) {
+export function TaxonomyDeleteButton({
+  base,
+  id,
+  name,
+}: {
+  base: string;
+  id: string;
+  name: string;
+}) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +45,13 @@ export function TaxonomyDeleteButton({ base, id, name }: { base: string; id: str
         type="button"
         onClick={onClick}
         disabled={pending}
-        style={{ color: '#b00020', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        style={{
+          color: '#b00020',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
       >
         {pending ? 'Deleting…' : 'Delete'}
       </button>

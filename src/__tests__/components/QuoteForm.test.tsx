@@ -39,10 +39,14 @@ function getInput(container: HTMLElement, name: string) {
 
 function fillForm(container: HTMLElement) {
   fireEvent.change(getInput(container, 'contactName'), { target: { value: 'John Doe' } });
-  fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'john@example.invalid' } });
+  fireEvent.change(getInput(container, 'contactEmail'), {
+    target: { value: 'john@example.invalid' },
+  });
   fireEvent.change(getInput(container, 'contactPhone'), { target: { value: '+1 555 123 4567' } });
   fireEvent.change(getInput(container, 'company'), { target: { value: 'Acme Corp' } });
-  fireEvent.change(getInput(container, 'message'), { target: { value: 'I need marble for a hotel lobby.' } });
+  fireEvent.change(getInput(container, 'message'), {
+    target: { value: 'I need marble for a hotel lobby.' },
+  });
 }
 
 describe('QuoteForm', () => {
@@ -84,7 +88,7 @@ describe('QuoteForm', () => {
       <QuoteForm
         locale="en"
         context={{ contextKind: 'PRODUCT', name: 'Calacatta Gold', id: 'prod-1' }}
-      />
+      />,
     );
 
     expect(screen.getByText('Related Product')).toBeInTheDocument();
@@ -96,7 +100,7 @@ describe('QuoteForm', () => {
       <QuoteForm
         locale="en"
         context={{ contextKind: 'PROJECT', name: 'Marriott Hotel', id: 'proj-1' }}
-      />
+      />,
     );
 
     expect(screen.getByText('Related Project')).toBeInTheDocument();
@@ -124,7 +128,7 @@ describe('QuoteForm', () => {
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      })
+      }),
     );
 
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
@@ -143,11 +147,13 @@ describe('QuoteForm', () => {
       <QuoteForm
         locale="en"
         context={{ contextKind: 'PRODUCT', name: 'Calacatta', id: 'prod-123' }}
-      />
+      />,
     );
 
     fireEvent.change(getInput(container, 'contactName'), { target: { value: 'Jane' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'jane@test.invalid' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: 'jane@test.invalid' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: 'Price please' } });
 
     fireEvent.click(screen.getByRole('button', { name: /submit quote request/i }));
@@ -168,7 +174,9 @@ describe('QuoteForm', () => {
     const { container } = render(<QuoteForm locale="en" />);
 
     fireEvent.change(getInput(container, 'contactName'), { target: { value: 'Jane' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'jane@test.invalid' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: 'jane@test.invalid' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: 'Hello' } });
 
     fireEvent.click(screen.getByRole('button', { name: /submit quote request/i }));
@@ -187,7 +195,9 @@ describe('QuoteForm', () => {
     const { container } = render(<QuoteForm locale="en" />);
 
     fireEvent.change(getInput(container, 'contactName'), { target: { value: 'Jane' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'jane@test.invalid' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: 'jane@test.invalid' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: 'Hello' } });
 
     fireEvent.click(screen.getByRole('button', { name: /submit quote request/i }));
@@ -198,8 +208,14 @@ describe('QuoteForm', () => {
 
     expect(screen.getByText('Your Request Has Been Received')).toBeInTheDocument();
     expect(screen.getByText(/has been submitted successfully/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /explore products/i })).toHaveAttribute('href', '/en/products');
-    expect(screen.getByRole('link', { name: /view projects/i })).toHaveAttribute('href', '/en/projects');
+    expect(screen.getByRole('link', { name: /explore products/i })).toHaveAttribute(
+      'href',
+      '/en/products',
+    );
+    expect(screen.getByRole('link', { name: /view projects/i })).toHaveAttribute(
+      'href',
+      '/en/projects',
+    );
   });
 
   it('shows validation errors from API', async () => {
@@ -215,7 +231,9 @@ describe('QuoteForm', () => {
       expect(screen.getByText(/please fix the following errors/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/please fix the following errors/i).closest('.quote-errors')).toBeInTheDocument();
+    expect(
+      screen.getByText(/please fix the following errors/i).closest('.quote-errors'),
+    ).toBeInTheDocument();
   });
 
   it('shows network error on fetch failure', async () => {
@@ -223,7 +241,9 @@ describe('QuoteForm', () => {
     const { container } = render(<QuoteForm locale="en" />);
 
     fireEvent.change(getInput(container, 'contactName'), { target: { value: 'Jane' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'jane@test.invalid' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: 'jane@test.invalid' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: 'Hello' } });
 
     fireEvent.click(screen.getByRole('button', { name: /submit quote request/i }));
@@ -238,12 +258,17 @@ describe('QuoteForm', () => {
   it('disables submit button while submitting', async () => {
     let resolveFetch!: (value: unknown) => void;
     fetchSpy.mockImplementation(
-      () => new Promise((resolve) => { resolveFetch = resolve; })
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        }),
     );
 
     const { container } = render(<QuoteForm locale="en" />);
     fireEvent.change(getInput(container, 'contactName'), { target: { value: 'Jane' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'jane@test.invalid' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: 'jane@test.invalid' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: 'Hello' } });
 
     fireEvent.click(screen.getByRole('button', { name: /submit quote request/i }));
@@ -267,7 +292,9 @@ describe('QuoteForm', () => {
     const { container } = render(<QuoteForm locale="en" />);
 
     fireEvent.change(getInput(container, 'contactName'), { target: { value: 'Jane' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: 'jane@test.invalid' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: 'jane@test.invalid' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: 'Hello' } });
 
     const button = screen.getByRole('button', { name: /submit quote request/i });
@@ -284,7 +311,9 @@ describe('QuoteForm', () => {
     const { container } = render(<QuoteForm locale="en" />);
 
     fireEvent.change(getInput(container, 'contactName'), { target: { value: '  Jane Doe  ' } });
-    fireEvent.change(getInput(container, 'contactEmail'), { target: { value: '  jane@test.invalid  ' } });
+    fireEvent.change(getInput(container, 'contactEmail'), {
+      target: { value: '  jane@test.invalid  ' },
+    });
     fireEvent.change(getInput(container, 'message'), { target: { value: '  Hello  ' } });
 
     fireEvent.click(screen.getByRole('button', { name: /submit quote request/i }));

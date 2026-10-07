@@ -29,7 +29,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
       const details = Object.entries(fieldErrors).flatMap(([field, messages]) =>
-        (messages ?? []).map((message) => ({ field, code: 'INVALID', message }))
+        (messages ?? []).map((message) => ({ field, code: 'INVALID', message })),
       );
       throw new ValidationError('Validation failed', details);
     }
@@ -40,13 +40,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const res = NextResponse.json(
       { data: { user } },
-      { status: 200, headers: { 'x-request-id': requestId } }
+      { status: 200, headers: { 'x-request-id': requestId } },
     );
     res.headers.append('Set-Cookie', buildSessionCookie(token, ADMIN_SESSION_TTL_SECONDS));
     return res;
   } catch (error) {
     console.warn(
-      `[${requestId}] admin.login.failure email=${attemptEmail ?? 'unknown'} ip=${ip} reason=${error instanceof Error ? error.name : 'unknown'}`
+      `[${requestId}] admin.login.failure email=${attemptEmail ?? 'unknown'} ip=${ip} reason=${error instanceof Error ? error.name : 'unknown'}`,
     );
     return handleAdminError(error, requestId);
   }

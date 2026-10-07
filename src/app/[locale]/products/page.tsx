@@ -15,7 +15,11 @@ type PageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -72,13 +76,15 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
         <div className="catalogue-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Koleksiyon' : 'Collection'}
           </span>
-          <h1 className="text-h1">
-            {locale === 'tr' ? 'Mermer Kataloğu' : 'Marble Catalogue'}
-          </h1>
+          <h1 className="text-h1">{locale === 'tr' ? 'Mermer Kataloğu' : 'Marble Catalogue'}</h1>
           <p className="catalogue-page__intro">
             {locale === 'tr'
               ? 'Doğal taş koleksiyonumuzu keşfedin. Her mermer, benzersiz dokusu ve karakteriyle projelerinize değer katar.'
@@ -103,11 +109,7 @@ export default async function ProductsPage({ params, searchParams }: PageProps) 
         ) : (
           <>
             <ProductGrid products={products} locale={locale} />
-            <Pagination
-              currentPage={meta.page}
-              totalPages={meta.totalPages}
-              locale={locale}
-            />
+            <Pagination currentPage={meta.page} totalPages={meta.totalPages} locale={locale} />
           </>
         )}
       </Container>

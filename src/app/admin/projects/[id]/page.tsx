@@ -11,19 +11,21 @@ import { ProductMediaManager } from '../../products/[id]/ProductMediaManager';
 export const dynamic = 'force-dynamic';
 
 function toFormValues(p: Awaited<ReturnType<typeof getAdminEditorial>>): TaxonomyFormValues {
-  const pick = (v: {
-    slug: string;
-    name: string | null;
-    description: string | null;
-    tagline: string | null;
-    seoTitle: string | null;
-    seoDescription: string | null;
-    seoCanonical: string | null;
-    seoRobots: string | null;
-    isFeatured: boolean;
-    featuredOrder: number | null;
-    displayOrder: number | null;
-  } | null) => ({
+  const pick = (
+    v: {
+      slug: string;
+      name: string | null;
+      description: string | null;
+      tagline: string | null;
+      seoTitle: string | null;
+      seoDescription: string | null;
+      seoCanonical: string | null;
+      seoRobots: string | null;
+      isFeatured: boolean;
+      featuredOrder: number | null;
+      displayOrder: number | null;
+    } | null,
+  ) => ({
     slug: v?.slug ?? '',
     name: v?.name ?? '',
     description: v?.description ?? '',
@@ -39,7 +41,11 @@ function toFormValues(p: Awaited<ReturnType<typeof getAdminEditorial>>): Taxonom
   return { tr: pick(p.tr), en: pick(p.en) };
 }
 
-export default async function EditAdminProjectPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditAdminProjectPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     await requireAdminSession();
   } catch {
@@ -55,7 +61,14 @@ export default async function EditAdminProjectPage({ params }: { params: Promise
   const title = project.tr?.name ?? project.en?.name ?? id;
   const apiBase = `/api/v1/admin/projects/${project.id}`;
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', padding: '0 1.5rem', fontFamily: 'system-ui, sans-serif' }}>
+    <main
+      style={{
+        maxWidth: 760,
+        margin: '2rem auto',
+        padding: '0 1.5rem',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
       <p>
         <Link href="/admin/projects">← Projects</Link>
       </p>
@@ -78,7 +91,13 @@ export default async function EditAdminProjectPage({ params }: { params: Promise
           projectType: project.projectType ?? '',
         }}
       />
-      <RelationManager base={apiBase} title="Attached products" relationPath="products" idField="productId" optionsUrl="/api/v1/admin/products" />
+      <RelationManager
+        base={apiBase}
+        title="Attached products"
+        relationPath="products"
+        idField="productId"
+        optionsUrl="/api/v1/admin/products"
+      />
       <RelationManager
         base={apiBase}
         title="Attached applications"

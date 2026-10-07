@@ -43,7 +43,9 @@ vi.mock('@/lib/data/products', () => ({
 }));
 
 vi.mock('@/lib/data/collections', () => ({
-  getCollections: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
+  getCollections: vi
+    .fn()
+    .mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
   getCollection: vi.fn(async (locale: string, slug: string) => ({
     id: 'coll-001',
     name: 'Classic Collection',
@@ -65,7 +67,9 @@ vi.mock('@/lib/data/collections', () => ({
 }));
 
 vi.mock('@/lib/data/applications', () => ({
-  getApplications: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
+  getApplications: vi
+    .fn()
+    .mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
   getApplication: vi.fn(async (locale: string, slug: string) => ({
     id: 'app-001',
     name: 'Flooring',
@@ -138,9 +142,33 @@ vi.mock('@/lib/data/journal', () => ({
 }));
 
 vi.mock('@/lib/data/company', () => ({
-  getAbout: vi.fn().mockResolvedValue({ id: 'about-1', name: 'About Us', slug: 'about-us', description: 'About description', coverImage: null }),
-  getQuarry: vi.fn().mockResolvedValue({ id: 'quarry-1', name: 'Our Quarry', slug: 'our-quarry', description: 'Quarry description', coverImage: null }),
-  getFactory: vi.fn().mockResolvedValue({ id: 'factory-1', name: 'Our Factory', slug: 'our-factory', description: 'Factory description', coverImage: null }),
+  getAbout: vi
+    .fn()
+    .mockResolvedValue({
+      id: 'about-1',
+      name: 'About Us',
+      slug: 'about-us',
+      description: 'About description',
+      coverImage: null,
+    }),
+  getQuarry: vi
+    .fn()
+    .mockResolvedValue({
+      id: 'quarry-1',
+      name: 'Our Quarry',
+      slug: 'our-quarry',
+      description: 'Quarry description',
+      coverImage: null,
+    }),
+  getFactory: vi
+    .fn()
+    .mockResolvedValue({
+      id: 'factory-1',
+      name: 'Our Factory',
+      slug: 'our-factory',
+      description: 'Factory description',
+      coverImage: null,
+    }),
 }));
 
 import sitemap from '@/app/sitemap';
@@ -218,7 +246,9 @@ describe('Sitemap advertises only supported content locales', () => {
     expect(contact.changeFrequency).toBe('monthly');
     expect(contact.priority).toBe(0.7);
 
-    expect(entries.every((e) => typeof e.lastModified === 'object' && e.lastModified !== null)).toBe(true);
+    expect(
+      entries.every((e) => typeof e.lastModified === 'object' && e.lastModified !== null),
+    ).toBe(true);
   });
 });
 
@@ -238,7 +268,13 @@ describe('SEO locale source', () => {
 });
 
 describe('Hreflang / alternates', () => {
-  const paths = ['', '/products', '/products/calacatta-gold', '/journal/marble-trends-2026', '/quote'];
+  const paths = [
+    '',
+    '/products',
+    '/products/calacatta-gold',
+    '/journal/marble-trends-2026',
+    '/quote',
+  ];
 
   it('emits every supported locale plus x-default for every localized path', () => {
     for (const path of paths) {
@@ -272,7 +308,7 @@ describe('Canonical generation', () => {
       languages: buildFullAlternates('/products'),
     });
     expect(buildPageAlternates('tr', '/products/calacatta-gold')?.canonical).toBe(
-      `${SITE_URL}/tr/products/calacatta-gold`
+      `${SITE_URL}/tr/products/calacatta-gold`,
     );
     expect(buildPageAlternates('en', '')?.canonical).toBe(`${SITE_URL}/en`);
   });
@@ -301,7 +337,9 @@ describe('Canonical generation', () => {
       languages: expectedLanguages,
     });
 
-    expect(buildPageAlternates('es', '/products', ['en'])?.canonical).toBe(`${SITE_URL}/en/products`);
+    expect(buildPageAlternates('es', '/products', ['en'])?.canonical).toBe(
+      `${SITE_URL}/en/products`,
+    );
   });
 });
 
@@ -311,15 +349,35 @@ const LOCALIZED_PAGES: PageCase[] = [
   { module: '@/app/[locale]/layout', path: '', params: { locale: 'tr' } },
   { module: '@/app/[locale]/page', path: '', params: { locale: 'tr' } },
   { module: '@/app/[locale]/products/page', path: '/products', params: { locale: 'tr' } },
-  { module: '@/app/[locale]/products/[slug]/page', path: '/products/calacatta-gold', params: { locale: 'tr', slug: 'calacatta-gold' } },
+  {
+    module: '@/app/[locale]/products/[slug]/page',
+    path: '/products/calacatta-gold',
+    params: { locale: 'tr', slug: 'calacatta-gold' },
+  },
   { module: '@/app/[locale]/collections/page', path: '/collections', params: { locale: 'tr' } },
-  { module: '@/app/[locale]/collections/[slug]/page', path: '/collections/classic-collection', params: { locale: 'tr', slug: 'classic-collection' } },
+  {
+    module: '@/app/[locale]/collections/[slug]/page',
+    path: '/collections/classic-collection',
+    params: { locale: 'tr', slug: 'classic-collection' },
+  },
   { module: '@/app/[locale]/applications/page', path: '/applications', params: { locale: 'tr' } },
-  { module: '@/app/[locale]/applications/[slug]/page', path: '/applications/flooring', params: { locale: 'tr', slug: 'flooring' } },
+  {
+    module: '@/app/[locale]/applications/[slug]/page',
+    path: '/applications/flooring',
+    params: { locale: 'tr', slug: 'flooring' },
+  },
   { module: '@/app/[locale]/projects/page', path: '/projects', params: { locale: 'tr' } },
-  { module: '@/app/[locale]/projects/[slug]/page', path: '/projects/marriott-hotel', params: { locale: 'tr', slug: 'marriott-hotel' } },
+  {
+    module: '@/app/[locale]/projects/[slug]/page',
+    path: '/projects/marriott-hotel',
+    params: { locale: 'tr', slug: 'marriott-hotel' },
+  },
   { module: '@/app/[locale]/journal/page', path: '/journal', params: { locale: 'tr' } },
-  { module: '@/app/[locale]/journal/[slug]/page', path: '/journal/marble-trends-2026', params: { locale: 'tr', slug: 'marble-trends-2026' } },
+  {
+    module: '@/app/[locale]/journal/[slug]/page',
+    path: '/journal/marble-trends-2026',
+    params: { locale: 'tr', slug: 'marble-trends-2026' },
+  },
   { module: '@/app/[locale]/about/page', path: '/about', params: { locale: 'tr' } },
   { module: '@/app/[locale]/quarry/page', path: '/quarry', params: { locale: 'tr' } },
   { module: '@/app/[locale]/factory/page', path: '/factory', params: { locale: 'tr' } },
@@ -328,29 +386,35 @@ const LOCALIZED_PAGES: PageCase[] = [
 ];
 
 describe('Public pages still generate metadata with tr/en only', () => {
-  it.each(LOCALIZED_PAGES)('$module advertises exactly tr/en/x-default', async ({ module: mod, path, params }) => {
-    const { generateMetadata } = await import(mod);
-    const metadata = await generateMetadata({ params: Promise.resolve(params) });
+  it.each(LOCALIZED_PAGES)(
+    '$module advertises exactly tr/en/x-default',
+    async ({ module: mod, path, params }) => {
+      const { generateMetadata } = await import(mod);
+      const metadata = await generateMetadata({ params: Promise.resolve(params) });
 
-    expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr${path}`);
+      expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr${path}`);
 
-    const languages = metadata.alternates?.languages as Record<string, string>;
-    expect(Object.keys(languages).sort()).toEqual(['en', 'tr', 'x-default']);
-    expect(languages['tr']).toBe(`${SITE_URL}/tr${path}`);
-    expect(languages['en']).toBe(`${SITE_URL}/en${path}`);
-    expect(languages['x-default']).toBe(`${SITE_URL}/${DEFAULT_LOCALE}${path}`);
-  });
+      const languages = metadata.alternates?.languages as Record<string, string>;
+      expect(Object.keys(languages).sort()).toEqual(['en', 'tr', 'x-default']);
+      expect(languages['tr']).toBe(`${SITE_URL}/tr${path}`);
+      expect(languages['en']).toBe(`${SITE_URL}/en${path}`);
+      expect(languages['x-default']).toBe(`${SITE_URL}/${DEFAULT_LOCALE}${path}`);
+    },
+  );
 
-  it.each(LOCALIZED_PAGES)('$module keeps EN canonical correct', async ({ module: mod, path, params }) => {
-    const { generateMetadata } = await import(mod);
-    const metadata = await generateMetadata({
-      params: Promise.resolve({ ...params, locale: 'en' }),
-    });
+  it.each(LOCALIZED_PAGES)(
+    '$module keeps EN canonical correct',
+    async ({ module: mod, path, params }) => {
+      const { generateMetadata } = await import(mod);
+      const metadata = await generateMetadata({
+        params: Promise.resolve({ ...params, locale: 'en' }),
+      });
 
-    expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/en${path}`);
-    const languages = metadata.alternates?.languages as Record<string, string>;
-    expect(Object.keys(languages).sort()).toEqual(['en', 'tr', 'x-default']);
-  });
+      expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/en${path}`);
+      const languages = metadata.alternates?.languages as Record<string, string>;
+      expect(Object.keys(languages).sort()).toEqual(['en', 'tr', 'x-default']);
+    },
+  );
 
   const GATED_PAGES = LOCALIZED_PAGES.filter((entry) => !entry.module.includes('[slug]'));
 
@@ -368,7 +432,7 @@ describe('Public pages still generate metadata with tr/en only', () => {
       const languages = metadata.alternates?.languages as Record<string, string>;
       expect(new Set(Object.keys(languages))).toEqual(new Set(['tr', 'en', 'x-default']));
       expect(languages['es']).toBeUndefined();
-    }
+    },
   );
 
   it('keeps the quote form noindex in every locale', async () => {

@@ -123,9 +123,7 @@ describe('ProductGrid', () => {
 
 describe('Pagination', () => {
   it('renders nothing when total pages is 1', () => {
-    const { container } = render(
-      <Pagination currentPage={1} totalPages={1} locale="tr" />,
-    );
+    const { container } = render(<Pagination currentPage={1} totalPages={1} locale="tr" />);
     expect(container.innerHTML).toBe('');
   });
 
@@ -198,40 +196,21 @@ describe('Breadcrumb', () => {
   });
 
   it('renders links for non-current items', () => {
-    render(
-      <Breadcrumb
-        items={[
-          { label: 'Home', href: '/tr' },
-          { label: 'Current' },
-        ]}
-      />,
-    );
+    render(<Breadcrumb items={[{ label: 'Home', href: '/tr' }, { label: 'Current' }]} />);
     const homeLink = screen.getByText('Home');
     expect(homeLink.tagName).toBe('A');
     expect(homeLink.getAttribute('href')).toBe('/tr');
   });
 
   it('marks current item with aria-current', () => {
-    render(
-      <Breadcrumb
-        items={[
-          { label: 'Home', href: '/tr' },
-          { label: 'Current' },
-        ]}
-      />,
-    );
+    render(<Breadcrumb items={[{ label: 'Home', href: '/tr' }, { label: 'Current' }]} />);
     const current = screen.getByText('Current');
     expect(current.getAttribute('aria-current')).toBe('page');
   });
 
   it('renders separator between items', () => {
     const { container } = render(
-      <Breadcrumb
-        items={[
-          { label: 'Home', href: '/tr' },
-          { label: 'Products' },
-        ]}
-      />,
+      <Breadcrumb items={[{ label: 'Home', href: '/tr' }, { label: 'Products' }]} />,
     );
     const separators = container.querySelectorAll('.breadcrumb__separator');
     expect(separators.length).toBeGreaterThanOrEqual(1);
@@ -261,7 +240,9 @@ describe('RelatedContent', () => {
   });
 
   it('renders nothing when items array is empty', () => {
-    const { container } = render(<RelatedContent title="Collections" items={[]} basePath="collections" />);
+    const { container } = render(
+      <RelatedContent title="Collections" items={[]} basePath="collections" />,
+    );
     expect(container.innerHTML).toBe('');
   });
 });
@@ -355,7 +336,9 @@ describe('ProductGallery', () => {
     const thumbnails = screen.getAllByRole('tab');
     fireEvent.click(thumbnails[1]);
     const mainImg = screen.getAllByRole('img')[0];
-    expect(decodeURIComponent(mainImg.getAttribute('src') ?? '')).toContain('/images/gallery-1.jpg');
+    expect(decodeURIComponent(mainImg.getAttribute('src') ?? '')).toContain(
+      '/images/gallery-1.jpg',
+    );
   });
 
   it('renders fallback when no images', () => {
@@ -371,7 +354,9 @@ describe('ProductGallery', () => {
   });
 
   it('preloads the primary image but lazy-loads thumbnails at thumbnail size', () => {
-    const { container } = render(<ProductGallery primaryImage={primaryImage} gallery={gallery} productName="Test" />);
+    const { container } = render(
+      <ProductGallery primaryImage={primaryImage} gallery={gallery} productName="Test" />,
+    );
     // Thumbnails use alt="" (presentation role), so query the DOM directly.
     const imgs = Array.from(container.querySelectorAll('img'));
     const [primary, ...thumbs] = imgs;
@@ -391,7 +376,12 @@ describe('ProductGallery', () => {
 
 describe('Product — Accessibility', () => {
   it('product card link has accessible name', () => {
-    const product: ProductSummary = { id: '1', name: 'Test Product', slug: 'test', isFeatured: true };
+    const product: ProductSummary = {
+      id: '1',
+      name: 'Test Product',
+      slug: 'test',
+      isFeatured: true,
+    };
     render(<ProductCard product={product} />);
     expect(screen.getByRole('link', { name: 'Test Product' })).toBeDefined();
   });
@@ -408,11 +398,26 @@ describe('Product — Accessibility', () => {
 
   it('gallery thumbnails have aria labels', () => {
     const primaryImage = {
-      id: 'img-1', mediaType: 'image' as const, src: '/img.jpg',
-      width: 800, height: 600, aspectRatio: '4/3', alt: 'Marble', loading: 'eager' as const,
+      id: 'img-1',
+      mediaType: 'image' as const,
+      src: '/img.jpg',
+      width: 800,
+      height: 600,
+      aspectRatio: '4/3',
+      alt: 'Marble',
+      loading: 'eager' as const,
     };
     const gallery = [
-      { id: 'img-2', mediaType: 'image' as const, src: '/img2.jpg', width: 800, height: 600, aspectRatio: '4/3', alt: 'Detail', loading: 'lazy' as const },
+      {
+        id: 'img-2',
+        mediaType: 'image' as const,
+        src: '/img2.jpg',
+        width: 800,
+        height: 600,
+        aspectRatio: '4/3',
+        alt: 'Detail',
+        loading: 'lazy' as const,
+      },
     ];
     render(<ProductGallery primaryImage={primaryImage} gallery={gallery} productName="Test" />);
     const tabs = screen.getAllByRole('tab');
@@ -421,9 +426,7 @@ describe('Product — Accessibility', () => {
   });
 
   it('breadcrumb has nav landmark', () => {
-    render(
-      <Breadcrumb items={[{ label: 'Home', href: '/tr' }, { label: 'Products' }]} />,
-    );
+    render(<Breadcrumb items={[{ label: 'Home', href: '/tr' }, { label: 'Products' }]} />);
     expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeDefined();
   });
 });

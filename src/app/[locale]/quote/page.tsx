@@ -16,7 +16,11 @@ type PageProps = {
   searchParams: Promise<{ product?: string; project?: string; application?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
 
   const title = locale === 'tr' ? 'Teklif Talebi' : 'Request a Quote';
@@ -40,7 +44,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-async function resolveContext(locale: Locale, searchParams: { product?: string; project?: string; application?: string }) {
+async function resolveContext(
+  locale: Locale,
+  searchParams: { product?: string; project?: string; application?: string },
+) {
   if (searchParams.product) {
     try {
       const product = await getProduct(locale, searchParams.product);
@@ -97,7 +104,11 @@ export default async function QuotePage({ params, searchParams }: PageProps) {
         <div className="quote-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Teklif Talebi' : 'Quote Request'}
           </span>
@@ -127,16 +138,21 @@ export default async function QuotePage({ params, searchParams }: PageProps) {
             </div>
 
             <div className="quote-aside__section">
-              <span className="quote-aside__label">
-                {locale === 'tr' ? 'Destek' : 'Support'}
-              </span>
+              <span className="quote-aside__label">{locale === 'tr' ? 'Destek' : 'Support'}</span>
               <p className="quote-aside__value">
                 {locale === 'tr'
                   ? 'Sorularınız için bize ulaşın:'
                   : 'For questions, reach out to us:'}
               </p>
               <p className="quote-aside__value">
-                <a href="mailto:info@marbleplatform.com" style={{ color: 'var(--color-accent)', textDecoration: 'none', borderBottom: '1px solid var(--color-accent)' }}>
+                <a
+                  href="mailto:info@marbleplatform.com"
+                  style={{
+                    color: 'var(--color-accent)',
+                    textDecoration: 'none',
+                    borderBottom: '1px solid var(--color-accent)',
+                  }}
+                >
                   info@marbleplatform.com
                 </a>
               </p>
@@ -147,13 +163,25 @@ export default async function QuotePage({ params, searchParams }: PageProps) {
                 {locale === 'tr' ? 'Hızlı Bağlantılar' : 'Quick Links'}
               </span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                <a href={`/${locale}/products`} className="button button--ghost button--sm" style={{ justifyContent: 'flex-start' }}>
+                <a
+                  href={`/${locale}/products`}
+                  className="button button--ghost button--sm"
+                  style={{ justifyContent: 'flex-start' }}
+                >
                   {locale === 'tr' ? 'Mermerlerimiz' : 'Our Marbles'}
                 </a>
-                <a href={`/${locale}/collections`} className="button button--ghost button--sm" style={{ justifyContent: 'flex-start' }}>
+                <a
+                  href={`/${locale}/collections`}
+                  className="button button--ghost button--sm"
+                  style={{ justifyContent: 'flex-start' }}
+                >
                   {locale === 'tr' ? 'Koleksiyonlar' : 'Collections'}
                 </a>
-                <a href={`/${locale}/projects`} className="button button--ghost button--sm" style={{ justifyContent: 'flex-start' }}>
+                <a
+                  href={`/${locale}/projects`}
+                  className="button button--ghost button--sm"
+                  style={{ justifyContent: 'flex-start' }}
+                >
                   {locale === 'tr' ? 'Projelerimiz' : 'Our Projects'}
                 </a>
               </div>

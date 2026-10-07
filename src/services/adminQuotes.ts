@@ -100,7 +100,11 @@ export async function listAdminQuoteRequests(options: {
   ]);
 
   return {
-    data: rows.map((row) => ({ ...row, state: row.state as QuoteRequestState, submittedAt: row.submittedAt.toISOString() })),
+    data: rows.map((row) => ({
+      ...row,
+      state: row.state as QuoteRequestState,
+      submittedAt: row.submittedAt.toISOString(),
+    })),
     meta: buildPaginationMeta(page, pageSize, total),
   };
 }
@@ -111,7 +115,7 @@ type ContextTargetRow = { contentItem?: { variants: VariantRow[] } } | null | un
 
 function contextTarget(
   id: string | null,
-  target: ContextTargetRow
+  target: ContextTargetRow,
 ): { id: string; trName: string | null; trSlug: string | null } | null {
   if (!id || !target?.contentItem) return null;
   const tr = target.contentItem.variants.find((v) => v.locale === 'tr');
@@ -175,7 +179,11 @@ export interface QuoteActor {
  * submitted customer data is never modified. Records an audit event
  * with the transition (no PII) and stamps the acting processor.
  */
-export async function setAdminQuoteState(id: string, nextState: string, actor: QuoteActor): Promise<AdminQuoteDetail> {
+export async function setAdminQuoteState(
+  id: string,
+  nextState: string,
+  actor: QuoteActor,
+): Promise<AdminQuoteDetail> {
   const target = assertQuoteState(nextState);
 
   const row = await prisma.quoteRequest.findUnique({
@@ -210,7 +218,11 @@ export async function setAdminQuoteState(id: string, nextState: string, actor: Q
     },
   });
 
-  await writeAudit(actor.id, 'QUOTE_STATE_UPDATE', null, { quoteId: id, from: current, to: target });
+  await writeAudit(actor.id, 'QUOTE_STATE_UPDATE', null, {
+    quoteId: id,
+    from: current,
+    to: target,
+  });
 
   return getAdminQuoteRequest(id);
 }

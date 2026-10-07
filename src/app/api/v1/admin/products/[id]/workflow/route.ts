@@ -13,5 +13,5 @@ export const GET = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid product id.');
     return getProductWorkflow(parsed.data);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

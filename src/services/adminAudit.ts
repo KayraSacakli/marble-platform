@@ -5,7 +5,7 @@ export async function writeAudit(
   actorId: string,
   action: string,
   contentItemId: string | null,
-  details: Record<string, unknown>
+  details: Record<string, unknown>,
 ): Promise<void> {
   await prisma.auditEvent.create({
     data: {

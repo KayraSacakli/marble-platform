@@ -14,5 +14,5 @@ export const GET = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid project id.');
     return getContentWorkflow(parsed.data, KIND);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

@@ -12,12 +12,7 @@ interface HeroScrollStageProps {
 }
 
 export function HeroScrollStage({ hero }: HeroScrollStageProps) {
-  const {
-    videoRef,
-    isReady,
-    hasError,
-    isReducedMotion,
-  } = useScrollVideo();
+  const { videoRef, isReady, hasError, isReducedMotion } = useScrollVideo();
 
   const hasVideo = hero.media?.mediaType === 'video' && Boolean(hero.media.src);
   const hasPoster = Boolean(hero.fallbackImage?.src || hero.media?.poster);
@@ -32,11 +27,7 @@ export function HeroScrollStage({ hero }: HeroScrollStageProps) {
       <div className="hero__sticky-visual">
         {showVideo && (
           <div className="hero__media">
-            <HeroVideo
-              ref={videoRef}
-              media={hero.media!}
-              isReady={isReady}
-            />
+            <HeroVideo ref={videoRef} media={hero.media!} isReady={isReady} />
           </div>
         )}
 
@@ -54,11 +45,15 @@ export function HeroScrollStage({ hero }: HeroScrollStageProps) {
         <HeroContent hero={hero} />
 
         {showVideo && isReady && (
-          <div
-            className="hero__scroll-progress"
-            aria-hidden="true"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <div className="hero__scroll-progress" aria-hidden="true">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
               <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>

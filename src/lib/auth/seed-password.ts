@@ -10,8 +10,7 @@ export const DEV_ADMIN_DEFAULT_PASSWORD = 'Admin123!ChangeMe';
 export const MIN_SEED_ADMIN_PASSWORD_LENGTH = 12;
 
 export type SeedAdminPasswordResolution =
-  | { action: 'skip'; reason: string }
-  | { action: 'use'; password: string; isDefault: boolean };
+  { action: 'skip'; reason: string } | { action: 'use'; password: string; isDefault: boolean };
 
 /**
  * Decide which password (if any) seed should provision admin/editor logins
@@ -23,9 +22,10 @@ export type SeedAdminPasswordResolution =
  */
 export function resolveSeedAdminPassword(
   configured: string | undefined,
-  isProduction: boolean
+  isProduction: boolean,
 ): SeedAdminPasswordResolution {
-  const usable = configured && configured.length >= MIN_SEED_ADMIN_PASSWORD_LENGTH ? configured : null;
+  const usable =
+    configured && configured.length >= MIN_SEED_ADMIN_PASSWORD_LENGTH ? configured : null;
 
   if (!usable) {
     if (isProduction) {

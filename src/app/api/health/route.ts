@@ -23,7 +23,7 @@ export async function GET() {
           'x-request-id': requestId,
           'Cache-Control': 'no-store',
         },
-      }
+      },
     );
   } catch (error) {
     console.error(`[${requestId}] Health check failed:`, error);
@@ -42,7 +42,7 @@ export async function GET() {
           'x-request-id': requestId,
           'Cache-Control': 'no-store',
         },
-      }
+      },
     );
   }
 }

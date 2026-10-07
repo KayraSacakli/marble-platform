@@ -30,10 +30,7 @@ export function HeaderInteractive({
 
   const handleScroll = useCallback(() => {
     const scrolled = window.scrollY > 20;
-    document.documentElement.style.setProperty(
-      '--header-scrolled',
-      scrolled ? '1' : '0',
-    );
+    document.documentElement.style.setProperty('--header-scrolled', scrolled ? '1' : '0');
     if (isHomepage) {
       const header = document.querySelector('.header');
       if (header) {
@@ -82,11 +79,7 @@ export function HeaderInteractive({
       <div className="header__utility">
         <LanguageSwitcher items={utilityItems} locale={locale} className="header__lang" />
         {ctaItem && (
-          <a
-            href={ctaItem.href}
-            className="header__cta"
-            aria-label={ctaItem.label}
-          >
+          <a href={ctaItem.href} className="header__cta" aria-label={ctaItem.label}>
             {ctaItem.label}
           </a>
         )}
@@ -97,9 +90,14 @@ export function HeaderInteractive({
           className="header__menu-trigger"
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
-          aria-label={mobileOpen
-            ? (locale === 'tr' ? 'Menüyü kapat' : 'Close menu')
-            : (locale === 'tr' ? 'Menüyü aç' : 'Open menu')
+          aria-label={
+            mobileOpen
+              ? locale === 'tr'
+                ? 'Menüyü kapat'
+                : 'Close menu'
+              : locale === 'tr'
+                ? 'Menüyü aç'
+                : 'Open menu'
           }
         >
           <span className={`header__hamburger ${mobileOpen ? 'header__hamburger--open' : ''}`}>

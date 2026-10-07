@@ -134,8 +134,16 @@ export function WorkflowPanel({ kind, contentId }: { kind: WorkflowKind; content
   return (
     <section style={box}>
       <h2>Publishing workflow</h2>
-      {error && <p role="alert" style={{ color: '#b00020' }}>{error}</p>}
-      {notice && <p role="status" style={{ color: '#0a7d2c' }}>{notice}</p>}
+      {error && (
+        <p role="alert" style={{ color: '#b00020' }}>
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" style={{ color: '#0a7d2c' }}>
+          {notice}
+        </p>
+      )}
       {workflow &&
         (['tr', 'en'] as const).map((locale) => {
           const w = workflow[locale];
@@ -146,8 +154,15 @@ export function WorkflowPanel({ kind, contentId }: { kind: WorkflowKind; content
               <h3>{locale.toUpperCase()}</h3>
               <p>
                 Variant: <code>{w.lifecycleState}</code>
-                {w.publishedRevisionNumber != null && <> · published rev #{w.publishedRevisionNumber}</>}
-                {open && <> · open rev #{open.revisionNumber} (<code>{open.status}</code>)</>}
+                {w.publishedRevisionNumber != null && (
+                  <> · published rev #{w.publishedRevisionNumber}</>
+                )}
+                {open && (
+                  <>
+                    {' '}
+                    · open rev #{open.revisionNumber} (<code>{open.status}</code>)
+                  </>
+                )}
                 {!open && w.publishedRevisionNumber == null && <> · no revisions yet</>}
               </p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -158,7 +173,11 @@ export function WorkflowPanel({ kind, contentId }: { kind: WorkflowKind; content
                     onClick={() => act(`${base}/revisions`, 'POST', { locale })}
                     style={{ cursor: 'pointer' }}
                   >
-                    {open ? 'New draft from rejected' : w.publishedRevisionNumber != null ? 'New draft' : 'Create draft'}
+                    {open
+                      ? 'New draft from rejected'
+                      : w.publishedRevisionNumber != null
+                        ? 'New draft'
+                        : 'Create draft'}
                   </button>
                 )}
                 {open?.status === 'DRAFT' && (
@@ -190,7 +209,9 @@ export function WorkflowPanel({ kind, contentId }: { kind: WorkflowKind; content
                     <button
                       type="button"
                       disabled={busy || reason.trim() === ''}
-                      onClick={() => act(`/api/v1/admin/revisions/${open.id}/reject`, 'POST', { reason })}
+                      onClick={() =>
+                        act(`/api/v1/admin/revisions/${open.id}/reject`, 'POST', { reason })
+                      }
                       style={{ cursor: 'pointer' }}
                     >
                       Reject
@@ -208,7 +229,9 @@ export function WorkflowPanel({ kind, contentId }: { kind: WorkflowKind; content
                     Publish rev #{open.revisionNumber}
                   </button>
                 )}
-                {open?.status === 'APPROVED' && !isAdmin && <span>Approved — waiting for admin to publish.</span>}
+                {open?.status === 'APPROVED' && !isAdmin && (
+                  <span>Approved — waiting for admin to publish.</span>
+                )}
                 {w.lifecycleState === 'PUBLISHED' && isAdmin && (
                   <button
                     type="button"
@@ -229,7 +252,8 @@ export function WorkflowPanel({ kind, contentId }: { kind: WorkflowKind; content
           <ul>
             {history.map((r) => (
               <li key={r.id}>
-                #{r.revisionNumber} [{r.locale ?? '?'}] <code>{r.status}</code> by {r.authorEmail ?? '—'}{' '}
+                #{r.revisionNumber} [{r.locale ?? '?'}] <code>{r.status}</code> by{' '}
+                {r.authorEmail ?? '—'}{' '}
                 {r.approvals.map((a, i) => (
                   <span key={i}>
                     · {a.outcome} by {a.approverEmail ?? '—'}

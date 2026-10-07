@@ -153,9 +153,17 @@ async function findItemOrThrow(kind: TaxonomyKind, id: string) {
   return item;
 }
 
-async function assertSlugAvailable(locale: string, slug: string, excludeContentItemId?: string): Promise<void> {
+async function assertSlugAvailable(
+  locale: string,
+  slug: string,
+  excludeContentItemId?: string,
+): Promise<void> {
   const clash = await prisma.contentVariant.findFirst({
-    where: { locale, slug, ...(excludeContentItemId ? { NOT: { contentItemId: excludeContentItemId } } : {}) },
+    where: {
+      locale,
+      slug,
+      ...(excludeContentItemId ? { NOT: { contentItemId: excludeContentItemId } } : {}),
+    },
     select: { id: true },
   });
   if (clash) {
@@ -211,7 +219,10 @@ function snapshotInput(localeInput: VariantInput): DraftSnapshot {
   };
 }
 
-export async function listAdminTaxonomy(kind: TaxonomyKind, options: { page?: number; pageSize?: number; q?: string }) {
+export async function listAdminTaxonomy(
+  kind: TaxonomyKind,
+  options: { page?: number; pageSize?: number; q?: string },
+) {
   const { page, pageSize, skip } = normalizePagination({
     page: options.page ?? 1,
     pageSize: options.pageSize ?? 20,
@@ -233,7 +244,13 @@ export async function listAdminTaxonomy(kind: TaxonomyKind, options: { page?: nu
       : {}),
   };
   const [items, total] = await Promise.all([
-    prisma.contentItem.findMany({ where, include: itemInclude, orderBy: { createdAt: 'desc' }, skip, take: pageSize }),
+    prisma.contentItem.findMany({
+      where,
+      include: itemInclude,
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: pageSize,
+    }),
     prisma.contentItem.count({ where }),
   ]);
   return {
@@ -251,14 +268,19 @@ export async function getAdminTaxonomy(kind: TaxonomyKind, id: string): Promise<
     const variant = (item as unknown as ItemWithVariants).variants.find((v) => v.locale === locale);
     if (!variant) continue;
     const open = await findOpenRevision(variant.id);
-    if (!open || (open.status !== 'DRAFT' && open.status !== 'IN_REVIEW' && open.status !== 'APPROVED')) continue;
+    if (
+      !open ||
+      (open.status !== 'DRAFT' && open.status !== 'IN_REVIEW' && open.status !== 'APPROVED')
+    )
+      continue;
     const snapshot = parseSnapshot(open.materialSnapshot);
     if (snapshot.slug !== undefined) cell.slug = snapshot.slug;
     if (snapshot.name !== undefined) cell.name = snapshot.name;
     if (snapshot.description !== undefined) cell.description = snapshot.description;
     if (snapshot.tagline !== undefined) cell.tagline = snapshot.tagline ?? null;
     if (snapshot.seoTitle !== undefined) cell.seoTitle = snapshot.seoTitle ?? null;
-    if (snapshot.seoDescription !== undefined) cell.seoDescription = snapshot.seoDescription ?? null;
+    if (snapshot.seoDescription !== undefined)
+      cell.seoDescription = snapshot.seoDescription ?? null;
     if (snapshot.seoCanonical !== undefined) cell.seoCanonical = snapshot.seoCanonical ?? null;
     if (snapshot.seoRobots !== undefined) cell.seoRobots = snapshot.seoRobots ?? null;
     if (snapshot.isFeatured !== undefined) cell.isFeatured = snapshot.isFeatured;
@@ -271,7 +293,11 @@ export async function getAdminTaxonomy(kind: TaxonomyKind, id: string): Promise<
 
 type CreateInput = AdminCollectionCreateInput | AdminApplicationCreateInput;
 
-export async function createAdminTaxonomy(kind: TaxonomyKind, input: CreateInput, actorId: string): Promise<AdminTaxonomy> {
+export async function createAdminTaxonomy(
+  kind: TaxonomyKind,
+  input: CreateInput,
+  actorId: string,
+): Promise<AdminTaxonomy> {
   const locales = SUPPORTED_LOCALES.filter((l) => input[l]);
   for (const locale of locales) {
     const localeInput = input[locale];
@@ -329,7 +355,7 @@ export async function updateAdminTaxonomy(
   kind: TaxonomyKind,
   id: string,
   input: UpdateInput,
-  actorId: string
+  actorId: string,
 ): Promise<AdminTaxonomy> {
   const item = await findItemOrThrow(kind, id);
   const typed = item as unknown as ItemWithVariants;
@@ -350,7 +376,19 @@ export async function updateAdminTaxonomy(
       const draft = await ensureDraftRevision(variant.id, actorId);
       const snapshotPatch: DraftSnapshot = {};
       if (patch) {
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of [
+          'slug',
+          'name',
+          'description',
+          'tagline',
+          'seoTitle',
+          'seoDescription',
+          'seoCanonical',
+          'seoRobots',
+          'isFeatured',
+          'featuredOrder',
+          'displayOrder',
+        ] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -382,7 +420,19 @@ export async function updateAdminTaxonomy(
       const open = await findOpenRevision(variant.id);
       if (open && open.status === 'DRAFT') {
         const snapshotPatch: DraftSnapshot = {};
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of [
+          'slug',
+          'name',
+          'description',
+          'tagline',
+          'seoTitle',
+          'seoDescription',
+          'seoCanonical',
+          'seoRobots',
+          'isFeatured',
+          'featuredOrder',
+          'displayOrder',
+        ] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -429,7 +479,10 @@ async function findProductOrThrow(productId: string) {
   return product;
 }
 
-export async function listRelatedProducts(kind: TaxonomyKind, id: string): Promise<AttachedProduct[]> {
+export async function listRelatedProducts(
+  kind: TaxonomyKind,
+  id: string,
+): Promise<AttachedProduct[]> {
   await findItemOrThrow(kind, id);
   if (kind === 'COLLECTION') {
     const rows = await prisma.productCollection.findMany({
@@ -469,7 +522,12 @@ export async function listRelatedProducts(kind: TaxonomyKind, id: string): Promi
   });
 }
 
-export async function attachRelatedProduct(kind: TaxonomyKind, id: string, productId: string, actorId: string) {
+export async function attachRelatedProduct(
+  kind: TaxonomyKind,
+  id: string,
+  productId: string,
+  actorId: string,
+) {
   await findItemOrThrow(kind, id);
   await findProductOrThrow(productId);
   if (kind === 'COLLECTION') {
@@ -493,7 +551,12 @@ export async function attachRelatedProduct(kind: TaxonomyKind, id: string, produ
   return listRelatedProducts(kind, id);
 }
 
-export async function detachRelatedProduct(kind: TaxonomyKind, id: string, productId: string, actorId: string) {
+export async function detachRelatedProduct(
+  kind: TaxonomyKind,
+  id: string,
+  productId: string,
+  actorId: string,
+) {
   await findItemOrThrow(kind, id);
   const removed =
     kind === 'COLLECTION'

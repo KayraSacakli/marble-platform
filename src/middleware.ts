@@ -14,7 +14,10 @@ function isStaticAsset(pathname: string): boolean {
 
 function getLocaleFromPathname(pathname: string): string | null {
   const segments = pathname.split('/');
-  if (segments.length >= 2 && SUPPORTED_LOCALES.includes(segments[1] as typeof SUPPORTED_LOCALES[number])) {
+  if (
+    segments.length >= 2 &&
+    SUPPORTED_LOCALES.includes(segments[1] as (typeof SUPPORTED_LOCALES)[number])
+  ) {
     return segments[1];
   }
   return null;

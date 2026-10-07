@@ -3,7 +3,13 @@ import { ValidationError } from '@/lib/api/errors';
 import { rejectRevision, type ManagedContentType } from '@/services/adminWorkflow';
 import { parseRevisionId, readJsonBody } from '../_common';
 
-const MANAGED: ManagedContentType[] = ['PRODUCT', 'COLLECTION', 'APPLICATION', 'PROJECT', 'JOURNAL_ARTICLE'];
+const MANAGED: ManagedContentType[] = [
+  'PRODUCT',
+  'COLLECTION',
+  'APPLICATION',
+  'PROJECT',
+  'JOURNAL_ARTICLE',
+];
 
 // POST /api/v1/admin/revisions/[revId]/reject { reason } — ADMIN only
 export const POST = withAdminAuth(
@@ -15,7 +21,9 @@ export const POST = withAdminAuth(
         { field: 'reason', code: 'INVALID', message: 'Rejection reason is required.' },
       ]);
     }
-    return { revision: await rejectRevision(parseRevisionId(revId), admin.id, body.reason, MANAGED) };
+    return {
+      revision: await rejectRevision(parseRevisionId(revId), admin.id, body.reason, MANAGED),
+    };
   },
-  { roles: ['ADMIN'] }
+  { roles: ['ADMIN'] },
 );

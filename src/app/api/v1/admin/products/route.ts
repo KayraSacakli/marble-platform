@@ -15,7 +15,7 @@ export const GET = withAdminAuth(
     });
     return result;
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/products — ADMIN, EDITOR
@@ -29,12 +29,13 @@ export const POST = withAdminAuth(
     }
     const parsed = adminProductCreateSchema.safeParse(body);
     if (!parsed.success) {
-      const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(([field, messages]) =>
-        (messages ?? []).map((message) => ({ field, code: 'INVALID', message }))
+      const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(
+        ([field, messages]) =>
+          (messages ?? []).map((message) => ({ field, code: 'INVALID', message })),
       );
       throw new ValidationError('Validation failed', details);
     }
     return createAdminProduct(parsed.data, admin.id);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

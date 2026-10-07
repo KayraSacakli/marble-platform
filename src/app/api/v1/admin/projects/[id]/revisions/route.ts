@@ -2,7 +2,11 @@ import { z } from 'zod';
 import type { NextRequest } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
-import { listContentRevisions, ensureDraftRevision, getContentWorkflow } from '@/services/adminWorkflow';
+import {
+  listContentRevisions,
+  ensureDraftRevision,
+  getContentWorkflow,
+} from '@/services/adminWorkflow';
 import { prisma } from '@/lib/prisma';
 import { localeSchema } from '@/lib/api/validation';
 import type { Locale } from '@/types/locale';
@@ -30,7 +34,7 @@ export const GET = withAdminAuth(
     }
     return { revisions: await listContentRevisions(parseId(id), KIND, locale) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/projects/[id]/revisions { locale } — ADMIN, EDITOR
@@ -56,5 +60,5 @@ export const POST = withAdminAuth(
     const draft = await ensureDraftRevision(item.variants[0].id, admin.id);
     return { revision: draft, workflow: await getContentWorkflow(contentId, KIND) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

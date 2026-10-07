@@ -5,7 +5,12 @@ interface PaginationProps {
   basePath?: string;
 }
 
-export function Pagination({ currentPage, totalPages, locale, basePath = '/products' }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  locale,
+  basePath = '/products',
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const pages: Array<number | 'ellipsis'> = [];

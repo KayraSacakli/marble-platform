@@ -63,7 +63,11 @@ export function LoginForm() {
           {error}
         </p>
       )}
-      <button type="submit" disabled={pending} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+      <button
+        type="submit"
+        disabled={pending}
+        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+      >
         {pending ? 'Signing in…' : 'Sign in'}
       </button>
     </form>

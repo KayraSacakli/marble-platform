@@ -72,7 +72,10 @@ export function collectProductionEnvIssues(env: EnvLike): EnvIssue[] {
   // --- DATABASE_URL ---
   const databaseUrl = env.DATABASE_URL?.trim();
   if (!databaseUrl) {
-    issues.push({ key: 'DATABASE_URL', reason: 'is required in production but is missing or empty' });
+    issues.push({
+      key: 'DATABASE_URL',
+      reason: 'is required in production but is missing or empty',
+    });
   } else {
     try {
       const parsed = new URL(databaseUrl);
@@ -118,7 +121,10 @@ export function collectProductionEnvIssues(env: EnvLike): EnvIssue[] {
   // --- NEXTAUTH_SECRET (admin/auth secret of record, see .env.example) ---
   const secret = env.NEXTAUTH_SECRET?.trim();
   if (!secret) {
-    issues.push({ key: 'NEXTAUTH_SECRET', reason: 'is required in production but is missing or empty' });
+    issues.push({
+      key: 'NEXTAUTH_SECRET',
+      reason: 'is required in production but is missing or empty',
+    });
   } else if (isPlaceholderSecret(secret)) {
     issues.push({
       key: 'NEXTAUTH_SECRET',

@@ -150,9 +150,17 @@ async function findItemOrThrow(kind: EditorialKind, id: string) {
   return item;
 }
 
-async function assertSlugAvailable(locale: string, slug: string, excludeContentItemId?: string): Promise<void> {
+async function assertSlugAvailable(
+  locale: string,
+  slug: string,
+  excludeContentItemId?: string,
+): Promise<void> {
   const clash = await prisma.contentVariant.findFirst({
-    where: { locale, slug, ...(excludeContentItemId ? { NOT: { contentItemId: excludeContentItemId } } : {}) },
+    where: {
+      locale,
+      slug,
+      ...(excludeContentItemId ? { NOT: { contentItemId: excludeContentItemId } } : {}),
+    },
     select: { id: true },
   });
   if (clash) {
@@ -192,7 +200,11 @@ function variantCreateData(locale: Locale, input: VariantInput) {
   };
 }
 
-function snapshotInput(kind: EditorialKind, localeInput: VariantInput, ext: Record<string, unknown>): DraftSnapshot {
+function snapshotInput(
+  kind: EditorialKind,
+  localeInput: VariantInput,
+  ext: Record<string, unknown>,
+): DraftSnapshot {
   const base: DraftSnapshot = {
     slug: localeInput.slug,
     name: localeInput.name,
@@ -221,14 +233,29 @@ function snapshotInput(kind: EditorialKind, localeInput: VariantInput, ext: Reco
 }
 
 function mergeVariantPatch(target: DraftSnapshot, patch: Record<string, unknown>): void {
-  for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+  for (const key of [
+    'slug',
+    'name',
+    'description',
+    'tagline',
+    'seoTitle',
+    'seoDescription',
+    'seoCanonical',
+    'seoRobots',
+    'isFeatured',
+    'featuredOrder',
+    'displayOrder',
+  ] as const) {
     if (patch[key] !== undefined) {
       (target as Record<string, unknown>)[key] = patch[key];
     }
   }
 }
 
-export async function listAdminEditorial(kind: EditorialKind, options: { page?: number; pageSize?: number; q?: string }) {
+export async function listAdminEditorial(
+  kind: EditorialKind,
+  options: { page?: number; pageSize?: number; q?: string },
+) {
   const { page, pageSize, skip } = normalizePagination({
     page: options.page ?? 1,
     pageSize: options.pageSize ?? 20,
@@ -250,7 +277,13 @@ export async function listAdminEditorial(kind: EditorialKind, options: { page?: 
       : {}),
   };
   const [items, total] = await Promise.all([
-    prisma.contentItem.findMany({ where, include: itemInclude, orderBy: { createdAt: 'desc' }, skip, take: pageSize }),
+    prisma.contentItem.findMany({
+      where,
+      include: itemInclude,
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: pageSize,
+    }),
     prisma.contentItem.count({ where }),
   ]);
   return {
@@ -265,19 +298,24 @@ export async function getAdminEditorial(kind: EditorialKind, id: string): Promis
   for (const locale of SUPPORTED_LOCALES) {
     const cell = view.variants[locale];
     if (!cell) continue;
-    const variant = (item as unknown as ItemWithExt & { variants: Array<VariantRow & { id: string }> }).variants.find(
-      (v) => v.locale === locale
-    );
+    const variant = (
+      item as unknown as ItemWithExt & { variants: Array<VariantRow & { id: string }> }
+    ).variants.find((v) => v.locale === locale);
     if (!variant) continue;
     const open = await findOpenRevision(variant.id);
-    if (!open || (open.status !== 'DRAFT' && open.status !== 'IN_REVIEW' && open.status !== 'APPROVED')) continue;
+    if (
+      !open ||
+      (open.status !== 'DRAFT' && open.status !== 'IN_REVIEW' && open.status !== 'APPROVED')
+    )
+      continue;
     const snapshot = parseSnapshot(open.materialSnapshot);
     if (snapshot.slug !== undefined) cell.slug = snapshot.slug;
     if (snapshot.name !== undefined) cell.name = snapshot.name;
     if (snapshot.description !== undefined) cell.description = snapshot.description;
     if (snapshot.tagline !== undefined) cell.tagline = snapshot.tagline ?? null;
     if (snapshot.seoTitle !== undefined) cell.seoTitle = snapshot.seoTitle ?? null;
-    if (snapshot.seoDescription !== undefined) cell.seoDescription = snapshot.seoDescription ?? null;
+    if (snapshot.seoDescription !== undefined)
+      cell.seoDescription = snapshot.seoDescription ?? null;
     if (snapshot.seoCanonical !== undefined) cell.seoCanonical = snapshot.seoCanonical ?? null;
     if (snapshot.seoRobots !== undefined) cell.seoRobots = snapshot.seoRobots ?? null;
     if (snapshot.isFeatured !== undefined) cell.isFeatured = snapshot.isFeatured;
@@ -285,10 +323,12 @@ export async function getAdminEditorial(kind: EditorialKind, id: string): Promis
     if (snapshot.displayOrder !== undefined) cell.displayOrder = snapshot.displayOrder;
     if (kind === 'PROJECT' && snapshot.project) {
       if (snapshot.project.location !== undefined) view.location = snapshot.project.location;
-      if (snapshot.project.projectType !== undefined) view.projectType = snapshot.project.projectType;
+      if (snapshot.project.projectType !== undefined)
+        view.projectType = snapshot.project.projectType;
     }
     if (kind === 'JOURNAL_ARTICLE' && snapshot.journal) {
-      if (snapshot.journal.publicationDate !== undefined) view.publicationDate = snapshot.journal.publicationDate;
+      if (snapshot.journal.publicationDate !== undefined)
+        view.publicationDate = snapshot.journal.publicationDate;
       if (snapshot.journal.authorName !== undefined) view.authorName = snapshot.journal.authorName;
     }
     cell.draft = { revisionId: open.id, revisionNumber: open.revisionNumber, status: open.status };
@@ -298,7 +338,11 @@ export async function getAdminEditorial(kind: EditorialKind, id: string): Promis
 
 type CreateInput = AdminProjectCreateInput | AdminJournalCreateInput;
 
-export async function createAdminEditorial(kind: EditorialKind, input: CreateInput, actorId: string): Promise<AdminEditorial> {
+export async function createAdminEditorial(
+  kind: EditorialKind,
+  input: CreateInput,
+  actorId: string,
+): Promise<AdminEditorial> {
   const locales = SUPPORTED_LOCALES.filter((l) => input[l]);
   for (const locale of locales) {
     const localeInput = input[locale];
@@ -386,7 +430,7 @@ export async function updateAdminEditorial(
   kind: EditorialKind,
   id: string,
   input: UpdateInput,
-  actorId: string
+  actorId: string,
 ): Promise<AdminEditorial> {
   const item = await findItemOrThrow(kind, id);
   const typed = item as unknown as ItemWithExt & { variants: Array<VariantRow & { id: string }> };
@@ -418,14 +462,22 @@ export async function updateAdminEditorial(
         if (kind === 'PROJECT') {
           snapshotPatch.project = {
             ...(snapshotPatch.project ?? {}),
-            ...(extPatch.location !== undefined ? { location: extPatch.location as string | null } : {}),
-            ...(extPatch.projectType !== undefined ? { projectType: extPatch.projectType as string | null } : {}),
+            ...(extPatch.location !== undefined
+              ? { location: extPatch.location as string | null }
+              : {}),
+            ...(extPatch.projectType !== undefined
+              ? { projectType: extPatch.projectType as string | null }
+              : {}),
           };
         } else {
           snapshotPatch.journal = {
             ...(snapshotPatch.journal ?? {}),
-            ...(extPatch.publicationDate !== undefined ? { publicationDate: extPatch.publicationDate as string | null } : {}),
-            ...(extPatch.authorName !== undefined ? { authorName: extPatch.authorName as string | null } : {}),
+            ...(extPatch.publicationDate !== undefined
+              ? { publicationDate: extPatch.publicationDate as string | null }
+              : {}),
+            ...(extPatch.authorName !== undefined
+              ? { authorName: extPatch.authorName as string | null }
+              : {}),
           };
         }
       }
@@ -444,7 +496,10 @@ export async function updateAdminEditorial(
         if (typeof journalPatch.publicationDate === 'string') {
           journalPatch.publicationDate = new Date(journalPatch.publicationDate);
         }
-        await prisma.journalArticle.update({ where: { contentItemId: id }, data: journalPatch as never });
+        await prisma.journalArticle.update({
+          where: { contentItemId: id },
+          data: journalPatch as never,
+        });
       }
     }
     if (Object.keys(patch).length > 0) {
@@ -460,8 +515,12 @@ export async function updateAdminEditorial(
           ...(patch.seoCanonical !== undefined ? { seoCanonical: patch.seoCanonical } : {}),
           ...(patch.seoRobots !== undefined ? { seoRobots: patch.seoRobots } : {}),
           ...(patch.isFeatured !== undefined ? { isFeatured: patch.isFeatured as boolean } : {}),
-          ...(patch.featuredOrder !== undefined ? { featuredOrder: patch.featuredOrder as number | null } : {}),
-          ...(patch.displayOrder !== undefined ? { displayOrder: patch.displayOrder as number | null } : {}),
+          ...(patch.featuredOrder !== undefined
+            ? { featuredOrder: patch.featuredOrder as number | null }
+            : {}),
+          ...(patch.displayOrder !== undefined
+            ? { displayOrder: patch.displayOrder as number | null }
+            : {}),
         },
       });
       const open = await findOpenRevision(variant.id);
@@ -542,14 +601,17 @@ async function findProjectOrThrow(projectId: string) {
   return project;
 }
 
-function variantName(variants: Array<{ locale: string; slug: string; name: string | null }>, locale: string) {
+function variantName(
+  variants: Array<{ locale: string; slug: string; name: string | null }>,
+  locale: string,
+) {
   const v = variants.find((x) => x.locale === locale);
   return v ? { name: v.name, slug: v.slug } : { name: null, slug: null };
 }
 
 export async function listProjectRelations(
   kind: 'products' | 'applications',
-  projectId: string
+  projectId: string,
 ): Promise<RelatedEntry[]> {
   await findItemOrThrow('PROJECT', projectId);
   if (kind === 'products') {
@@ -561,7 +623,15 @@ export async function listProjectRelations(
     return rows.map((r) => {
       const tr = variantName(r.product.contentItem.variants, 'tr');
       const en = variantName(r.product.contentItem.variants, 'en');
-      return { id: `${r.projectId}:${r.productId}`, targetKind: 'product' as const, targetId: r.productId, trName: tr.name, trSlug: tr.slug, enName: en.name, attachedAt: r.createdAt.toISOString() };
+      return {
+        id: `${r.projectId}:${r.productId}`,
+        targetKind: 'product' as const,
+        targetId: r.productId,
+        trName: tr.name,
+        trSlug: tr.slug,
+        enName: en.name,
+        attachedAt: r.createdAt.toISOString(),
+      };
     });
   }
   const rows = await prisma.projectApplication.findMany({
@@ -572,7 +642,15 @@ export async function listProjectRelations(
   return rows.map((r) => {
     const tr = variantName(r.application.contentItem.variants, 'tr');
     const en = variantName(r.application.contentItem.variants, 'en');
-    return { id: `${r.projectId}:${r.applicationId}`, targetKind: 'application' as const, targetId: r.applicationId, trName: tr.name, trSlug: tr.slug, enName: en.name, attachedAt: r.createdAt.toISOString() };
+    return {
+      id: `${r.projectId}:${r.applicationId}`,
+      targetKind: 'application' as const,
+      targetId: r.applicationId,
+      trName: tr.name,
+      trSlug: tr.slug,
+      enName: en.name,
+      attachedAt: r.createdAt.toISOString(),
+    };
   });
 }
 
@@ -580,7 +658,7 @@ export async function attachProjectRelation(
   kind: 'products' | 'applications',
   projectId: string,
   targetId: string,
-  actorId: string
+  actorId: string,
 ) {
   await findItemOrThrow('PROJECT', projectId);
   if (kind === 'products') {
@@ -611,19 +689,26 @@ export async function detachProjectRelation(
   kind: 'products' | 'applications',
   projectId: string,
   targetId: string,
-  actorId: string
+  actorId: string,
 ) {
   await findItemOrThrow('PROJECT', projectId);
   const removed =
     kind === 'products'
       ? await prisma.projectProduct.deleteMany({ where: { projectId, productId: targetId } })
-      : await prisma.projectApplication.deleteMany({ where: { projectId, applicationId: targetId } });
+      : await prisma.projectApplication.deleteMany({
+          where: { projectId, applicationId: targetId },
+        });
   if (removed.count === 0) {
     throw new NotFoundError('Relation not found.');
   }
-  await writeAudit(actorId, kind === 'products' ? 'PROJECT_PRODUCT_DETACH' : 'PROJECT_APPLICATION_DETACH', projectId, {
-    targetId,
-  });
+  await writeAudit(
+    actorId,
+    kind === 'products' ? 'PROJECT_PRODUCT_DETACH' : 'PROJECT_APPLICATION_DETACH',
+    projectId,
+    {
+      targetId,
+    },
+  );
   return { detached: true as const };
 }
 
@@ -666,7 +751,7 @@ export async function attachJournalReference(
   journalId: string,
   targetKind: 'product' | 'application' | 'project',
   targetId: string,
-  actorId: string
+  actorId: string,
 ) {
   await findItemOrThrow('JOURNAL_ARTICLE', journalId);
   if (targetKind === 'product') {
@@ -693,7 +778,11 @@ export async function attachJournalReference(
   return listJournalReferences(journalId);
 }
 
-export async function detachJournalReference(journalId: string, referenceId: string, actorId: string) {
+export async function detachJournalReference(
+  journalId: string,
+  referenceId: string,
+  actorId: string,
+) {
   await findItemOrThrow('JOURNAL_ARTICLE', journalId);
   const removed = await prisma.journalContentReference.deleteMany({
     where: { id: referenceId, journalArticleId: journalId },

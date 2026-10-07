@@ -1,7 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createErrorResponse, isAppError, mapPrismaError, InternalError } from '@/lib/api/errors';
 import { generateRequestId } from '@/lib/api/request-id';
-import { requireAdminSession, requireAdminRole, type AdminRole, type AdminSessionUser } from '@/lib/auth/session';
+import {
+  requireAdminSession,
+  requireAdminRole,
+  type AdminRole,
+  type AdminSessionUser,
+} from '@/lib/auth/session';
 
 // ============================================================
 // Admin API handler guard
@@ -16,16 +21,19 @@ export type AdminRouteContext<P = Record<string, string>> = {
   params: Promise<P>;
 };
 
-export type AdminRouteHandler<T = unknown, P extends Record<string, string> = Record<string, string>> = (
+export type AdminRouteHandler<
+  T = unknown,
+  P extends Record<string, string> = Record<string, string>,
+> = (
   request: NextRequest,
   context: AdminRouteContext<P>,
-  admin: AdminSessionUser
+  admin: AdminSessionUser,
 ) => Promise<T | NextResponse>;
 
-export function withAdminAuth<T = unknown, P extends Record<string, string> = Record<string, string>>(
-  handler: AdminRouteHandler<T, P>,
-  options?: { roles?: AdminRole[] }
-) {
+export function withAdminAuth<
+  T = unknown,
+  P extends Record<string, string> = Record<string, string>,
+>(handler: AdminRouteHandler<T, P>, options?: { roles?: AdminRole[] }) {
   return async (request: NextRequest, context: AdminRouteContext<P>): Promise<NextResponse> => {
     const requestId = generateRequestId();
     try {
@@ -40,7 +48,10 @@ export function withAdminAuth<T = unknown, P extends Record<string, string> = Re
         }
         return result as unknown as NextResponse;
       }
-      return NextResponse.json({ data: result }, { status: 200, headers: { 'x-request-id': requestId } });
+      return NextResponse.json(
+        { data: result },
+        { status: 200, headers: { 'x-request-id': requestId } },
+      );
     } catch (error) {
       return handleAdminError(error, requestId);
     }

@@ -29,7 +29,11 @@ describe('notFoundOnlyWhenMissing', () => {
   });
 
   it('rethrows upstream 5xx unchanged', () => {
-    const serverError = new ApiClientError('HTTP 500: Internal Server Error', 500, 'INTERNAL_ERROR');
+    const serverError = new ApiClientError(
+      'HTTP 500: Internal Server Error',
+      500,
+      'INTERNAL_ERROR',
+    );
     expect(run(serverError)).toBe(serverError);
   });
 

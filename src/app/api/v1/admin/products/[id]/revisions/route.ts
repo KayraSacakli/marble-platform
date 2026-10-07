@@ -2,7 +2,11 @@ import { z } from 'zod';
 import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
 import { prisma } from '@/lib/prisma';
-import { listProductRevisions, ensureDraftRevision, getProductWorkflow } from '@/services/adminWorkflow';
+import {
+  listProductRevisions,
+  ensureDraftRevision,
+  getProductWorkflow,
+} from '@/services/adminWorkflow';
 import { localeSchema } from '@/lib/api/validation';
 import type { Locale } from '@/types/locale';
 
@@ -27,7 +31,7 @@ export const GET = withAdminAuth(
     }
     return { revisions: await listProductRevisions(parseProductId(id), locale) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/products/[id]/revisions { locale } — ensure draft — ADMIN, EDITOR
@@ -53,5 +57,5 @@ export const POST = withAdminAuth(
     const draft = await ensureDraftRevision(item.variants[0].id, admin.id);
     return { revision: draft, workflow: await getProductWorkflow(productId) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

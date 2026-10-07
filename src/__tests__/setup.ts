@@ -32,7 +32,7 @@ globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
       new Response(JSON.stringify({ data: SEO_AVAILABILITY }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
-      })
+      }),
     );
   }
 

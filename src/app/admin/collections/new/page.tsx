@@ -12,7 +12,14 @@ export default async function NewAdminCollectionPage() {
     redirect('/admin/login');
   }
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', padding: '0 1.5rem', fontFamily: 'system-ui, sans-serif' }}>
+    <main
+      style={{
+        maxWidth: 760,
+        margin: '2rem auto',
+        padding: '0 1.5rem',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
       <p>
         <Link href="/admin/collections">← Collections</Link>
       </p>

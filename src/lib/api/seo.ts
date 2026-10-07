@@ -7,7 +7,10 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
  * Build a self-referencing canonical URL for a locale + path.
  */
 export function buildCanonical(locale: Locale, path: string): string {
-  return `${SITE_URL}/${locale}${path}`;
+  const prefix = `/${locale}`;
+  const normalized =
+    path === prefix || path.startsWith(`${prefix}/`) ? path.slice(prefix.length) : path;
+  return `${SITE_URL}/${locale}${normalized}`;
 }
 
 /**
@@ -17,14 +20,17 @@ export function buildCanonical(locale: Locale, path: string): string {
 export function buildHreflang(
   locale: Locale,
   path: string,
-  alternates: Array<{ locale: Locale; slug: string }>
+  alternates: Array<{ locale: Locale; slug: string }>,
 ): SEOData['hreflang'] {
   const entries: SEOData['hreflang'] = [];
 
   for (const alt of alternates) {
     entries.push({
       lang: alt.locale,
-      href: buildCanonical(alt.locale, path.replace(`/${locale}/`, `/${alt.locale}/`).replace(/\/[^/]+$/, `/${alt.slug}`)),
+      href: buildCanonical(
+        alt.locale,
+        path.replace(`/${locale}/`, `/${alt.locale}/`).replace(/\/[^/]+$/, `/${alt.slug}`),
+      ),
     });
   }
 
@@ -33,7 +39,10 @@ export function buildHreflang(
   if (trAlt) {
     entries.push({
       lang: 'x-default',
-      href: buildCanonical('tr', path.replace(`/${locale}/`, '/tr/').replace(/\/[^/]+$/, `/${trAlt.slug}`)),
+      href: buildCanonical(
+        'tr',
+        path.replace(`/${locale}/`, '/tr/').replace(/\/[^/]+$/, `/${trAlt.slug}`),
+      ),
     });
   }
 
@@ -102,7 +111,10 @@ export function buildListSEO(options: {
     robots: 'index',
     hreflang: [
       { lang: options.locale, href: canonical },
-      { lang: options.locale === 'tr' ? 'en' : 'tr', href: buildCanonical(options.locale === 'tr' ? 'en' : 'tr', `/${options.section}`) },
+      {
+        lang: options.locale === 'tr' ? 'en' : 'tr',
+        href: buildCanonical(options.locale === 'tr' ? 'en' : 'tr', `/${options.section}`),
+      },
       { lang: 'x-default', href: buildCanonical('tr', `/${options.section}`) },
     ],
   };

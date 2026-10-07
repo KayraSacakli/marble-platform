@@ -15,7 +15,9 @@ export function LoadingState({ message = 'Loading...' }: LoadingStateProps) {
         margin: '0 auto',
       }}
     >
-      <p className="text-body" style={{ color: 'var(--color-text-secondary)' }}>{message}</p>
+      <p className="text-body" style={{ color: 'var(--color-text-secondary)' }}>
+        {message}
+      </p>
     </div>
   );
 }

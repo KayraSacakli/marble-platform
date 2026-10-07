@@ -10,7 +10,9 @@ describe('resolveSeedAdminPassword', () => {
     expect(resolveSeedAdminPassword(undefined, true)).toMatchObject({ action: 'skip' });
     expect(resolveSeedAdminPassword('', true)).toMatchObject({ action: 'skip' });
     expect(resolveSeedAdminPassword('short', true)).toMatchObject({ action: 'skip' });
-    expect(resolveSeedAdminPassword('x'.repeat(MIN_SEED_ADMIN_PASSWORD_LENGTH - 1), true)).toMatchObject({
+    expect(
+      resolveSeedAdminPassword('x'.repeat(MIN_SEED_ADMIN_PASSWORD_LENGTH - 1), true),
+    ).toMatchObject({
       action: 'skip',
     });
   });
@@ -36,11 +38,17 @@ describe('resolveSeedAdminPassword', () => {
 
   it('prefers the configured password in development when long enough', () => {
     const result = resolveSeedAdminPassword('dev-password-long-enough', false);
-    expect(result).toEqual({ action: 'use', password: 'dev-password-long-enough', isDefault: false });
+    expect(result).toEqual({
+      action: 'use',
+      password: 'dev-password-long-enough',
+      isDefault: false,
+    });
   });
 
   it('exposes the development default as a non-production value', () => {
     expect(MIN_SEED_ADMIN_PASSWORD_LENGTH).toBeGreaterThanOrEqual(12);
-    expect(DEV_ADMIN_DEFAULT_PASSWORD.length).toBeGreaterThanOrEqual(MIN_SEED_ADMIN_PASSWORD_LENGTH);
+    expect(DEV_ADMIN_DEFAULT_PASSWORD.length).toBeGreaterThanOrEqual(
+      MIN_SEED_ADMIN_PASSWORD_LENGTH,
+    );
   });
 });

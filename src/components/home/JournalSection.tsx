@@ -17,13 +17,15 @@ export function JournalSection({ heading, articles, locale }: JournalSectionProp
   return (
     <section className="homepage-section">
       <Container size="lg">
-        <SectionHeader
-          eyebrow="Insights"
-          title={displayHeading}
-        />
+        <SectionHeader eyebrow="Insights" title={displayHeading} />
         <div className="journal-grid">
           {articles.map((article, index) => (
-            <JournalCard key={article.id} article={article} featured={index === 0} locale={locale} />
+            <JournalCard
+              key={article.id}
+              article={article}
+              featured={index === 0}
+              locale={locale}
+            />
           ))}
         </div>
       </Container>
@@ -31,7 +33,15 @@ export function JournalSection({ heading, articles, locale }: JournalSectionProp
   );
 }
 
-function JournalCard({ article, featured, locale }: { article: JournalSummary; featured: boolean; locale: string }) {
+function JournalCard({
+  article,
+  featured,
+  locale,
+}: {
+  article: JournalSummary;
+  featured: boolean;
+  locale: string;
+}) {
   const href = locale ? `/${locale}/journal/${article.slug}` : `/journal/${article.slug}`;
 
   return (
@@ -41,13 +51,11 @@ function JournalCard({ article, featured, locale }: { article: JournalSummary; f
       </a>
       <div className="journal-card__image-wrap" style={{ position: 'relative' }}>
         {article.coverImage ? (
-          <Media
-            src={article.coverImage.src}
-            alt={article.coverImage.alt}
-            loading="lazy"
-          />
+          <Media src={article.coverImage.src} alt={article.coverImage.alt} loading="lazy" />
         ) : (
-          <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />
+          <div
+            style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }}
+          />
         )}
       </div>
       <div className="journal-card__body">
@@ -61,14 +69,10 @@ function JournalCard({ article, featured, locale }: { article: JournalSummary; f
               })}
             </time>
           )}
-          {article.author && (
-            <span className="journal-card__author">{article.author}</span>
-          )}
+          {article.author && <span className="journal-card__author">{article.author}</span>}
         </div>
         <h3 className="journal-card__title">{article.title}</h3>
-        {article.summary && (
-          <p className="journal-card__summary">{article.summary}</p>
-        )}
+        {article.summary && <p className="journal-card__summary">{article.summary}</p>}
       </div>
     </article>
   );

@@ -23,12 +23,16 @@ export function LanguageSwitcher({ items, locale, className = '' }: LanguageSwit
 
   return (
     <nav aria-label={locale === 'tr' ? 'Dil seçimi' : 'Language switch'} className={className}>
-      <ul style={{ display: 'flex', gap: 'var(--space-2)', listStyle: 'none', margin: 0, padding: 0 }}>
+      <ul
+        style={{ display: 'flex', gap: 'var(--space-2)', listStyle: 'none', margin: 0, padding: 0 }}
+      >
         {languageItems.map((item) => {
           const itemLocale = extractLocaleFromHref(item.href);
           if (!itemLocale) return null;
           const isCurrent = itemLocale === locale;
-          const nativeName = getLocaleNativeName(itemLocale as 'tr' | 'en' | 'es' | 'fr' | 'de' | 'it' | 'ar');
+          const nativeName = getLocaleNativeName(
+            itemLocale as 'tr' | 'en' | 'es' | 'fr' | 'de' | 'it' | 'ar',
+          );
           return (
             <li key={item.href}>
               <Link

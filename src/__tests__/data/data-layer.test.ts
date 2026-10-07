@@ -42,11 +42,17 @@ describe('Data Layer — Products', () => {
     });
 
     it('passes pagination params', async () => {
-      mockedClient.getList.mockResolvedValue({ data: [], meta: { page: 2, pageSize: 12, total: 0, totalPages: 0 } });
+      mockedClient.getList.mockResolvedValue({
+        data: [],
+        meta: { page: 2, pageSize: 12, total: 0, totalPages: 0 },
+      });
 
       await getProducts('en', { page: 2, pageSize: 12 });
 
-      expect(mockedClient.getList).toHaveBeenCalledWith('en', '/products', { page: 2, pageSize: 12 });
+      expect(mockedClient.getList).toHaveBeenCalledWith('en', '/products', {
+        page: 2,
+        pageSize: 12,
+      });
     });
   });
 
@@ -77,7 +83,13 @@ describe('Data Layer — Homepage', () => {
           hero: { heading: 'Test Hero', primaryCTA: { label: 'Explore', href: '/tr/products' } },
           sections: [],
           sectionOrder: [],
-          seo: { title: 'Test', metaDescription: 'Test', canonical: '/', robots: 'index' as const, hreflang: [] },
+          seo: {
+            title: 'Test',
+            metaDescription: 'Test',
+            canonical: '/',
+            robots: 'index' as const,
+            hreflang: [],
+          },
         },
       };
       mockedClient.getOne.mockResolvedValue(mockHomepage);
@@ -91,10 +103,15 @@ describe('Data Layer — Homepage', () => {
 });
 
 describe('Data Layer — Collections', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getCollections calls correct endpoint', async () => {
-    mockedClient.getList.mockResolvedValue({ data: [], meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 } });
+    mockedClient.getList.mockResolvedValue({
+      data: [],
+      meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
+    });
     await getCollections('en');
     expect(mockedClient.getList).toHaveBeenCalledWith('en', '/collections', undefined);
   });
@@ -108,10 +125,15 @@ describe('Data Layer — Collections', () => {
 });
 
 describe('Data Layer — Applications', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getApplications calls correct endpoint', async () => {
-    mockedClient.getList.mockResolvedValue({ data: [], meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 } });
+    mockedClient.getList.mockResolvedValue({
+      data: [],
+      meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
+    });
     await getApplications('tr');
     expect(mockedClient.getList).toHaveBeenCalledWith('tr', '/applications', undefined);
   });
@@ -124,10 +146,15 @@ describe('Data Layer — Applications', () => {
 });
 
 describe('Data Layer — Projects', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getProjects calls correct endpoint', async () => {
-    mockedClient.getList.mockResolvedValue({ data: [], meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 } });
+    mockedClient.getList.mockResolvedValue({
+      data: [],
+      meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
+    });
     await getProjects('tr');
     expect(mockedClient.getList).toHaveBeenCalledWith('tr', '/projects', undefined);
   });
@@ -140,10 +167,15 @@ describe('Data Layer — Projects', () => {
 });
 
 describe('Data Layer — Journal', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getJournal calls correct endpoint', async () => {
-    mockedClient.getList.mockResolvedValue({ data: [], meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 } });
+    mockedClient.getList.mockResolvedValue({
+      data: [],
+      meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
+    });
     await getJournal('tr');
     expect(mockedClient.getList).toHaveBeenCalledWith('tr', '/journal', undefined);
   });
@@ -156,7 +188,9 @@ describe('Data Layer — Journal', () => {
 });
 
 describe('Data Layer — Company', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getAbout calls correct endpoint', async () => {
     mockedClient.getOne.mockResolvedValue({ data: { id: '1', name: 'About', slug: 'about' } });
@@ -178,7 +212,9 @@ describe('Data Layer — Company', () => {
 });
 
 describe('Data Layer — Navigation', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getNavigation calls correct endpoint', async () => {
     const mockNav = {
@@ -192,11 +228,20 @@ describe('Data Layer — Navigation', () => {
 });
 
 describe('Data Layer — Footer', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getFooter calls correct endpoint', async () => {
     const mockFooter = {
-      data: { company: [], catalogue: [], conversion: [], legal: [], language: [], copyright: '2026' },
+      data: {
+        company: [],
+        catalogue: [],
+        conversion: [],
+        legal: [],
+        language: [],
+        copyright: '2026',
+      },
     };
     mockedClient.getOne.mockResolvedValue(mockFooter);
     const result = await getFooter('tr');
@@ -206,7 +251,9 @@ describe('Data Layer — Footer', () => {
 });
 
 describe('Data Layer — Error Propagation', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('propagates API client errors', async () => {
     const { ApiClientError } = await import('@/lib/api/client-errors');

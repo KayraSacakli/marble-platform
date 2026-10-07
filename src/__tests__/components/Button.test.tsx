@@ -72,14 +72,31 @@ describe('Button', () => {
 
   it('calls onClick handler', async () => {
     let clicked = false;
-    render(<Button onClick={() => { clicked = true; }}>Click</Button>);
+    render(
+      <Button
+        onClick={() => {
+          clicked = true;
+        }}
+      >
+        Click
+      </Button>,
+    );
     screen.getByRole('button').click();
     expect(clicked).toBe(true);
   });
 
   it('does not call onClick when disabled', () => {
     let clicked = false;
-    render(<Button disabled onClick={() => { clicked = true; }}>Click</Button>);
+    render(
+      <Button
+        disabled
+        onClick={() => {
+          clicked = true;
+        }}
+      >
+        Click
+      </Button>,
+    );
     screen.getByRole('button').click();
     expect(clicked).toBe(false);
   });

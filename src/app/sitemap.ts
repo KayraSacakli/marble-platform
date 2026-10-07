@@ -12,18 +12,19 @@ import { getJournal } from '@/lib/data/journal';
 
 // Static paths are advertised only for the locales that actually have content
 // for them (the /quote form is intentionally absent: it is noindex).
-const STATIC_PATHS: Array<{ path: string; locales: (availability: SeoAvailability) => Locale[] }> = [
-  { path: '', locales: anyContentLocales },
-  { path: '/products', locales: (a) => a.sections.products },
-  { path: '/collections', locales: (a) => a.sections.collections },
-  { path: '/applications', locales: (a) => a.sections.applications },
-  { path: '/projects', locales: (a) => a.sections.projects },
-  { path: '/journal', locales: (a) => a.sections.journal },
-  { path: '/about', locales: (a) => a.company.about },
-  { path: '/quarry', locales: (a) => a.company.quarry },
-  { path: '/factory', locales: (a) => a.company.factory },
-  { path: '/contact', locales: anyContentLocales },
-];
+const STATIC_PATHS: Array<{ path: string; locales: (availability: SeoAvailability) => Locale[] }> =
+  [
+    { path: '', locales: anyContentLocales },
+    { path: '/products', locales: (a) => a.sections.products },
+    { path: '/collections', locales: (a) => a.sections.collections },
+    { path: '/applications', locales: (a) => a.sections.applications },
+    { path: '/projects', locales: (a) => a.sections.projects },
+    { path: '/journal', locales: (a) => a.sections.journal },
+    { path: '/about', locales: (a) => a.company.about },
+    { path: '/quarry', locales: (a) => a.company.quarry },
+    { path: '/factory', locales: (a) => a.company.factory },
+    { path: '/contact', locales: anyContentLocales },
+  ];
 
 type DetailSummary = { slug: string; publicationDate?: string };
 
@@ -31,7 +32,7 @@ type DetailSource = {
   basePath: string;
   fetchPage: (
     locale: Locale,
-    params?: Record<string, string | number>
+    params?: Record<string, string | number>,
   ) => Promise<{ data: DetailSummary[]; meta: { totalPages: number } }>;
 };
 
@@ -43,7 +44,10 @@ const DETAIL_SOURCES: DetailSource[] = [
   { basePath: '/journal', fetchPage: getJournal as DetailSource['fetchPage'] },
 ];
 
-async function collectDetailEntries(locale: Locale, source: DetailSource): Promise<MetadataRoute.Sitemap> {
+async function collectDetailEntries(
+  locale: Locale,
+  source: DetailSource,
+): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [];
   let page = 1;
   let totalPages = 1;

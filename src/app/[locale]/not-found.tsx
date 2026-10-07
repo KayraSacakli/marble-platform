@@ -24,13 +24,17 @@ export default function NotFound() {
       <h1 className="text-h2" style={{ marginBottom: 'var(--space-4)' }}>
         Page not found
       </h1>
-      <p className="text-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)', maxWidth: '40ch' }}>
+      <p
+        className="text-body"
+        style={{
+          color: 'var(--color-text-secondary)',
+          marginBottom: 'var(--space-6)',
+          maxWidth: '40ch',
+        }}
+      >
         The page you are looking for does not exist or has been moved.
       </p>
-      <Link
-        href={`/${locale}`}
-        className="button button--primary button--md"
-      >
+      <Link href={`/${locale}`} className="button button--primary button--md">
         Go to homepage
       </Link>
     </div>

@@ -18,11 +18,14 @@ export const GET = withAdminAuth(
       q: parseQueryString(url.searchParams.get('q') ?? undefined),
     });
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 function uploadLimitError(): ValidationError {
-  return new ValidationError(`File exceeds the ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} MB limit.`, []);
+  return new ValidationError(
+    `File exceeds the ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} MB limit.`,
+    [],
+  );
 }
 
 /**
@@ -91,5 +94,5 @@ export const POST = withAdminAuth(
     const data = Buffer.from(await file.arrayBuffer());
     return uploadAdminMedia({ data, filename: file.name ?? 'upload', actorId: admin.id });
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

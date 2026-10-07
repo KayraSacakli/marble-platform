@@ -6,8 +6,16 @@ import { useScrollVideo } from '@/hooks/useScrollVideo';
 describe('useScrollVideo', () => {
   beforeEach(() => {
     Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 1000, writable: true, configurable: true });
-    Object.defineProperty(window, 'innerHeight', { value: 500, writable: true, configurable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 1000,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      value: 500,
+      writable: true,
+      configurable: true,
+    });
 
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: query === '(prefers-reduced-motion: reduce)' ? false : false,
@@ -50,8 +58,16 @@ describe('useScrollVideo', () => {
   });
 
   it('handles zero scroll height gracefully', () => {
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 500, writable: true, configurable: true });
-    Object.defineProperty(window, 'innerHeight', { value: 500, writable: true, configurable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 500,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      value: 500,
+      writable: true,
+      configurable: true,
+    });
 
     const { result } = renderHook(() => useScrollVideo());
     expect(result.current.progress).toBe(0);
@@ -70,8 +86,16 @@ describe('useScrollVideo', () => {
   });
 
   it('clamps progress between 0 and 1', () => {
-    Object.defineProperty(document.documentElement, 'scrollHeight', { value: 1000, writable: true, configurable: true });
-    Object.defineProperty(window, 'innerHeight', { value: 500, writable: true, configurable: true });
+    Object.defineProperty(document.documentElement, 'scrollHeight', {
+      value: 1000,
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'innerHeight', {
+      value: 500,
+      writable: true,
+      configurable: true,
+    });
 
     const { result } = renderHook(() => useScrollVideo());
     expect(result.current.progress).toBe(0);

@@ -27,7 +27,10 @@ export const slugSchema = z
   .string()
   .min(1, 'Slug is required.')
   .max(500, 'Slug must be 500 characters or fewer.')
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must contain only lowercase letters, numbers, and hyphens.');
+  .regex(
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    'Slug must contain only lowercase letters, numbers, and hyphens.',
+  );
 
 // ============================================================
 // Pagination validation
@@ -85,7 +88,7 @@ export function parsePagination(searchParams?: URLSearchParams | null): Paginati
 export function buildPaginationMeta(
   page: number,
   pageSize: number,
-  total: number
+  total: number,
 ): { page: number; pageSize: number; total: number; totalPages: number } {
   return {
     page,
@@ -108,14 +111,8 @@ export const quoteRequestSchema = z.object({
     .string()
     .email('A valid email address is required.')
     .max(300, 'Email must be 300 characters or fewer.'),
-  contactPhone: z
-    .string()
-    .max(50, 'Phone must be 50 characters or fewer.')
-    .optional(),
-  company: z
-    .string()
-    .max(300, 'Company must be 300 characters or fewer.')
-    .optional(),
+  contactPhone: z.string().max(50, 'Phone must be 50 characters or fewer.').optional(),
+  company: z.string().max(300, 'Company must be 300 characters or fewer.').optional(),
   message: z
     .string()
     .min(1, 'Message is required.')
@@ -170,14 +167,14 @@ export type SeoRobotsValue = (typeof SEO_ROBOTS_VALUES)[number];
 
 export const adminContentVariantSchema = z.object({
   slug: slugSchema,
-  name: z
-    .string()
-    .min(1, 'Name is required.')
-    .max(500, 'Name must be 500 characters or fewer.'),
+  name: z.string().min(1, 'Name is required.').max(500, 'Name must be 500 characters or fewer.'),
   description: z.string().max(20000, 'Description must be 20000 characters or fewer.').optional(),
   tagline: z.string().max(500, 'Tagline must be 500 characters or fewer.').optional(),
   seoTitle: z.string().max(500, 'SEO title must be 500 characters or fewer.').optional(),
-  seoDescription: z.string().max(1000, 'SEO description must be 1000 characters or fewer.').optional(),
+  seoDescription: z
+    .string()
+    .max(1000, 'SEO description must be 1000 characters or fewer.')
+    .optional(),
   seoCanonical: z.string().max(1000, 'Canonical URL must be 1000 characters or fewer.').optional(),
   seoRobots: z.enum(SEO_ROBOTS_VALUES).optional(),
   isFeatured: z.boolean().optional(),
@@ -306,7 +303,11 @@ export function toValidationDetails(error: {
   flatten: () => { fieldErrors: Record<string, unknown> };
 }) {
   return Object.entries(error.flatten().fieldErrors).flatMap(([field, messages]) =>
-    ((messages as string[] | undefined) ?? []).map((message) => ({ field, code: 'INVALID', message }))
+    ((messages as string[] | undefined) ?? []).map((message) => ({
+      field,
+      code: 'INVALID',
+      message,
+    })),
   );
 }
 

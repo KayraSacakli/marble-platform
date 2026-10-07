@@ -15,7 +15,11 @@ type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
 
@@ -32,7 +36,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         description,
         url: `${SITE_URL}/${locale}/projects/${project.slug}`,
         type: 'website',
-        images: project.heroImage ? [{ url: project.heroImage.src, alt: project.heroImage.alt, width: project.heroImage.width, height: project.heroImage.height }] : [],
+        images: project.heroImage
+          ? [
+              {
+                url: project.heroImage.src,
+                alt: project.heroImage.alt,
+                width: project.heroImage.width,
+                height: project.heroImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...metadataFromSeoData(project.seo),
@@ -96,28 +109,18 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
           {project.heroImage && (
             <div className="project-hero__media">
-              <Media
-                src={project.heroImage.src}
-                alt={project.heroImage.alt}
-                loading="eager"
-              />
+              <Media src={project.heroImage.src} alt={project.heroImage.alt} loading="eager" />
             </div>
           )}
         </div>
 
         {project.gallery.length > 0 && (
           <section className="project-gallery">
-            <h2 className="project-gallery__heading">
-              {locale === 'tr' ? 'Galeri' : 'Gallery'}
-            </h2>
+            <h2 className="project-gallery__heading">{locale === 'tr' ? 'Galeri' : 'Gallery'}</h2>
             <div className="project-gallery__grid">
               {project.gallery.map((image) => (
                 <div key={image.id} className="project-gallery__item">
-                  <Media
-                    src={image.src}
-                    alt={image.alt}
-                    loading="lazy"
-                  />
+                  <Media src={image.src} alt={image.alt} loading="lazy" />
                 </div>
               ))}
             </div>
@@ -165,7 +168,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
         <section className="project-cta">
           <h2 className="project-cta__heading">
-            {locale === 'tr' ? 'Bu Proje Hakkında Konuşalım' : 'Let\'s Discuss This Project'}
+            {locale === 'tr' ? 'Bu Proje Hakkında Konuşalım' : "Let's Discuss This Project"}
           </h2>
           <p className="project-cta__message">
             {locale === 'tr'

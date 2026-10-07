@@ -18,7 +18,9 @@ export function DesktopNavigation({
 
   return (
     <nav aria-label={locale === 'tr' ? 'Ana navigasyon' : 'Main navigation'} className={className}>
-      <ul style={{ display: 'flex', gap: 'var(--space-6)', listStyle: 'none', margin: 0, padding: 0 }}>
+      <ul
+        style={{ display: 'flex', gap: 'var(--space-6)', listStyle: 'none', margin: 0, padding: 0 }}
+      >
         {visibleItems.map((item) => {
           const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/');
           return (

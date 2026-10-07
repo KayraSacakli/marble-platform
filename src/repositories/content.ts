@@ -122,19 +122,39 @@ export class ContentRepository extends BaseRepository {
   }
 
   async listProducts(locale: Locale, pagination: PaginationInput) {
-    return this.listPublished({ contentType: 'PRODUCT', locale, pagination, orderBy: { name: 'asc' } });
+    return this.listPublished({
+      contentType: 'PRODUCT',
+      locale,
+      pagination,
+      orderBy: { name: 'asc' },
+    });
   }
 
   async listCollections(locale: Locale, pagination: PaginationInput) {
-    return this.listPublished({ contentType: 'COLLECTION', locale, pagination, orderBy: { name: 'asc' } });
+    return this.listPublished({
+      contentType: 'COLLECTION',
+      locale,
+      pagination,
+      orderBy: { name: 'asc' },
+    });
   }
 
   async listApplications(locale: Locale, pagination: PaginationInput) {
-    return this.listPublished({ contentType: 'APPLICATION', locale, pagination, orderBy: { name: 'asc' } });
+    return this.listPublished({
+      contentType: 'APPLICATION',
+      locale,
+      pagination,
+      orderBy: { name: 'asc' },
+    });
   }
 
   async listProjects(locale: Locale, pagination: PaginationInput) {
-    return this.listPublished({ contentType: 'PROJECT', locale, pagination, orderBy: { name: 'asc' } });
+    return this.listPublished({
+      contentType: 'PROJECT',
+      locale,
+      pagination,
+      orderBy: { name: 'asc' },
+    });
   }
 
   async listJournalArticles(locale: Locale, pagination: PaginationInput) {
@@ -209,9 +229,19 @@ export class ContentRepository extends BaseRepository {
       PROJECT: 'projects',
       JOURNAL_ARTICLE: 'journal',
     };
-    const companyByKind: Record<string, SeoCompanyPage> = { ABOUT: 'about', QUARRY: 'quarry', FACTORY: 'factory' };
+    const companyByKind: Record<string, SeoCompanyPage> = {
+      ABOUT: 'about',
+      QUARRY: 'quarry',
+      FACTORY: 'factory',
+    };
 
-    const sections: SeoAvailability['sections'] = { products: [], collections: [], applications: [], projects: [], journal: [] };
+    const sections: SeoAvailability['sections'] = {
+      products: [],
+      collections: [],
+      applications: [],
+      projects: [],
+      journal: [],
+    };
     const company: SeoAvailability['company'] = { about: [], quarry: [], factory: [] };
 
     for (const row of rows) {

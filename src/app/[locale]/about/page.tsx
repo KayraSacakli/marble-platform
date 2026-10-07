@@ -14,7 +14,11 @@ type PageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -31,7 +35,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         description,
         url: `${SITE_URL}/${locale}/about`,
         type: 'website',
-        images: about.coverImage ? [{ url: about.coverImage.src, alt: about.coverImage.alt, width: about.coverImage.width, height: about.coverImage.height }] : [],
+        images: about.coverImage
+          ? [
+              {
+                url: about.coverImage.src,
+                alt: about.coverImage.alt,
+                width: about.coverImage.width,
+                height: about.coverImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...gatedMetadata(locale, '/about', companyLocales(await getSeoAvailability(), 'about')),
@@ -74,14 +87,16 @@ export default async function AboutPage({ params }: PageProps) {
         <div className="company-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Şirketimiz' : 'Our Company'}
           </span>
           <h1 className="text-h1">{about.name}</h1>
-          {about.description && (
-            <p className="company-page__intro">{about.description}</p>
-          )}
+          {about.description && <p className="company-page__intro">{about.description}</p>}
         </div>
 
         <div className="company-hero">
@@ -93,11 +108,7 @@ export default async function AboutPage({ params }: PageProps) {
 
           {about.coverImage && (
             <div className="company-hero__media">
-              <Media
-                src={about.coverImage.src}
-                alt={about.coverImage.alt}
-                loading="eager"
-              />
+              <Media src={about.coverImage.src} alt={about.coverImage.alt} loading="eager" />
             </div>
           )}
         </div>

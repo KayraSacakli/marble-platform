@@ -64,27 +64,30 @@ describe('collectProductionEnvIssues', () => {
   });
 
   it('flags subdomains of placeholder hosts', () => {
-    expect(keysOf({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'https://staging.example.org' })).toContain(
-      'NEXT_PUBLIC_SITE_URL'
-    );
-    expect(keysOf({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'https://yourdomain.com' })).toContain(
-      'NEXT_PUBLIC_SITE_URL'
-    );
+    expect(
+      keysOf({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'https://staging.example.org' }),
+    ).toContain('NEXT_PUBLIC_SITE_URL');
+    expect(
+      keysOf({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'https://yourdomain.com' }),
+    ).toContain('NEXT_PUBLIC_SITE_URL');
   });
 
   it('flags an invalid or non-http(s) SITE_URL', () => {
     expect(keysOf({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'not-a-url' })).toContain(
-      'NEXT_PUBLIC_SITE_URL'
+      'NEXT_PUBLIC_SITE_URL',
     );
     expect(keysOf({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'ftp://site.com' })).toContain(
-      'NEXT_PUBLIC_SITE_URL'
+      'NEXT_PUBLIC_SITE_URL',
     );
   });
 
   it('accepts localhost SITE_URL for local production runs', () => {
-    expect(collectProductionEnvIssues({ ...validProductionEnv, NEXT_PUBLIC_SITE_URL: 'http://localhost:3100' })).toEqual(
-      []
-    );
+    expect(
+      collectProductionEnvIssues({
+        ...validProductionEnv,
+        NEXT_PUBLIC_SITE_URL: 'http://localhost:3100',
+      }),
+    ).toEqual([]);
   });
 
   it('flags a missing NEXTAUTH_SECRET', () => {
@@ -94,13 +97,19 @@ describe('collectProductionEnvIssues', () => {
   });
 
   it('flags the documented placeholder secret', () => {
-    const issues = collectProductionEnvIssues({ ...validProductionEnv, NEXTAUTH_SECRET: 'your-secret-here' });
+    const issues = collectProductionEnvIssues({
+      ...validProductionEnv,
+      NEXTAUTH_SECRET: 'your-secret-here',
+    });
     expect(issues).toHaveLength(1);
     expect(issues[0].reason).toMatch(/placeholder/);
   });
 
   it('flags a too-short secret', () => {
-    const issues = collectProductionEnvIssues({ ...validProductionEnv, NEXTAUTH_SECRET: 'shortsecret' });
+    const issues = collectProductionEnvIssues({
+      ...validProductionEnv,
+      NEXTAUTH_SECRET: 'shortsecret',
+    });
     expect(issues).toHaveLength(1);
     expect(issues[0].reason).toMatch(/at least 16/);
   });
@@ -122,7 +131,10 @@ describe('validateProductionEnv', () => {
 
   it('throws an aggregated error listing every issue', () => {
     try {
-      validateProductionEnv({ NODE_ENV: 'production', NEXT_PUBLIC_SITE_URL: 'https://example.com' });
+      validateProductionEnv({
+        NODE_ENV: 'production',
+        NEXT_PUBLIC_SITE_URL: 'https://example.com',
+      });
       expect.unreachable('expected validation to throw');
     } catch (error) {
       const message = (error as Error).message;
@@ -142,7 +154,9 @@ describe('validateEnv (NODE_ENV gate)', () => {
   });
 
   it('enforces production rules when NODE_ENV is production', () => {
-    expect(() => validateEnv({ NODE_ENV: 'production' })).toThrow(/Production environment validation failed/);
+    expect(() => validateEnv({ NODE_ENV: 'production' })).toThrow(
+      /Production environment validation failed/,
+    );
   });
 });
 

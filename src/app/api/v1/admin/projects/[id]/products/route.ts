@@ -2,7 +2,11 @@ import { z } from 'zod';
 import type { NextRequest } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
-import { listProjectRelations, attachProjectRelation, detachProjectRelation } from '@/services/adminEditorial';
+import {
+  listProjectRelations,
+  attachProjectRelation,
+  detachProjectRelation,
+} from '@/services/adminEditorial';
 
 const idParam = z.string().uuid('Invalid project id.');
 const targetParam = z.string().uuid('Invalid product id.');
@@ -27,7 +31,7 @@ export const GET = withAdminAuth(
     const { id } = await params;
     return { items: await listProjectRelations('products', parseId(id)) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/projects/[id]/products { productId } — ADMIN, EDITOR
@@ -39,7 +43,7 @@ export const POST = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid product id.');
     return { items: await attachProjectRelation('products', parseId(id), parsed.data, admin.id) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // DELETE /api/v1/admin/projects/[id]/products?productId= — ADMIN, EDITOR
@@ -51,5 +55,5 @@ export const DELETE = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid product id.');
     return detachProjectRelation('products', parseId(id), parsed.data, admin.id);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

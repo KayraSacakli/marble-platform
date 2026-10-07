@@ -24,7 +24,9 @@ describe('GET /api/v1/public/[locale]/collections', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/collections', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/collections', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.data).toHaveLength(1);
@@ -38,7 +40,9 @@ describe('GET /api/v1/public/[locale]/collections', () => {
       meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/collections', { locale: 'en' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/collections', {
+      locale: 'en',
+    });
     const json = await res.json();
 
     expect(json.data.data).toEqual([]);
@@ -50,12 +54,16 @@ describe('GET /api/v1/public/[locale]/collections', () => {
       meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/collections', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/collections', {
+      locale: 'tr',
+    });
     expect(res.status).toBe(200);
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/collections', { locale: 'xx' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/collections', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -69,9 +77,15 @@ describe('GET /api/v1/public/[locale]/collections/[slug]', () => {
   });
 
   it('returns collection detail for valid slug', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockCollectionDetail);
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockCollectionDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/collections/test-collection', { locale: 'tr', slug: 'test-collection' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/collections/test-collection',
+      { locale: 'tr', slug: 'test-collection' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -82,9 +96,15 @@ describe('GET /api/v1/public/[locale]/collections/[slug]', () => {
   });
 
   it('returns 404 for missing slug', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/collections/nonexistent', { locale: 'tr', slug: 'nonexistent' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/collections/nonexistent',
+      { locale: 'tr', slug: 'nonexistent' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(404);
@@ -92,23 +112,41 @@ describe('GET /api/v1/public/[locale]/collections/[slug]', () => {
   });
 
   it('returns 404 for unpublished content', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/collections/draft-collection', { locale: 'tr', slug: 'draft-collection' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/collections/draft-collection',
+      { locale: 'tr', slug: 'draft-collection' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 404 for missing translation', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/en/collections/tr-only', { locale: 'en', slug: 'tr-only' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/en/collections/tr-only',
+      { locale: 'en', slug: 'tr-only' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('includes SEO data', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockCollectionDetail);
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockCollectionDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/collections/test-collection', { locale: 'tr', slug: 'test-collection' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/collections/test-collection',
+      { locale: 'tr', slug: 'test-collection' },
+    );
     const json = await res.json();
 
     expect(json.data.seo).toBeDefined();
@@ -116,9 +154,15 @@ describe('GET /api/v1/public/[locale]/collections/[slug]', () => {
   });
 
   it('does not expose internal fields', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockCollectionDetail);
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockCollectionDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/collections/test-collection', { locale: 'tr', slug: 'test-collection' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/collections/test-collection',
+      { locale: 'tr', slug: 'test-collection' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('internalUser');

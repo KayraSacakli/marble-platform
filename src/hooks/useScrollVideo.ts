@@ -58,9 +58,7 @@ export function useScrollVideo(options: ScrollVideoOptions = {}) {
       if (!Number.isFinite(duration) || duration <= 0) return;
 
       const scrollContainer = optionsRef.current.scrollContainerRef?.current;
-      const scrollTop = scrollContainer
-        ? scrollContainer.scrollTop
-        : window.scrollY;
+      const scrollTop = scrollContainer ? scrollContainer.scrollTop : window.scrollY;
       const scrollHeight = scrollContainer
         ? scrollContainer.scrollHeight - scrollContainer.clientHeight
         : document.documentElement.scrollHeight - window.innerHeight;

@@ -12,19 +12,29 @@ import {
 import { GET as SERVE } from '@/app/api/media/[key]/route';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
-import {
-  sniffImageMime,
-  sniffDimensions,
-  MEDIA_PUBLIC_PREFIX,
-} from '@/services/adminMedia';
+import { sniffImageMime, sniffDimensions, MEDIA_PUBLIC_PREFIX } from '@/services/adminMedia';
 import { LocalMediaStorage, setMediaStorage, assertSafeKey } from '@/lib/media/storage';
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     contentItem: { findUnique: vi.fn() },
     contentVariant: { findFirst: vi.fn() },
-    contentMedia: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), deleteMany: vi.fn(), updateMany: vi.fn(), count: vi.fn() },
-    mediaAsset: { findMany: vi.fn(), findUnique: vi.fn(), findFirst: vi.fn(), create: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    contentMedia: {
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      deleteMany: vi.fn(),
+      updateMany: vi.fn(),
+      count: vi.fn(),
+    },
+    mediaAsset: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
     adminSession: { findUnique: vi.fn(), delete: vi.fn() },
     auditEvent: { create: vi.fn() },
   },
@@ -43,12 +53,12 @@ function mockSession(user: typeof ADMIN | null) {
   } as never);
   vi.mocked(prisma.adminSession.findUnique).mockResolvedValue(
     user
-      ? {
+      ? ({
           id: 's-1',
           expiresAt: new Date(Date.now() + 60_000),
           user: { ...user, isActive: true, roles: user.roles.map((name) => ({ role: { name } })) },
-        } as never
-      : null
+        } as never)
+      : null,
   );
 }
 
@@ -67,8 +77,14 @@ const ASSET_ID = '22222222-2222-4222-8222-222222222222';
 
 function uploadRequest(bytes: Buffer, filename: string): Request {
   const form = new FormData();
-  form.append('file', new File([new Uint8Array(bytes)], filename, { type: 'application/octet-stream' }));
-  return new Request('http://localhost/api/v1/admin/media', { method: 'POST', body: form }) as never;
+  form.append(
+    'file',
+    new File([new Uint8Array(bytes)], filename, { type: 'application/octet-stream' }),
+  );
+  return new Request('http://localhost/api/v1/admin/media', {
+    method: 'POST',
+    body: form,
+  }) as never;
 }
 
 describe('magic-byte sniffing and key safety', () => {
@@ -76,10 +92,12 @@ describe('magic-byte sniffing and key safety', () => {
     expect(sniffImageMime(pngBytes())).toBe('image/png');
     expect(sniffImageMime(Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 0]))).toBe('image/jpeg');
     expect(sniffImageMime(Buffer.from('GIF89a' + '0'.repeat(10)))).toBe('image/gif');
-    expect(sniffImageMime(Buffer.concat([Buffer.from('RIFF'), Buffer.alloc(4), Buffer.from('WEBP')])))
-      .toBe('image/webp');
-    expect(sniffImageMime(Buffer.concat([Buffer.alloc(4), Buffer.from('ftypavif'), Buffer.alloc(4)])))
-      .toBe('image/avif');
+    expect(
+      sniffImageMime(Buffer.concat([Buffer.from('RIFF'), Buffer.alloc(4), Buffer.from('WEBP')])),
+    ).toBe('image/webp');
+    expect(
+      sniffImageMime(Buffer.concat([Buffer.alloc(4), Buffer.from('ftypavif'), Buffer.alloc(4)])),
+    ).toBe('image/avif');
     expect(sniffImageMime(Buffer.from('%PDF-1.4 fake'))).toBeNull();
     expect(sniffImageMime(Buffer.from('plain text'))).toBeNull();
   });
@@ -121,17 +139,40 @@ describe('admin media authZ', () => {
 
   it('rejects unauthenticated upload/list/get/delete with 401', async () => {
     mockSession(null);
-    expect((await UPLOAD(uploadRequest(pngBytes(), 'a.png'), { params: Promise.resolve({}) })).status).toBe(401);
-    expect((await LIST(new Request('http://localhost/api/v1/admin/media') as never, { params: Promise.resolve({}) })).status).toBe(401);
-    expect((await GET_ONE(new Request('http://localhost/x') as never, { params: Promise.resolve({ id: ASSET_ID }) })).status).toBe(401);
-    expect((await DELETE_ONE(new Request('http://localhost/x', { method: 'DELETE' }) as never, { params: Promise.resolve({ id: ASSET_ID }) })).status).toBe(401);
+    expect(
+      (await UPLOAD(uploadRequest(pngBytes(), 'a.png'), { params: Promise.resolve({}) })).status,
+    ).toBe(401);
+    expect(
+      (
+        await LIST(new Request('http://localhost/api/v1/admin/media') as never, {
+          params: Promise.resolve({}),
+        })
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await GET_ONE(new Request('http://localhost/x') as never, {
+          params: Promise.resolve({ id: ASSET_ID }),
+        })
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await DELETE_ONE(new Request('http://localhost/x', { method: 'DELETE' }) as never, {
+          params: Promise.resolve({ id: ASSET_ID }),
+        })
+      ).status,
+    ).toBe(401);
     expect(
       (
         await ATTACH(
-          new Request('http://localhost/x', { method: 'POST', body: JSON.stringify({ assetId: ASSET_ID, role: 'GALLERY' }) }) as never,
-          { params: Promise.resolve({ id: PROD_ID }) }
+          new Request('http://localhost/x', {
+            method: 'POST',
+            body: JSON.stringify({ assetId: ASSET_ID, role: 'GALLERY' }),
+          }) as never,
+          { params: Promise.resolve({ id: PROD_ID }) },
         )
-      ).status
+      ).status,
     ).toBe(401);
   });
 
@@ -140,14 +181,19 @@ describe('admin media authZ', () => {
     const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'media-e2e-'));
     setMediaStorage(new LocalMediaStorage(dir));
     try {
-      vi.mocked(prisma.mediaAsset.create).mockImplementation(async (args: never) => ({
-        id: 'new-asset',
-        ...(args as { data: Record<string, unknown> }).data,
-        createdAt: new Date(),
-      }) as never);
+      vi.mocked(prisma.mediaAsset.create).mockImplementation(
+        async (args: never) =>
+          ({
+            id: 'new-asset',
+            ...(args as { data: Record<string, unknown> }).data,
+            createdAt: new Date(),
+          }) as never,
+      );
       vi.mocked(prisma.auditEvent.create).mockResolvedValue({} as never);
 
-      const up = await UPLOAD(uploadRequest(pngBytes(4, 3), '../../evil.png'), { params: Promise.resolve({}) });
+      const up = await UPLOAD(uploadRequest(pngBytes(4, 3), '../../evil.png'), {
+        params: Promise.resolve({}),
+      });
       expect(up.status).toBe(200);
       const upJson = await up.json();
       // Original filename is never used as storage path.
@@ -159,9 +205,12 @@ describe('admin media authZ', () => {
       const created = vi.mocked(prisma.mediaAsset.create).mock.calls[0][0];
       expect(created.data.fileType).toBe('image/png');
 
-      const del = await DELETE_ONE(new Request('http://localhost/x', { method: 'DELETE' }) as never, {
-        params: Promise.resolve({ id: ASSET_ID }),
-      });
+      const del = await DELETE_ONE(
+        new Request('http://localhost/x', { method: 'DELETE' }) as never,
+        {
+          params: Promise.resolve({ id: ASSET_ID }),
+        },
+      );
       expect(del.status).toBe(403);
     } finally {
       setMediaStorage(null);
@@ -219,9 +268,12 @@ describe('admin media authZ', () => {
       vi.mocked(prisma.mediaAsset.delete).mockResolvedValue({} as never);
       vi.mocked(prisma.auditEvent.create).mockResolvedValue({} as never);
 
-      const res = await DELETE_ONE(new Request('http://localhost/x', { method: 'DELETE' }) as never, {
-        params: Promise.resolve({ id: ASSET_ID }),
-      });
+      const res = await DELETE_ONE(
+        new Request('http://localhost/x', { method: 'DELETE' }) as never,
+        {
+          params: Promise.resolve({ id: ASSET_ID }),
+        },
+      );
       expect(res.status).toBe(200);
       const audit = vi.mocked(prisma.auditEvent.create).mock.calls[0][0];
       expect(audit.data.action).toBe('MEDIA_DELETE');
@@ -265,7 +317,10 @@ describe('product media relations', () => {
   it('attaches to both variants and audits', async () => {
     mockSession(EDITOR);
     mockProduct();
-    vi.mocked(prisma.mediaAsset.findUnique).mockResolvedValue({ id: ASSET_ID, mediaType: 'IMAGE' } as never);
+    vi.mocked(prisma.mediaAsset.findUnique).mockResolvedValue({
+      id: ASSET_ID,
+      mediaType: 'IMAGE',
+    } as never);
     vi.mocked(prisma.contentMedia.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.contentMedia.count).mockResolvedValue(0);
     vi.mocked(prisma.contentMedia.create).mockResolvedValue({} as never);
@@ -275,9 +330,14 @@ describe('product media relations', () => {
     const res = await ATTACH(
       new Request('http://localhost/x', {
         method: 'POST',
-        body: JSON.stringify({ assetId: ASSET_ID, role: 'GALLERY', altTr: 'TR alt', altEn: 'EN alt' }),
+        body: JSON.stringify({
+          assetId: ASSET_ID,
+          role: 'GALLERY',
+          altTr: 'TR alt',
+          altEn: 'EN alt',
+        }),
       }) as never,
-      { params: Promise.resolve({ id: PROD_ID }) }
+      { params: Promise.resolve({ id: PROD_ID }) },
     );
     expect(res.status).toBe(200);
     expect(vi.mocked(prisma.contentMedia.create).mock.calls).toHaveLength(2);
@@ -288,14 +348,17 @@ describe('product media relations', () => {
   it('rejects duplicate attach with 409', async () => {
     mockSession(EDITOR);
     mockProduct();
-    vi.mocked(prisma.mediaAsset.findUnique).mockResolvedValue({ id: ASSET_ID, mediaType: 'IMAGE' } as never);
+    vi.mocked(prisma.mediaAsset.findUnique).mockResolvedValue({
+      id: ASSET_ID,
+      mediaType: 'IMAGE',
+    } as never);
     vi.mocked(prisma.contentMedia.findFirst).mockResolvedValue({ id: 'row' } as never);
     const res = await ATTACH(
       new Request('http://localhost/x', {
         method: 'POST',
         body: JSON.stringify({ assetId: ASSET_ID, role: 'GALLERY' }),
       }) as never,
-      { params: Promise.resolve({ id: PROD_ID }) }
+      { params: Promise.resolve({ id: PROD_ID }) },
     );
     expect(res.status).toBe(409);
   });
@@ -305,11 +368,16 @@ describe('product media relations', () => {
     mockProduct();
     vi.mocked(prisma.contentMedia.deleteMany).mockResolvedValue({ count: 2 } as never);
     vi.mocked(prisma.auditEvent.create).mockResolvedValue({} as never);
-    const det = await DETACH(new Request(`http://localhost/x?assetId=${ASSET_ID}`, { method: 'DELETE' }) as never, {
-      params: Promise.resolve({ id: PROD_ID }),
-    });
+    const det = await DETACH(
+      new Request(`http://localhost/x?assetId=${ASSET_ID}`, { method: 'DELETE' }) as never,
+      {
+        params: Promise.resolve({ id: PROD_ID }),
+      },
+    );
     expect(det.status).toBe(200);
-    expect(vi.mocked(prisma.auditEvent.create).mock.calls[0][0].data.action).toBe('PRODUCT_MEDIA_DETACH');
+    expect(vi.mocked(prisma.auditEvent.create).mock.calls[0][0].data.action).toBe(
+      'PRODUCT_MEDIA_DETACH',
+    );
 
     vi.mocked(prisma.contentMedia.updateMany).mockResolvedValue({ count: 1 } as never);
     vi.mocked(prisma.contentMedia.findMany).mockResolvedValue([] as never);
@@ -318,13 +386,15 @@ describe('product media relations', () => {
         method: 'PATCH',
         body: JSON.stringify({ items: [{ assetId: ASSET_ID, displayOrder: 0, altTr: 'Yeni' }] }),
       }) as never,
-      { params: Promise.resolve({ id: PROD_ID }) }
+      { params: Promise.resolve({ id: PROD_ID }) },
     );
     expect(re.status).toBe(200);
     const calls = vi.mocked(prisma.contentMedia.updateMany).mock.calls;
     expect(calls.length).toBeGreaterThan(0);
     expect(calls[0][0].data).toMatchObject({ displayOrder: 0, altText: 'Yeni' });
-    const reorderAudit = vi.mocked(prisma.auditEvent.create).mock.calls.find((c) => c[0].data.action === 'PRODUCT_MEDIA_REORDER');
+    const reorderAudit = vi
+      .mocked(prisma.auditEvent.create)
+      .mock.calls.find((c) => c[0].data.action === 'PRODUCT_MEDIA_REORDER');
     expect(reorderAudit).toBeDefined();
   });
 });
@@ -335,7 +405,8 @@ describe('public product gallery reads attached media', () => {
   });
 
   it('passes /api/media sources through the public detail contract', async () => {
-    const { GET: PUBLIC_DETAIL } = await import('@/app/api/v1/public/[locale]/products/[slug]/route');
+    const { GET: PUBLIC_DETAIL } =
+      await import('@/app/api/v1/public/[locale]/products/[slug]/route');
     const { contentService } = await import('@/services/content');
     const spy = vi.spyOn(contentService, 'getProductDetail').mockResolvedValue({
       id: 'p-1',
@@ -365,9 +436,12 @@ describe('public product gallery reads attached media', () => {
       ],
     } as never);
 
-    const res = await PUBLIC_DETAIL(new Request('http://localhost/api/v1/public/tr/products/demo') as never, {
-      params: Promise.resolve({ locale: 'tr', slug: 'demo' }),
-    });
+    const res = await PUBLIC_DETAIL(
+      new Request('http://localhost/api/v1/public/tr/products/demo') as never,
+      {
+        params: Promise.resolve({ locale: 'tr', slug: 'demo' }),
+      },
+    );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.data.primaryImage.src).toContain('/api/media/');
@@ -386,7 +460,11 @@ describe('public media serving', () => {
     const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'media-pub-'));
     setMediaStorage(new LocalMediaStorage(dir));
     try {
-      const { key } = await (await import('@/lib/media/storage')).getMediaStorage().save(pngBytes(), 'png');
+      const { key } = await (
+        await import('@/lib/media/storage')
+      )
+        .getMediaStorage()
+        .save(pngBytes(), 'png');
       vi.mocked(prisma.mediaAsset.findFirst).mockImplementation(async (args: never) => {
         const where = (args as { where: { sourceReference: string } }).where;
         if (where.sourceReference === `${MEDIA_PUBLIC_PREFIX}${key}`) {
@@ -394,7 +472,9 @@ describe('public media serving', () => {
         }
         return null;
       });
-      const ok = await SERVE(new Request('http://localhost/x') as never, { params: Promise.resolve({ key }) });
+      const ok = await SERVE(new Request('http://localhost/x') as never, {
+        params: Promise.resolve({ key }),
+      });
       expect(ok.status).toBe(200);
       expect(ok.headers.get('content-type')).toBe('image/png');
 
@@ -404,7 +484,9 @@ describe('public media serving', () => {
       expect(traversal.status).toBe(404);
 
       vi.mocked(prisma.mediaAsset.findFirst).mockResolvedValue(null);
-      const missing = await SERVE(new Request('http://localhost/x') as never, { params: Promise.resolve({ key }) });
+      const missing = await SERVE(new Request('http://localhost/x') as never, {
+        params: Promise.resolve({ key }),
+      });
       expect(missing.status).toBe(404);
     } finally {
       setMediaStorage(null);

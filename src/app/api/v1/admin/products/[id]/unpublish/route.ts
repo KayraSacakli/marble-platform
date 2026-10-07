@@ -20,5 +20,5 @@ export const POST = withAdminAuth(
     if (!parsedLocale.success) throw new ValidationError('A valid locale is required.', []);
     return { workflow: await unpublishProduct(parsedId.data, parsedLocale.data, admin.id) };
   },
-  { roles: ['ADMIN'] }
+  { roles: ['ADMIN'] },
 );

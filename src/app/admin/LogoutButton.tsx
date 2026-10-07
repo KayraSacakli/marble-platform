@@ -19,7 +19,12 @@ export function LogoutButton() {
   }
 
   return (
-    <button type="button" onClick={onClick} disabled={pending} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={pending}
+      style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+    >
       {pending ? 'Signing out…' : 'Log out'}
     </button>
   );

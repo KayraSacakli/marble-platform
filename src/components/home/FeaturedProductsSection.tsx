@@ -9,7 +9,11 @@ interface FeaturedProductsSectionProps {
   locale: string;
 }
 
-export function FeaturedProductsSection({ heading, products, locale }: FeaturedProductsSectionProps) {
+export function FeaturedProductsSection({
+  heading,
+  products,
+  locale,
+}: FeaturedProductsSectionProps) {
   if (products.length === 0) return null;
 
   const displayHeading = heading || 'Featured Products';
@@ -17,13 +21,15 @@ export function FeaturedProductsSection({ heading, products, locale }: FeaturedP
   return (
     <section className="homepage-section">
       <Container size="lg">
-        <SectionHeader
-          eyebrow="Collection"
-          title={displayHeading}
-        />
+        <SectionHeader eyebrow="Collection" title={displayHeading} />
         <div className="products-grid products-grid--editorial">
           {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} featured={index === 0} locale={locale} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              featured={index === 0}
+              locale={locale}
+            />
           ))}
         </div>
       </Container>
@@ -31,7 +37,15 @@ export function FeaturedProductsSection({ heading, products, locale }: FeaturedP
   );
 }
 
-function ProductCard({ product, featured, locale }: { product: ProductSummary; featured: boolean; locale: string }) {
+function ProductCard({
+  product,
+  featured,
+  locale,
+}: {
+  product: ProductSummary;
+  featured: boolean;
+  locale: string;
+}) {
   const href = locale ? `/${locale}/products/${product.slug}` : `/products/${product.slug}`;
 
   return (
@@ -50,14 +64,14 @@ function ProductCard({ product, featured, locale }: { product: ProductSummary; f
             priority={featured}
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />
+          <div
+            style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }}
+          />
         )}
       </div>
       <div className="product-card__body">
         <h3 className="product-card__name">{product.name}</h3>
-        {product.tagline && (
-          <p className="product-card__tagline">{product.tagline}</p>
-        )}
+        {product.tagline && <p className="product-card__tagline">{product.tagline}</p>}
       </div>
     </article>
   );

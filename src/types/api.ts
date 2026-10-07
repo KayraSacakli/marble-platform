@@ -271,10 +271,20 @@ export type HomepageSection =
   | { type: 'featured_products'; heading?: string; products: ProductSummary[] }
   | { type: 'featured_collections'; heading?: string; collections: CollectionSummary[] }
   | { type: 'featured_applications'; heading?: string; applications: ApplicationSummary[] }
-  | { type: 'quarry_factory'; quarry?: { name: string; slug: string; coverImage?: MediaPresentation }; factory?: { name: string; slug: string; coverImage?: MediaPresentation } }
+  | {
+      type: 'quarry_factory';
+      quarry?: { name: string; slug: string; coverImage?: MediaPresentation };
+      factory?: { name: string; slug: string; coverImage?: MediaPresentation };
+    }
   | { type: 'featured_projects'; heading?: string; projects: ProjectSummary[] }
   | { type: 'featured_journal'; heading?: string; articles: JournalSummary[] }
-  | { type: 'final_cta'; heading: string; message?: string; primaryCTA: CTALink; secondaryCTA?: CTALink };
+  | {
+      type: 'final_cta';
+      heading: string;
+      message?: string;
+      primaryCTA: CTALink;
+      secondaryCTA?: CTALink;
+    };
 
 export interface HomepageContent {
   hero: HeroContent;

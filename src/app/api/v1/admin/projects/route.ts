@@ -21,7 +21,7 @@ export const GET = withAdminAuth(
       q: parseQueryString(url.searchParams.get('q') ?? undefined),
     });
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/projects — ADMIN, EDITOR
@@ -34,8 +34,9 @@ export const POST = withAdminAuth(
       throw new ValidationError('Invalid JSON body', []);
     }
     const parsed = adminProjectCreateSchema.safeParse(body);
-    if (!parsed.success) throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
+    if (!parsed.success)
+      throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
     return createAdminEditorial(KIND, parsed.data, admin.id);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

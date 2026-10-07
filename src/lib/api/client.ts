@@ -59,12 +59,16 @@ class ApiClient {
       throw new ApiClientError(
         `Invalid locale: "${locale}". Supported locales: ${SUPPORTED_LOCALES.join(', ')}`,
         400,
-        'BAD_REQUEST'
+        'BAD_REQUEST',
       );
     }
   }
 
-  private buildUrl(locale: Locale, path: string, searchParams?: Record<string, string | number | undefined>): string {
+  private buildUrl(
+    locale: Locale,
+    path: string,
+    searchParams?: Record<string, string | number | undefined>,
+  ): string {
     const base = this.baseUrl || '';
     const urlPath = `/api/v1/public/${locale}${path}`;
 
@@ -82,7 +86,10 @@ class ApiClient {
     return `${base}${urlPath}${qs ? `?${qs}` : ''}`;
   }
 
-  private async fetchJson<T>(url: string, options?: RequestOptions & { method?: string; body?: unknown }): Promise<T> {
+  private async fetchJson<T>(
+    url: string,
+    options?: RequestOptions & { method?: string; body?: unknown },
+  ): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
@@ -127,7 +134,7 @@ class ApiClient {
           {
             details: errorData?.details,
             requestId: errorData?.requestId,
-          }
+          },
         );
       }
 
@@ -149,7 +156,7 @@ class ApiClient {
       throw new ApiClientError(
         error instanceof Error ? error.message : 'An unexpected error occurred',
         500,
-        'INTERNAL_ERROR'
+        'INTERNAL_ERROR',
       );
     } finally {
       clearTimeout(timeoutId);
@@ -164,7 +171,7 @@ class ApiClient {
     locale: Locale,
     path: string,
     params?: Record<string, string | number | undefined>,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<T> {
     this.validateLocale(locale);
     const url = this.buildUrl(locale, path, params);
@@ -175,7 +182,7 @@ class ApiClient {
     locale: Locale,
     path: string,
     params?: Record<string, string | number | undefined>,
-    options?: RequestOptions
+    options?: RequestOptions,
   ): Promise<ApiListResponse<T>> {
     const body = await this.get<ApiListResponse<T>>(locale, path, params, options);
     // List services return an already-paginated `{ data, meta }` payload and
@@ -184,20 +191,11 @@ class ApiClient {
     return body.data as unknown as ApiListResponse<T>;
   }
 
-  async getOne<T>(
-    locale: Locale,
-    path: string,
-    options?: RequestOptions
-  ): Promise<ApiResponse<T>> {
+  async getOne<T>(locale: Locale, path: string, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.get<ApiResponse<T>>(locale, path, undefined, options);
   }
 
-  async post<T>(
-    locale: Locale,
-    path: string,
-    body: unknown,
-    options?: RequestOptions
-  ): Promise<T> {
+  async post<T>(locale: Locale, path: string, body: unknown, options?: RequestOptions): Promise<T> {
     this.validateLocale(locale);
     const url = this.buildUrl(locale, path);
     return this.fetchJson<T>(url, { ...options, method: 'POST', body });

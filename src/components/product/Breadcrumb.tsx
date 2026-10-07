@@ -16,7 +16,9 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
           return (
             <li key={index} style={{ display: 'contents' }}>
               {index > 0 && (
-                <span className="breadcrumb__separator" aria-hidden="true">/</span>
+                <span className="breadcrumb__separator" aria-hidden="true">
+                  /
+                </span>
               )}
               {isLast || !item.href ? (
                 <span className="breadcrumb__current" aria-current="page">

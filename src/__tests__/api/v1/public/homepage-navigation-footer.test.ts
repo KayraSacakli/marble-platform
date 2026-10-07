@@ -15,12 +15,16 @@ vi.mock('@/services/content', () => ({
 const { contentService } = await import('@/services/content');
 
 describe('GET /api/v1/public/[locale]/homepage', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns homepage with correct structure', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -34,7 +38,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   it('returns hero content with CTAs', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/homepage', { locale: 'en' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/homepage', {
+      locale: 'en',
+    });
     const json = await res.json();
 
     expect(json.data.hero.heading).toBeDefined();
@@ -48,7 +54,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   it('returns sections array with type field', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(Array.isArray(json.data.sections)).toBe(true);
@@ -61,7 +69,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   it('returns sectionOrder matching sections count', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(Array.isArray(json.data.sectionOrder)).toBe(true);
@@ -71,7 +81,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   it('includes final_cta section', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     const ctaSection = json.data.sections.find((s: { type: string }) => s.type === 'final_cta');
@@ -90,7 +102,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
     };
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(emptyHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.sections.length).toBe(1);
@@ -98,7 +112,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/homepage', { locale: 'xx' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/homepage', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -108,7 +124,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   it('includes SEO data with hreflang', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.seo.hreflang).toBeDefined();
@@ -119,7 +137,9 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
   it('does not expose internal fields', async () => {
     (contentService.getHomepage as ReturnType<typeof vi.fn>).mockResolvedValue(mockHomepage);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/homepage', {
+      locale: 'tr',
+    });
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('internalUser');
@@ -130,12 +150,16 @@ describe('GET /api/v1/public/[locale]/homepage', () => {
 });
 
 describe('GET /api/v1/public/[locale]/navigation', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns navigation with primary and utility arrays', async () => {
     (contentService.getNavigation as ReturnType<typeof vi.fn>).mockResolvedValue(mockNavigation);
 
-    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', { locale: 'tr' });
+    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -151,7 +175,9 @@ describe('GET /api/v1/public/[locale]/navigation', () => {
       primary: [{ label: 'Mermerler', href: '/tr/products', visible: true }],
     });
 
-    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', { locale: 'tr' });
+    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.primary[0].label).toBe('Mermerler');
@@ -161,7 +187,9 @@ describe('GET /api/v1/public/[locale]/navigation', () => {
   it('returns EN navigation with correct labels', async () => {
     (contentService.getNavigation as ReturnType<typeof vi.fn>).mockResolvedValue(mockNavigation);
 
-    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/en/navigation', { locale: 'en' });
+    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/en/navigation', {
+      locale: 'en',
+    });
     const json = await res.json();
 
     expect(json.data.primary[0].label).toBe('Marbles');
@@ -171,7 +199,9 @@ describe('GET /api/v1/public/[locale]/navigation', () => {
   it('each nav item has label, href, visible', async () => {
     (contentService.getNavigation as ReturnType<typeof vi.fn>).mockResolvedValue(mockNavigation);
 
-    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', { locale: 'tr' });
+    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     json.data.primary.forEach((item: { label: string; href: string; visible: boolean }) => {
@@ -184,16 +214,22 @@ describe('GET /api/v1/public/[locale]/navigation', () => {
   it('includes language switch in utility', async () => {
     (contentService.getNavigation as ReturnType<typeof vi.fn>).mockResolvedValue(mockNavigation);
 
-    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', { locale: 'tr' });
+    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/tr/navigation', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
-    const langSwitch = json.data.utility.find((u: { type: string }) => u.type === 'language_switch');
+    const langSwitch = json.data.utility.find(
+      (u: { type: string }) => u.type === 'language_switch',
+    );
     expect(langSwitch).toBeDefined();
     expect(langSwitch.href).toBeDefined();
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/xx/navigation', { locale: 'xx' });
+    const res = await callHandler(GET_NAV, 'http://localhost/api/v1/public/xx/navigation', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -202,12 +238,16 @@ describe('GET /api/v1/public/[locale]/navigation', () => {
 });
 
 describe('GET /api/v1/public/[locale]/footer', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns footer with all link groups', async () => {
     (contentService.getFooter as ReturnType<typeof vi.fn>).mockResolvedValue(mockFooter);
 
-    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/tr/footer', { locale: 'tr' });
+    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/tr/footer', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -225,7 +265,9 @@ describe('GET /api/v1/public/[locale]/footer', () => {
       company: [{ label: 'Hakkinda', href: '/tr/about', visible: true }],
     });
 
-    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/tr/footer', { locale: 'tr' });
+    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/tr/footer', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.company[0].label).toBe('Hakkinda');
@@ -235,7 +277,9 @@ describe('GET /api/v1/public/[locale]/footer', () => {
   it('returns EN footer with correct labels', async () => {
     (contentService.getFooter as ReturnType<typeof vi.fn>).mockResolvedValue(mockFooter);
 
-    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/en/footer', { locale: 'en' });
+    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/en/footer', {
+      locale: 'en',
+    });
     const json = await res.json();
 
     expect(json.data.company[0].label).toBe('About');
@@ -245,7 +289,9 @@ describe('GET /api/v1/public/[locale]/footer', () => {
   it('returns language links with active flag', async () => {
     (contentService.getFooter as ReturnType<typeof vi.fn>).mockResolvedValue(mockFooter);
 
-    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/en/footer', { locale: 'en' });
+    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/en/footer', {
+      locale: 'en',
+    });
     const json = await res.json();
 
     expect(json.data.language).toBeDefined();
@@ -260,7 +306,9 @@ describe('GET /api/v1/public/[locale]/footer', () => {
   it('each link group has label, href, visible', async () => {
     (contentService.getFooter as ReturnType<typeof vi.fn>).mockResolvedValue(mockFooter);
 
-    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/tr/footer', { locale: 'tr' });
+    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/tr/footer', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     [...json.data.company, ...json.data.catalogue, ...json.data.conversion].forEach(
@@ -268,12 +316,14 @@ describe('GET /api/v1/public/[locale]/footer', () => {
         expect(item.label).toBeDefined();
         expect(item.href).toBeDefined();
         expect(typeof item.visible).toBe('boolean');
-      }
+      },
     );
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/xx/footer', { locale: 'xx' });
+    const res = await callHandler(GET_FOOTER, 'http://localhost/api/v1/public/xx/footer', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);

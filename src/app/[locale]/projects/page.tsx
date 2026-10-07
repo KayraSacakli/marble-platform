@@ -15,7 +15,11 @@ type PageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -72,13 +76,15 @@ export default async function ProjectsPage({ params, searchParams }: PageProps) 
         <div className="project-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Mimari Portföy' : 'Architectural Portfolio'}
           </span>
-          <h1 className="text-h1">
-            {locale === 'tr' ? 'Projeler' : 'Projects'}
-          </h1>
+          <h1 className="text-h1">{locale === 'tr' ? 'Projeler' : 'Projects'}</h1>
           <p className="project-page__intro">
             {locale === 'tr'
               ? 'Doğal taşın mimari vizyonla buluştuğu projelerimizi keşfedin.'

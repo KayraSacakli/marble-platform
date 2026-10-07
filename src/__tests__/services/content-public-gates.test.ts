@@ -46,7 +46,13 @@ function detailVariant(aggregateState: string) {
       type: 'PRODUCT',
       aggregateState,
       variants: [
-        { id: 'v-en', locale: 'en', lifecycleState: 'PUBLISHED', name: 'Carrara Marble', slug: 'carrara-marble' },
+        {
+          id: 'v-en',
+          locale: 'en',
+          lifecycleState: 'PUBLISHED',
+          name: 'Carrara Marble',
+          slug: 'carrara-marble',
+        },
       ],
     },
   } as never;
@@ -84,8 +90,12 @@ describe('public detail relations enforce the ACTIVE gate', () => {
 
   it('drops ARCHIVED relations and keeps ACTIVE ones', async () => {
     findPublishedBySlug.mockResolvedValue(detailVariant('ACTIVE'));
-    getProductCollections.mockResolvedValue([relationRow('ci-c-archived', 'ARCHIVED', 'archived-collection')]);
-    getProductApplications.mockResolvedValue([relationRow('ci-app-active', 'ACTIVE', 'bathroom-app')]);
+    getProductCollections.mockResolvedValue([
+      relationRow('ci-c-archived', 'ARCHIVED', 'archived-collection'),
+    ]);
+    getProductApplications.mockResolvedValue([
+      relationRow('ci-app-active', 'ACTIVE', 'bathroom-app'),
+    ]);
     getRelatedProducts.mockResolvedValue([
       relationRow('ci-p-active', 'ACTIVE', 'active-related'),
       relationRow('ci-p-removed', 'REMOVED', 'removed-related'),
@@ -103,7 +113,9 @@ describe('public detail relations enforce the ACTIVE gate', () => {
 
   it('hides a detail page whose aggregate is not ACTIVE', async () => {
     findPublishedBySlug.mockResolvedValue(detailVariant('ARCHIVED'));
-    await expect(contentService.getProductDetail('carrara-marble', 'en')).rejects.toThrow(NotFoundError);
+    await expect(contentService.getProductDetail('carrara-marble', 'en')).rejects.toThrow(
+      NotFoundError,
+    );
   });
 
   it('shows the detail page when the aggregate is ACTIVE', async () => {

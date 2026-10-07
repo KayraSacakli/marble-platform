@@ -1,6 +1,11 @@
 import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 
-function scryptAsync(password: string, salt: Buffer, keyLength: number, options: { N: number; r: number; p: number }): Promise<Buffer> {
+function scryptAsync(
+  password: string,
+  salt: Buffer,
+  keyLength: number,
+  options: { N: number; r: number; p: number },
+): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     scryptCallback(password, salt, keyLength, options, (err, derivedKey) => {
       if (err) {
@@ -46,7 +51,14 @@ export async function verifyPassword(password: string, storedHash: string): Prom
     const n = Number(parts[2].slice('n='.length));
     const r = Number(parts[3].slice('r='.length));
     const p = Number(parts[4].slice('p='.length));
-    if (!Number.isInteger(n) || !Number.isInteger(r) || !Number.isInteger(p) || n <= 0 || r <= 0 || p <= 0) {
+    if (
+      !Number.isInteger(n) ||
+      !Number.isInteger(r) ||
+      !Number.isInteger(p) ||
+      n <= 0 ||
+      r <= 0 ||
+      p <= 0
+    ) {
       return false;
     }
     const salt = Buffer.from(parts[5], 'base64');

@@ -31,12 +31,18 @@ const mockCompanyContent = {
 };
 
 describe('GET /api/v1/public/[locale]/company/about', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns about content', async () => {
-    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockResolvedValue(mockCompanyContent);
+    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockCompanyContent,
+    );
 
-    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/tr/company/about', { locale: 'tr' });
+    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/tr/company/about', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -46,23 +52,35 @@ describe('GET /api/v1/public/[locale]/company/about', () => {
   });
 
   it('returns 404 when about content does not exist', async () => {
-    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/tr/company/about', { locale: 'tr' });
+    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/tr/company/about', {
+      locale: 'tr',
+    });
     expect(res.status).toBe(404);
   });
 
   it('returns 404 for EN when only TR exists', async () => {
-    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/en/company/about', { locale: 'en' });
+    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/en/company/about', {
+      locale: 'en',
+    });
     expect(res.status).toBe(404);
   });
 
   it('does not expose internal fields', async () => {
-    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockResolvedValue(mockCompanyContent);
+    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockCompanyContent,
+    );
 
-    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/tr/company/about', { locale: 'tr' });
+    const res = await callHandler(GET_ABOUT, 'http://localhost/api/v1/public/tr/company/about', {
+      locale: 'tr',
+    });
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('internalUser');
@@ -72,7 +90,9 @@ describe('GET /api/v1/public/[locale]/company/about', () => {
 });
 
 describe('GET /api/v1/public/[locale]/company/quarry', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns quarry content', async () => {
     (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockResolvedValue({
@@ -81,7 +101,9 @@ describe('GET /api/v1/public/[locale]/company/quarry', () => {
       slug: 'quarry',
     });
 
-    const res = await callHandler(GET_QUARRY, 'http://localhost/api/v1/public/tr/company/quarry', { locale: 'tr' });
+    const res = await callHandler(GET_QUARRY, 'http://localhost/api/v1/public/tr/company/quarry', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -90,14 +112,20 @@ describe('GET /api/v1/public/[locale]/company/quarry', () => {
   });
 
   it('returns 404 when quarry content does not exist', async () => {
-    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_QUARRY, 'http://localhost/api/v1/public/tr/company/quarry', { locale: 'tr' });
+    const res = await callHandler(GET_QUARRY, 'http://localhost/api/v1/public/tr/company/quarry', {
+      locale: 'tr',
+    });
     expect(res.status).toBe(404);
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET_QUARRY, 'http://localhost/api/v1/public/xx/company/quarry', { locale: 'xx' });
+    const res = await callHandler(GET_QUARRY, 'http://localhost/api/v1/public/xx/company/quarry', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -106,7 +134,9 @@ describe('GET /api/v1/public/[locale]/company/quarry', () => {
 });
 
 describe('GET /api/v1/public/[locale]/company/factory', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns factory content', async () => {
     (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockResolvedValue({
@@ -115,7 +145,11 @@ describe('GET /api/v1/public/[locale]/company/factory', () => {
       slug: 'factory',
     });
 
-    const res = await callHandler(GET_FACTORY, 'http://localhost/api/v1/public/tr/company/factory', { locale: 'tr' });
+    const res = await callHandler(
+      GET_FACTORY,
+      'http://localhost/api/v1/public/tr/company/factory',
+      { locale: 'tr' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -124,14 +158,24 @@ describe('GET /api/v1/public/[locale]/company/factory', () => {
   });
 
   it('returns 404 when factory content does not exist', async () => {
-    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getCompanyContent as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_FACTORY, 'http://localhost/api/v1/public/tr/company/factory', { locale: 'tr' });
+    const res = await callHandler(
+      GET_FACTORY,
+      'http://localhost/api/v1/public/tr/company/factory',
+      { locale: 'tr' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET_FACTORY, 'http://localhost/api/v1/public/xx/company/factory', { locale: 'xx' });
+    const res = await callHandler(
+      GET_FACTORY,
+      'http://localhost/api/v1/public/xx/company/factory',
+      { locale: 'xx' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(400);

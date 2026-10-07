@@ -6,10 +6,7 @@ interface HeroContentProps {
 
 function CTALinkButton({ cta }: { cta: CTALink }) {
   return (
-    <a
-      href={cta.href}
-      className="button button--primary button--lg"
-    >
+    <a href={cta.href} className="button button--primary button--lg">
       {cta.label}
     </a>
   );
@@ -17,10 +14,7 @@ function CTALinkButton({ cta }: { cta: CTALink }) {
 
 function CTASecondaryLink({ cta }: { cta: CTALink }) {
   return (
-    <a
-      href={cta.href}
-      className="button button--secondary button--lg"
-    >
+    <a href={cta.href} className="button button--secondary button--lg">
       {cta.label}
     </a>
   );
@@ -29,19 +23,11 @@ function CTASecondaryLink({ cta }: { cta: CTALink }) {
 export function HeroContent({ hero }: HeroContentProps) {
   return (
     <div className="hero__content">
-      {hero.heading && (
-        <h1 className="hero__heading">{hero.heading}</h1>
-      )}
-      {hero.subheading && (
-        <p className="hero__subheading">{hero.subheading}</p>
-      )}
+      {hero.heading && <h1 className="hero__heading">{hero.heading}</h1>}
+      {hero.subheading && <p className="hero__subheading">{hero.subheading}</p>}
       <div className="hero__ctas">
-        {hero.primaryCTA && (
-          <CTALinkButton cta={hero.primaryCTA} />
-        )}
-        {hero.secondaryCTA && (
-          <CTASecondaryLink cta={hero.secondaryCTA} />
-        )}
+        {hero.primaryCTA && <CTALinkButton cta={hero.primaryCTA} />}
+        {hero.secondaryCTA && <CTASecondaryLink cta={hero.secondaryCTA} />}
       </div>
     </div>
   );

@@ -12,12 +12,7 @@ export function ProductGrid({ products, locale }: ProductGridProps) {
   return (
     <div className="product-grid">
       {products.map((product, index) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          priority={index < 3}
-          locale={locale}
-        />
+        <ProductCard key={product.id} product={product} priority={index < 3} locale={locale} />
       ))}
     </div>
   );

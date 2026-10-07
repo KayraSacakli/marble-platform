@@ -16,7 +16,7 @@ describe('Branded not-found UI (src/app/[locale]/not-found.tsx)', () => {
     render(<NotFound />);
     expect(screen.getByRole('heading', { level: 1, name: 'Page not found' })).toBeInTheDocument();
     expect(
-      screen.getByText('The page you are looking for does not exist or has been moved.')
+      screen.getByText('The page you are looking for does not exist or has been moved.'),
     ).toBeInTheDocument();
   });
 

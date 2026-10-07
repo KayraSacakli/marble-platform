@@ -27,49 +27,50 @@ const DEFAULT_PAGINATION: PaginationInput = { page: 1, pageSize: DEFAULT_PAGE_SI
 // Helpers to extract published variant from a content item
 // ============================================================
 
-function findPublishedVariant(contentItem: {
-  aggregateState?: string;
-  variants?: Array<{
-    id: string;
-    locale: string;
-    lifecycleState: string;
-    name?: string | null;
-    slug: string;
-    description?: string | null;
-    tagline?: string | null;
-    seoTitle?: string | null;
-    seoDescription?: string | null;
-    seoCanonical?: string | null;
-    seoRobots?: string | null;
-    isFeatured: boolean;
-    displayOrder?: number | null;
-    featuredOrder?: number | null;
-    mediaPresentations?: Array<{
-      role: string;
-      altText?: string | null;
-      caption?: string | null;
-      focalPointX?: number | null;
-      focalPointY?: number | null;
-      mediaAsset: {
-        id: string;
-        mediaType: string;
-        sourceReference: string;
-        width?: number | null;
-        height?: number | null;
-        aspectRatio?: string | null;
-        fileType: string;
-      };
+function findPublishedVariant(
+  contentItem: {
+    aggregateState?: string;
+    variants?: Array<{
+      id: string;
+      locale: string;
+      lifecycleState: string;
+      name?: string | null;
+      slug: string;
+      description?: string | null;
+      tagline?: string | null;
+      seoTitle?: string | null;
+      seoDescription?: string | null;
+      seoCanonical?: string | null;
+      seoRobots?: string | null;
+      isFeatured: boolean;
+      displayOrder?: number | null;
+      featuredOrder?: number | null;
+      mediaPresentations?: Array<{
+        role: string;
+        altText?: string | null;
+        caption?: string | null;
+        focalPointX?: number | null;
+        focalPointY?: number | null;
+        mediaAsset: {
+          id: string;
+          mediaType: string;
+          sourceReference: string;
+          width?: number | null;
+          height?: number | null;
+          aspectRatio?: string | null;
+          fileType: string;
+        };
+      }>;
     }>;
-  }>;
-}, locale: Locale) {
+  },
+  locale: Locale,
+) {
   // Full public gate: PUBLISHED + ACTIVE. Relation reads come from junction
   // queries that do not carry the aggregate filter, so it is enforced here.
   if (contentItem.aggregateState && contentItem.aggregateState !== 'ACTIVE') {
     return null;
   }
-  return contentItem.variants?.find(
-    (v) => v.locale === locale && v.lifecycleState === 'PUBLISHED'
-  );
+  return contentItem.variants?.find((v) => v.locale === locale && v.lifecycleState === 'PUBLISHED');
 }
 
 // ============================================================
@@ -102,29 +103,33 @@ function toMediaPresentation(media: {
     aspectRatio: asset.aspectRatio ?? '1/1',
     alt: media.altText ?? '',
     caption: media.caption ?? undefined,
-    focalPoint: media.focalPointX != null && media.focalPointY != null
-      ? { x: media.focalPointX, y: media.focalPointY }
-      : undefined,
+    focalPoint:
+      media.focalPointX != null && media.focalPointY != null
+        ? { x: media.focalPointX, y: media.focalPointY }
+        : undefined,
     loading: 'lazy',
   };
 }
 
-function findMediaByRole(mediaPresentations: Array<{
-  role: string;
-  altText?: string | null;
-  caption?: string | null;
-  focalPointX?: number | null;
-  focalPointY?: number | null;
-  mediaAsset: {
-    id: string;
-    mediaType: string;
-    sourceReference: string;
-    width?: number | null;
-    height?: number | null;
-    aspectRatio?: string | null;
-    fileType: string;
-  };
-}>, role: string) {
+function findMediaByRole(
+  mediaPresentations: Array<{
+    role: string;
+    altText?: string | null;
+    caption?: string | null;
+    focalPointX?: number | null;
+    focalPointY?: number | null;
+    mediaAsset: {
+      id: string;
+      mediaType: string;
+      sourceReference: string;
+      width?: number | null;
+      height?: number | null;
+      aspectRatio?: string | null;
+      fileType: string;
+    };
+  }>,
+  role: string,
+) {
   const media = mediaPresentations?.find((m) => m.role === role);
   return media ? toMediaPresentation(media) : undefined;
 }
@@ -197,7 +202,9 @@ function toCollectionSummary(v: {
     name: v.name ?? '',
     slug: v.slug,
     description: v.description ?? undefined,
-    coverImage: findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ?? findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
+    coverImage:
+      findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ??
+      findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
   };
 }
 
@@ -228,7 +235,9 @@ function toApplicationSummary(v: {
     name: v.name ?? '',
     slug: v.slug,
     description: v.description ?? undefined,
-    coverImage: findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ?? findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
+    coverImage:
+      findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ??
+      findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
   };
 }
 
@@ -259,7 +268,9 @@ function toProjectSummary(v: {
     name: v.name ?? '',
     slug: v.slug,
     description: v.description ?? undefined,
-    heroImage: findMediaByRole(v.mediaPresentations ?? [], 'HERO') ?? findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY'),
+    heroImage:
+      findMediaByRole(v.mediaPresentations ?? [], 'HERO') ??
+      findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY'),
   };
 }
 
@@ -295,7 +306,9 @@ function toJournalSummary(v: {
     title: v.name ?? '',
     slug: v.slug,
     summary: v.description ?? '',
-    coverImage: findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ?? findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
+    coverImage:
+      findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ??
+      findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
     publicationDate: v.journalArticle?.publicationDate?.toISOString() ?? v.createdAt.toISOString(),
     author: v.journalArticle?.authorName ?? undefined,
   };
@@ -317,7 +330,7 @@ function buildSEO(
   },
   locale: Locale,
   path: string,
-  alternates?: Array<{ locale: Locale; slug: string }>
+  alternates?: Array<{ locale: Locale; slug: string }>,
 ): SEOData {
   return buildSEOData({
     locale,
@@ -341,11 +354,13 @@ class ContentService {
   async getProductList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
     const result = await contentRepository.listProducts(locale, pagination);
     return {
-      data: result.items.map((v) => {
-        const cv = findPublishedVariant(v.contentItem, locale);
-        if (!cv) return null;
-        return toProductSummary(cv);
-      }).filter(Boolean),
+      data: result.items
+        .map((v) => {
+          const cv = findPublishedVariant(v.contentItem, locale);
+          if (!cv) return null;
+          return toProductSummary(cv);
+        })
+        .filter(Boolean),
       meta: result.meta,
     };
   }
@@ -360,9 +375,15 @@ class ContentService {
     if (!cv) throw new NotFoundError();
 
     const altLocale: Locale = locale === 'tr' ? 'en' : 'tr';
-    const altVariant = await contentRepository.findByContentItemId(variant.contentItemId, altLocale);
+    const altVariant = await contentRepository.findByContentItemId(
+      variant.contentItemId,
+      altLocale,
+    );
     const alternates = altVariant
-      ? [{ locale, slug: variant.slug }, { locale: altLocale, slug: altVariant.slug }]
+      ? [
+          { locale, slug: variant.slug },
+          { locale: altLocale, slug: altVariant.slug },
+        ]
       : [{ locale, slug: variant.slug }];
 
     const [collections, applications, relatedProducts, journalArticles] = await Promise.all([
@@ -387,26 +408,36 @@ class ContentService {
       description: cv.description ?? '',
       primaryImage: findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY'),
       gallery,
-      collections: collections.map((c) => {
-        const cvar = findPublishedVariant(c.contentItem, locale);
-        return cvar ? { id: c.contentItemId, name: cvar.name ?? '', slug: cvar.slug } : null;
-      }).filter(Boolean),
-      applications: applications.map((a) => {
-        const avar = findPublishedVariant(a.contentItem, locale);
-        return avar ? { id: a.contentItemId, name: avar.name ?? '', slug: avar.slug } : null;
-      }).filter(Boolean),
-      projects: projectRefs.map((p) => {
-        const pvar = findPublishedVariant(p.contentItem, locale);
-        return pvar ? { id: p.contentItemId, name: pvar.name ?? '', slug: pvar.slug } : null;
-      }).filter(Boolean),
-      relatedProducts: relatedProducts.map((rp) => {
-        const rpv = findPublishedVariant(rp.contentItem, locale);
-        return rpv ? toProductSummary(rpv) : null;
-      }).filter(Boolean),
-      journalArticles: journalArticles.map((ja) => {
-        const jv = findPublishedVariant(ja.contentItem, locale);
-        return jv ? { id: ja.contentItemId, name: jv.name ?? '', slug: jv.slug } : null;
-      }).filter(Boolean),
+      collections: collections
+        .map((c) => {
+          const cvar = findPublishedVariant(c.contentItem, locale);
+          return cvar ? { id: c.contentItemId, name: cvar.name ?? '', slug: cvar.slug } : null;
+        })
+        .filter(Boolean),
+      applications: applications
+        .map((a) => {
+          const avar = findPublishedVariant(a.contentItem, locale);
+          return avar ? { id: a.contentItemId, name: avar.name ?? '', slug: avar.slug } : null;
+        })
+        .filter(Boolean),
+      projects: projectRefs
+        .map((p) => {
+          const pvar = findPublishedVariant(p.contentItem, locale);
+          return pvar ? { id: p.contentItemId, name: pvar.name ?? '', slug: pvar.slug } : null;
+        })
+        .filter(Boolean),
+      relatedProducts: relatedProducts
+        .map((rp) => {
+          const rpv = findPublishedVariant(rp.contentItem, locale);
+          return rpv ? toProductSummary(rpv) : null;
+        })
+        .filter(Boolean),
+      journalArticles: journalArticles
+        .map((ja) => {
+          const jv = findPublishedVariant(ja.contentItem, locale);
+          return jv ? { id: ja.contentItemId, name: jv.name ?? '', slug: jv.slug } : null;
+        })
+        .filter(Boolean),
       seo: buildSEO(cv, locale, `/${locale}/products/${variant.slug}`, alternates),
       quoteContextIdentifier: `product:${variant.contentItemId}`,
       createdAt: variant.createdAt.toISOString(),
@@ -417,11 +448,13 @@ class ContentService {
   async getCollectionList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
     const result = await contentRepository.listCollections(locale, pagination);
     return {
-      data: result.items.map((v) => {
-        const cv = findPublishedVariant(v.contentItem, locale);
-        if (!cv) return null;
-        return toCollectionSummary(cv);
-      }).filter(Boolean),
+      data: result.items
+        .map((v) => {
+          const cv = findPublishedVariant(v.contentItem, locale);
+          if (!cv) return null;
+          return toCollectionSummary(cv);
+        })
+        .filter(Boolean),
       meta: result.meta,
     };
   }
@@ -436,9 +469,15 @@ class ContentService {
     if (!cv) throw new NotFoundError();
 
     const altLocale: Locale = locale === 'tr' ? 'en' : 'tr';
-    const altVariant = await contentRepository.findByContentItemId(variant.contentItemId, altLocale);
+    const altVariant = await contentRepository.findByContentItemId(
+      variant.contentItemId,
+      altLocale,
+    );
     const alternates = altVariant
-      ? [{ locale, slug: variant.slug }, { locale: altLocale, slug: altVariant.slug }]
+      ? [
+          { locale, slug: variant.slug },
+          { locale: altLocale, slug: altVariant.slug },
+        ]
       : [{ locale, slug: variant.slug }];
 
     const [products, applications] = await Promise.all([
@@ -452,14 +491,18 @@ class ContentService {
       slug: variant.slug,
       description: cv.description ?? '',
       coverImage: findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY'),
-      products: products.map((p) => {
-        const pv = findPublishedVariant(p.contentItem, locale);
-        return pv ? toProductSummary(pv) : null;
-      }).filter(Boolean),
-      applications: applications.map((a) => {
-        const av = findPublishedVariant(a.contentItem, locale);
-        return av ? toContentSummary(av) : null;
-      }).filter(Boolean),
+      products: products
+        .map((p) => {
+          const pv = findPublishedVariant(p.contentItem, locale);
+          return pv ? toProductSummary(pv) : null;
+        })
+        .filter(Boolean),
+      applications: applications
+        .map((a) => {
+          const av = findPublishedVariant(a.contentItem, locale);
+          return av ? toContentSummary(av) : null;
+        })
+        .filter(Boolean),
       seo: buildSEO(cv, locale, `/${locale}/collections/${variant.slug}`, alternates),
       createdAt: variant.createdAt.toISOString(),
       updatedAt: variant.updatedAt.toISOString(),
@@ -469,11 +512,13 @@ class ContentService {
   async getApplicationList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
     const result = await contentRepository.listApplications(locale, pagination);
     return {
-      data: result.items.map((v) => {
-        const cv = findPublishedVariant(v.contentItem, locale);
-        if (!cv) return null;
-        return toApplicationSummary(cv);
-      }).filter(Boolean),
+      data: result.items
+        .map((v) => {
+          const cv = findPublishedVariant(v.contentItem, locale);
+          if (!cv) return null;
+          return toApplicationSummary(cv);
+        })
+        .filter(Boolean),
       meta: result.meta,
     };
   }
@@ -488,9 +533,15 @@ class ContentService {
     if (!cv) throw new NotFoundError();
 
     const altLocale: Locale = locale === 'tr' ? 'en' : 'tr';
-    const altVariant = await contentRepository.findByContentItemId(variant.contentItemId, altLocale);
+    const altVariant = await contentRepository.findByContentItemId(
+      variant.contentItemId,
+      altLocale,
+    );
     const alternates = altVariant
-      ? [{ locale, slug: variant.slug }, { locale: altLocale, slug: altVariant.slug }]
+      ? [
+          { locale, slug: variant.slug },
+          { locale: altLocale, slug: altVariant.slug },
+        ]
       : [{ locale, slug: variant.slug }];
 
     const [products, projects] = await Promise.all([
@@ -499,7 +550,10 @@ class ContentService {
     ]);
 
     // Journal refs for this application
-    const journalRefs = await contentRepository.getApplicationJournalRefs(variant.contentItemId, locale);
+    const journalRefs = await contentRepository.getApplicationJournalRefs(
+      variant.contentItemId,
+      locale,
+    );
 
     return {
       id: variant.contentItemId,
@@ -507,18 +561,24 @@ class ContentService {
       slug: variant.slug,
       description: cv.description ?? '',
       coverImage: findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY'),
-      products: products.map((p) => {
-        const pv = findPublishedVariant(p.contentItem, locale);
-        return pv ? toProductSummary(pv) : null;
-      }).filter(Boolean),
-      projects: projects.map((p) => {
-        const pvar = findPublishedVariant(p.contentItem, locale);
-        return pvar ? { id: p.contentItemId, name: pvar.name ?? '', slug: pvar.slug } : null;
-      }).filter(Boolean),
-      journalArticles: journalRefs.map((ja) => {
-        const jv = findPublishedVariant(ja.contentItem, locale);
-        return jv ? { id: ja.contentItemId, name: jv.name ?? '', slug: jv.slug } : null;
-      }).filter(Boolean),
+      products: products
+        .map((p) => {
+          const pv = findPublishedVariant(p.contentItem, locale);
+          return pv ? toProductSummary(pv) : null;
+        })
+        .filter(Boolean),
+      projects: projects
+        .map((p) => {
+          const pvar = findPublishedVariant(p.contentItem, locale);
+          return pvar ? { id: p.contentItemId, name: pvar.name ?? '', slug: pvar.slug } : null;
+        })
+        .filter(Boolean),
+      journalArticles: journalRefs
+        .map((ja) => {
+          const jv = findPublishedVariant(ja.contentItem, locale);
+          return jv ? { id: ja.contentItemId, name: jv.name ?? '', slug: jv.slug } : null;
+        })
+        .filter(Boolean),
       seo: buildSEO(cv, locale, `/${locale}/applications/${variant.slug}`, alternates),
       createdAt: variant.createdAt.toISOString(),
       updatedAt: variant.updatedAt.toISOString(),
@@ -528,11 +588,13 @@ class ContentService {
   async getProjectList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
     const result = await contentRepository.listProjects(locale, pagination);
     return {
-      data: result.items.map((v) => {
-        const cv = findPublishedVariant(v.contentItem, locale);
-        if (!cv) return null;
-        return toProjectSummary(cv);
-      }).filter(Boolean),
+      data: result.items
+        .map((v) => {
+          const cv = findPublishedVariant(v.contentItem, locale);
+          if (!cv) return null;
+          return toProjectSummary(cv);
+        })
+        .filter(Boolean),
       meta: result.meta,
     };
   }
@@ -547,9 +609,15 @@ class ContentService {
     if (!cv) throw new NotFoundError();
 
     const altLocale: Locale = locale === 'tr' ? 'en' : 'tr';
-    const altVariant = await contentRepository.findByContentItemId(variant.contentItemId, altLocale);
+    const altVariant = await contentRepository.findByContentItemId(
+      variant.contentItemId,
+      altLocale,
+    );
     const alternates = altVariant
-      ? [{ locale, slug: variant.slug }, { locale: altLocale, slug: altVariant.slug }]
+      ? [
+          { locale, slug: variant.slug },
+          { locale: altLocale, slug: altVariant.slug },
+        ]
       : [{ locale, slug: variant.slug }];
 
     const project = variant.contentItem.project;
@@ -570,16 +638,22 @@ class ContentService {
       description: cv.description ?? '',
       location: project?.location ?? undefined,
       projectType: project?.projectType ?? undefined,
-      heroImage: findMediaByRole(variant.mediaPresentations ?? [], 'HERO') ?? findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY'),
+      heroImage:
+        findMediaByRole(variant.mediaPresentations ?? [], 'HERO') ??
+        findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY'),
       gallery,
-      products: products.map((p) => {
-        const pv = findPublishedVariant(p.contentItem, locale);
-        return pv ? toProductSummary(pv) : null;
-      }).filter(Boolean),
-      applications: applications.map((a) => {
-        const av = findPublishedVariant(a.contentItem, locale);
-        return av ? { id: a.contentItemId, name: av.name ?? '', slug: av.slug } : null;
-      }).filter(Boolean),
+      products: products
+        .map((p) => {
+          const pv = findPublishedVariant(p.contentItem, locale);
+          return pv ? toProductSummary(pv) : null;
+        })
+        .filter(Boolean),
+      applications: applications
+        .map((a) => {
+          const av = findPublishedVariant(a.contentItem, locale);
+          return av ? { id: a.contentItemId, name: av.name ?? '', slug: av.slug } : null;
+        })
+        .filter(Boolean),
       seo: buildSEO(cv, locale, `/${locale}/projects/${variant.slug}`, alternates),
       createdAt: variant.createdAt.toISOString(),
       updatedAt: variant.updatedAt.toISOString(),
@@ -589,11 +663,17 @@ class ContentService {
   async getJournalList(locale: Locale, pagination: PaginationInput = DEFAULT_PAGINATION) {
     const result = await contentRepository.listJournalArticles(locale, pagination);
     return {
-      data: result.items.map((v) => {
-        const cv = findPublishedVariant(v.contentItem, locale);
-        if (!cv) return null;
-        return toJournalSummary({ ...cv, createdAt: v.createdAt, journalArticle: v.contentItem.journalArticle });
-      }).filter(Boolean),
+      data: result.items
+        .map((v) => {
+          const cv = findPublishedVariant(v.contentItem, locale);
+          if (!cv) return null;
+          return toJournalSummary({
+            ...cv,
+            createdAt: v.createdAt,
+            journalArticle: v.contentItem.journalArticle,
+          });
+        })
+        .filter(Boolean),
       meta: result.meta,
     };
   }
@@ -608,17 +688,31 @@ class ContentService {
     if (!cv) throw new NotFoundError();
 
     const altLocale: Locale = locale === 'tr' ? 'en' : 'tr';
-    const altVariant = await contentRepository.findByContentItemId(variant.contentItemId, altLocale);
+    const altVariant = await contentRepository.findByContentItemId(
+      variant.contentItemId,
+      altLocale,
+    );
     const alternates = altVariant
-      ? [{ locale, slug: variant.slug }, { locale: altLocale, slug: altVariant.slug }]
+      ? [
+          { locale, slug: variant.slug },
+          { locale: altLocale, slug: altVariant.slug },
+        ]
       : [{ locale, slug: variant.slug }];
 
-    const { products, applications, projects } = await contentRepository.getJournalReferences(variant.contentItemId, locale);
+    const { products, applications, projects } = await contentRepository.getJournalReferences(
+      variant.contentItemId,
+      locale,
+    );
 
     const journalArticle = variant.contentItem.journalArticle;
-    const coverImage = findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY') ?? findMediaByRole(variant.mediaPresentations ?? [], 'HERO');
+    const coverImage =
+      findMediaByRole(variant.mediaPresentations ?? [], 'PRIMARY') ??
+      findMediaByRole(variant.mediaPresentations ?? [], 'HERO');
 
-    const relatedArticleRefs = await contentRepository.getRelatedJournalArticles(variant.contentItemId, locale);
+    const relatedArticleRefs = await contentRepository.getRelatedJournalArticles(
+      variant.contentItemId,
+      locale,
+    );
 
     return {
       id: variant.contentItemId,
@@ -627,24 +721,40 @@ class ContentService {
       summary: cv.description ?? '',
       body: cv.description ?? '',
       coverImage,
-      publicationDate: journalArticle?.publicationDate?.toISOString() ?? variant.createdAt.toISOString(),
+      publicationDate:
+        journalArticle?.publicationDate?.toISOString() ?? variant.createdAt.toISOString(),
       author: journalArticle?.authorName ?? undefined,
-      relatedProducts: products.map((p) => {
-        const pv = findPublishedVariant(p.contentItem, locale);
-        return pv ? toProductSummary(pv) : null;
-      }).filter(Boolean),
-      relatedApplications: applications.map((a) => {
-        const av = findPublishedVariant(a.contentItem, locale);
-        return av ? { id: a.contentItemId, name: av.name ?? '', slug: av.slug } : null;
-      }).filter(Boolean),
-      relatedProjects: projects.map((p) => {
-        const pvar = findPublishedVariant(p.contentItem, locale);
-        return pvar ? { id: p.contentItemId, name: pvar.name ?? '', slug: pvar.slug } : null;
-      }).filter(Boolean),
-      relatedArticles: relatedArticleRefs.map((ja) => {
-        const jv = findPublishedVariant(ja.contentItem, locale);
-        return jv ? { id: ja.contentItemId, name: jv.name ?? '', slug: jv.slug, summary: jv.description ?? '' } : null;
-      }).filter(Boolean),
+      relatedProducts: products
+        .map((p) => {
+          const pv = findPublishedVariant(p.contentItem, locale);
+          return pv ? toProductSummary(pv) : null;
+        })
+        .filter(Boolean),
+      relatedApplications: applications
+        .map((a) => {
+          const av = findPublishedVariant(a.contentItem, locale);
+          return av ? { id: a.contentItemId, name: av.name ?? '', slug: av.slug } : null;
+        })
+        .filter(Boolean),
+      relatedProjects: projects
+        .map((p) => {
+          const pvar = findPublishedVariant(p.contentItem, locale);
+          return pvar ? { id: p.contentItemId, name: pvar.name ?? '', slug: pvar.slug } : null;
+        })
+        .filter(Boolean),
+      relatedArticles: relatedArticleRefs
+        .map((ja) => {
+          const jv = findPublishedVariant(ja.contentItem, locale);
+          return jv
+            ? {
+                id: ja.contentItemId,
+                name: jv.name ?? '',
+                slug: jv.slug,
+                summary: jv.description ?? '',
+              }
+            : null;
+        })
+        .filter(Boolean),
       seo: buildSEO(cv, locale, `/${locale}/journal/${variant.slug}`, alternates),
       createdAt: variant.createdAt.toISOString(),
       updatedAt: variant.updatedAt.toISOString(),
@@ -672,7 +782,16 @@ class ContentService {
   }
 
   async getHomepage(locale: Locale): Promise<HomepageContent> {
-    const [featuredProducts, featuredCollections, featuredApplications, featuredProjects, featuredJournal, quarry, factory, projectsVisible] = await Promise.all([
+    const [
+      featuredProducts,
+      featuredCollections,
+      featuredApplications,
+      featuredProjects,
+      featuredJournal,
+      quarry,
+      factory,
+      projectsVisible,
+    ] = await Promise.all([
       contentRepository.getFeaturedProducts(locale),
       contentRepository.getFeaturedCollections(locale),
       contentRepository.getFeaturedApplications(locale),
@@ -714,13 +833,25 @@ class ContentService {
       const quarryData = quarry
         ? (() => {
             const qv = findPublishedVariant(quarry.contentItem, locale);
-            return qv ? { name: qv.name ?? '', slug: qv.slug, coverImage: findMediaByRole(quarry.mediaPresentations ?? [], 'PRIMARY') } : undefined;
+            return qv
+              ? {
+                  name: qv.name ?? '',
+                  slug: qv.slug,
+                  coverImage: findMediaByRole(quarry.mediaPresentations ?? [], 'PRIMARY'),
+                }
+              : undefined;
           })()
         : undefined;
       const factoryData = factory
         ? (() => {
             const fv = findPublishedVariant(factory.contentItem, locale);
-            return fv ? { name: fv.name ?? '', slug: fv.slug, coverImage: findMediaByRole(factory.mediaPresentations ?? [], 'PRIMARY') } : undefined;
+            return fv
+              ? {
+                  name: fv.name ?? '',
+                  slug: fv.slug,
+                  coverImage: findMediaByRole(factory.mediaPresentations ?? [], 'PRIMARY'),
+                }
+              : undefined;
           })()
         : undefined;
       if (quarryData || factoryData) {
@@ -740,7 +871,9 @@ class ContentService {
     if (featuredJournal.length > 0) {
       sections.push({
         type: 'featured_journal',
-        articles: featuredJournal.map((v) => toJournalSummary({ ...v, journalArticle: v.contentItem.journalArticle })),
+        articles: featuredJournal.map((v) =>
+          toJournalSummary({ ...v, journalArticle: v.contentItem.journalArticle }),
+        ),
       });
       sectionOrder.push('featured_journal');
     }
@@ -748,8 +881,14 @@ class ContentService {
     sections.push({
       type: 'final_cta',
       heading: locale === 'tr' ? 'Projeniz İçin Teklif Alın' : 'Get a Quote for Your Project',
-      message: locale === 'tr' ? 'Uzman ekibimiz size yardımcı olmaya hazır.' : 'Our expert team is ready to help you.',
-      primaryCTA: { label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote', href: `/${locale}/quote` },
+      message:
+        locale === 'tr'
+          ? 'Uzman ekibimiz size yardımcı olmaya hazır.'
+          : 'Our expert team is ready to help you.',
+      primaryCTA: {
+        label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote',
+        href: `/${locale}/quote`,
+      },
       secondaryCTA: { label: locale === 'tr' ? 'İletişim' : 'Contact', href: `/${locale}/contact` },
     });
     sectionOrder.push('final_cta');
@@ -757,7 +896,10 @@ class ContentService {
     const heroHeading = locale === 'tr' ? 'Premium Türk Mermeri' : 'Premium Turkish Marble';
     const hero = {
       heading: heroHeading,
-      subheading: locale === 'tr' ? 'Doğanın Zarafeti, Ustalığın Gücü' : 'Elegance of Nature, Power of Craftsmanship',
+      subheading:
+        locale === 'tr'
+          ? 'Doğanın Zarafeti, Ustalığın Gücü'
+          : 'Elegance of Nature, Power of Craftsmanship',
       // Demo hero poster — served as static fallback image until a real
       // homepage video (and its DB-driven media) is available. HeroScrollStage
       // renders this via HeroPoster; no video means poster-only mode.
@@ -771,16 +913,23 @@ class ContentService {
         alt: heroHeading,
         loading: 'eager',
       } satisfies MediaPresentation,
-      primaryCTA: { label: locale === 'tr' ? 'Mermerleri Keşfet' : 'Explore Marbles', href: `/${locale}/products` },
-      secondaryCTA: { label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote', href: `/${locale}/quote` },
+      primaryCTA: {
+        label: locale === 'tr' ? 'Mermerleri Keşfet' : 'Explore Marbles',
+        href: `/${locale}/products`,
+      },
+      secondaryCTA: {
+        label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote',
+        href: `/${locale}/quote`,
+      },
     };
 
     const canonical = buildCanonical(locale, `/${locale}`);
     const seo: SEOData = {
       title: `${SITE_NAME} — ${locale === 'tr' ? 'Premium Türk Mermeri' : 'Premium Turkish Marble'}`,
-      metaDescription: locale === 'tr'
-        ? 'Doğanın zarafeti ve ustalığın gücünü birleştiren premium Türk mermeri koleksiyonumuzu keşfedin.'
-        : 'Discover our premium Turkish marble collection, combining the elegance of nature with the power of craftsmanship.',
+      metaDescription:
+        locale === 'tr'
+          ? 'Doğanın zarafeti ve ustalığın gücünü birleştiren premium Türk mermeri koleksiyonumuzu keşfedin.'
+          : 'Discover our premium Turkish marble collection, combining the elegance of nature with the power of craftsmanship.',
       canonical,
       robots: 'index',
       hreflang: [
@@ -798,18 +947,49 @@ class ContentService {
     const altLocale: Locale = locale === 'tr' ? 'en' : 'tr';
 
     const primary = [
-      { label: locale === 'tr' ? 'Mermerler' : 'Marbles', href: `/${locale}/products`, visible: true },
-      { label: locale === 'tr' ? 'Koleksiyonlar' : 'Collections', href: `/${locale}/collections`, visible: true },
-      { label: locale === 'tr' ? 'Uygulamalar' : 'Applications', href: `/${locale}/applications`, visible: true },
-      { label: locale === 'tr' ? 'Projeler' : 'Projects', href: `/${locale}/projects`, visible: projectsVisible },
+      {
+        label: locale === 'tr' ? 'Mermerler' : 'Marbles',
+        href: `/${locale}/products`,
+        visible: true,
+      },
+      {
+        label: locale === 'tr' ? 'Koleksiyonlar' : 'Collections',
+        href: `/${locale}/collections`,
+        visible: true,
+      },
+      {
+        label: locale === 'tr' ? 'Uygulamalar' : 'Applications',
+        href: `/${locale}/applications`,
+        visible: true,
+      },
+      {
+        label: locale === 'tr' ? 'Projeler' : 'Projects',
+        href: `/${locale}/projects`,
+        visible: projectsVisible,
+      },
       { label: locale === 'tr' ? 'Dergi' : 'Journal', href: `/${locale}/journal`, visible: true },
       { label: locale === 'tr' ? 'Hakkında' : 'About', href: `/${locale}/about`, visible: true },
     ];
 
     const utility = [
-      { label: locale === 'tr' ? 'EN' : 'TR', href: `/${altLocale}`, visible: true, type: 'language_switch' as const },
-      { label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote', href: `/${locale}/quote`, visible: true, type: 'cta' as const },
-      { label: locale === 'tr' ? 'İletişim' : 'Contact', href: `/${locale}/contact`, visible: true, type: 'link' as const },
+      {
+        label: locale === 'tr' ? 'EN' : 'TR',
+        href: `/${altLocale}`,
+        visible: true,
+        type: 'language_switch' as const,
+      },
+      {
+        label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote',
+        href: `/${locale}/quote`,
+        visible: true,
+        type: 'cta' as const,
+      },
+      {
+        label: locale === 'tr' ? 'İletişim' : 'Contact',
+        href: `/${locale}/contact`,
+        visible: true,
+        type: 'link' as const,
+      },
     ];
 
     return { primary, utility, projectsVisible };
@@ -825,22 +1005,58 @@ class ContentService {
     ]);
 
     const company = [
-      { label: locale === 'tr' ? 'Hakkında' : 'About', href: `/${locale}/about`, visible: !!aboutExists },
-      { label: locale === 'tr' ? 'Ocak' : 'Quarry', href: `/${locale}/quarry`, visible: !!quarryExists },
-      { label: locale === 'tr' ? 'Fabrika' : 'Factory', href: `/${locale}/factory`, visible: !!factoryExists },
-      { label: locale === 'tr' ? 'İletişim' : 'Contact', href: `/${locale}/contact`, visible: true },
+      {
+        label: locale === 'tr' ? 'Hakkında' : 'About',
+        href: `/${locale}/about`,
+        visible: !!aboutExists,
+      },
+      {
+        label: locale === 'tr' ? 'Ocak' : 'Quarry',
+        href: `/${locale}/quarry`,
+        visible: !!quarryExists,
+      },
+      {
+        label: locale === 'tr' ? 'Fabrika' : 'Factory',
+        href: `/${locale}/factory`,
+        visible: !!factoryExists,
+      },
+      {
+        label: locale === 'tr' ? 'İletişim' : 'Contact',
+        href: `/${locale}/contact`,
+        visible: true,
+      },
     ];
 
     const catalogue = [
-      { label: locale === 'tr' ? 'Mermerler' : 'Marbles', href: `/${locale}/products`, visible: true },
-      { label: locale === 'tr' ? 'Koleksiyonlar' : 'Collections', href: `/${locale}/collections`, visible: true },
-      { label: locale === 'tr' ? 'Uygulamalar' : 'Applications', href: `/${locale}/applications`, visible: true },
-      { label: locale === 'tr' ? 'Projeler' : 'Projects', href: `/${locale}/projects`, visible: projectsVisible },
+      {
+        label: locale === 'tr' ? 'Mermerler' : 'Marbles',
+        href: `/${locale}/products`,
+        visible: true,
+      },
+      {
+        label: locale === 'tr' ? 'Koleksiyonlar' : 'Collections',
+        href: `/${locale}/collections`,
+        visible: true,
+      },
+      {
+        label: locale === 'tr' ? 'Uygulamalar' : 'Applications',
+        href: `/${locale}/applications`,
+        visible: true,
+      },
+      {
+        label: locale === 'tr' ? 'Projeler' : 'Projects',
+        href: `/${locale}/projects`,
+        visible: projectsVisible,
+      },
       { label: locale === 'tr' ? 'Dergi' : 'Journal', href: `/${locale}/journal`, visible: true },
     ];
 
     const conversion = [
-      { label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote', href: `/${locale}/quote`, visible: true },
+      {
+        label: locale === 'tr' ? 'Teklif Talebi' : 'Request Quote',
+        href: `/${locale}/quote`,
+        visible: true,
+      },
     ];
 
     const legal: Array<{ label: string; href: string; visible: boolean }> = [];
@@ -872,7 +1088,11 @@ class ContentService {
     };
   }) {
     if (data.context) {
-      const refs = [data.context.productId, data.context.projectId, data.context.applicationId].filter(Boolean);
+      const refs = [
+        data.context.productId,
+        data.context.projectId,
+        data.context.applicationId,
+      ].filter(Boolean);
       if (refs.length !== 1) {
         throw new NotFoundError('Quote request context must reference exactly one entity.');
       }

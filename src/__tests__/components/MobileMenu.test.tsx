@@ -35,7 +35,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByText('Mermerler')).toBeInTheDocument();
@@ -50,7 +49,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.queryByText('Mermerler')).not.toBeInTheDocument();
@@ -64,7 +62,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -78,7 +75,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
@@ -92,7 +88,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByRole('dialog', { name: 'Menü' })).toBeInTheDocument();
@@ -106,7 +101,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="en"
-
       />,
     );
     expect(screen.getByRole('dialog', { name: 'Menu' })).toBeInTheDocument();
@@ -120,7 +114,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(document.body.style.overflow).toBe('hidden');
@@ -134,7 +127,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(document.body.style.overflow).toBe('hidden');
@@ -145,7 +137,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(document.body.style.overflow).toBe('');
@@ -160,7 +151,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     fireEvent.keyDown(document, { key: 'Escape' });
@@ -175,7 +165,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByText('Teklif Talebi')).toBeInTheDocument();
@@ -189,7 +178,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByText('TR / EN')).toBeInTheDocument();
@@ -203,7 +191,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByRole('navigation', { name: 'Ana navigasyon' })).toBeInTheDocument();
@@ -217,7 +204,6 @@ describe('MobileMenu', () => {
         primaryItems={mockPrimaryItems}
         utilityItems={mockUtilityItems}
         locale="tr"
-
       />,
     );
     expect(screen.getByRole('button', { name: 'Menüyü kapat' })).toBeInTheDocument();

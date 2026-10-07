@@ -13,12 +13,7 @@ const sizeMap: Record<NonNullable<ContainerProps['size']>, string> = {
   full: '100%',
 };
 
-export function Container({
-  children,
-  className,
-  as: Tag = 'div',
-  size = 'lg',
-}: ContainerProps) {
+export function Container({ children, className, as: Tag = 'div', size = 'lg' }: ContainerProps) {
   return (
     <Tag
       className={className}

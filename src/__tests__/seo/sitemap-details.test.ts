@@ -18,7 +18,7 @@ const JOURNAL_PUBLISHED = '2026-06-10T00:00:00.000Z';
 
 function listPayload(
   data: Array<{ slug: string; publicationDate?: string }>,
-  meta: { page: number; total: number; totalPages: number }
+  meta: { page: number; total: number; totalPages: number },
 ) {
   return { data, meta: { pageSize: 100, ...meta } };
 }
@@ -38,20 +38,23 @@ beforeAll(() => {
   }) as never);
 
   vi.mocked(getCollections).mockResolvedValue(
-    listPayload([{ slug: 'classic-collection' }], { page: 1, total: 1, totalPages: 1 }) as never
+    listPayload([{ slug: 'classic-collection' }], { page: 1, total: 1, totalPages: 1 }) as never,
   );
   vi.mocked(getApplications).mockResolvedValue(
-    listPayload([{ slug: 'flooring' }], { page: 1, total: 1, totalPages: 1 }) as never
+    listPayload([{ slug: 'flooring' }], { page: 1, total: 1, totalPages: 1 }) as never,
   );
   vi.mocked(getProjects).mockResolvedValue(
-    listPayload([{ slug: 'marriott-hotel' }], { page: 1, total: 1, totalPages: 1 }) as never
+    listPayload([{ slug: 'marriott-hotel' }], { page: 1, total: 1, totalPages: 1 }) as never,
   );
   vi.mocked(getJournal).mockResolvedValue(
-    listPayload([{ slug: 'stone-in-contemporary-architecture', publicationDate: JOURNAL_PUBLISHED }], {
-      page: 1,
-      total: 1,
-      totalPages: 1,
-    }) as never
+    listPayload(
+      [{ slug: 'stone-in-contemporary-architecture', publicationDate: JOURNAL_PUBLISHED }],
+      {
+        page: 1,
+        total: 1,
+        totalPages: 1,
+      },
+    ) as never,
   );
 });
 
@@ -79,20 +82,27 @@ describe('Sitemap detail URLs (Phase 18D-4)', () => {
     // 20 static (10 paths × the TR/EN content locales) + 7 detail slugs × 2 locales = 34
     expect(entries).toHaveLength(34);
 
-    const staticOnes = entries.filter((e) => !/\/(products|collections|applications|projects|journal)\/[^/]+$/.test(new URL(e.url).pathname));
+    const staticOnes = entries.filter(
+      (e) =>
+        !/\/(products|collections|applications|projects|journal)\/[^/]+$/.test(
+          new URL(e.url).pathname,
+        ),
+    );
     expect(staticOnes).toHaveLength(20);
   });
 
   it('only advertises SEO locales on detail URLs', () => {
     const allowed = new Set<string>(SEO_LOCALES);
     for (const entry of entries) {
-      expect(allowed.has(new URL(entry.url).pathname.split('/').filter(Boolean)[0] ?? '')).toBe(true);
+      expect(allowed.has(new URL(entry.url).pathname.split('/').filter(Boolean)[0] ?? '')).toBe(
+        true,
+      );
     }
   });
 
   it('uses the journal publication date as lastModified for detail entries', () => {
     const journal = entries.find((e) =>
-      e.url.endsWith('/journal/stone-in-contemporary-architecture')
+      e.url.endsWith('/journal/stone-in-contemporary-architecture'),
     )!;
     expect(journal.lastModified).toEqual(new Date(JOURNAL_PUBLISHED));
     expect(journal.changeFrequency).toBe('monthly');

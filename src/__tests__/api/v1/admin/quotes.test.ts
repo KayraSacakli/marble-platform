@@ -36,7 +36,7 @@ function mockSession(user: { id: string; email: string; roles: string[] } | null
   } as never);
   vi.mocked(prisma.adminSession.findUnique).mockResolvedValue(
     user
-      ? {
+      ? ({
           id: 's-1',
           expiresAt: new Date(Date.now() + 60_000),
           user: {
@@ -46,8 +46,8 @@ function mockSession(user: { id: string; email: string; roles: string[] } | null
             isActive: true,
             roles: user.roles.map((name) => ({ role: { name } })),
           },
-        } as never
-      : null
+        } as never)
+      : null,
   );
 }
 
@@ -94,7 +94,8 @@ function ctx(params: Record<string, string> = {}) {
 const ROUTES = {
   list: (url = 'http://localhost/x') => LIST(req(url) as never, ctx()),
   detail: (id = QUOTE_ID) => DETAIL(req('http://localhost/x') as never, ctx({ id })),
-  update: (id: string, body: unknown) => UPDATE(req('http://localhost/x', 'PATCH', body) as never, ctx({ id })),
+  update: (id: string, body: unknown) =>
+    UPDATE(req('http://localhost/x', 'PATCH', body) as never, ctx({ id })),
 };
 
 describe('admin quotes API', () => {
@@ -162,7 +163,11 @@ describe('admin quotes API', () => {
 
     const audits = vi.mocked(prisma.auditEvent.create).mock.calls.map((c) => c[0].data);
     expect(audits).toHaveLength(3);
-    expect(audits.map((a) => a.action)).toEqual(['QUOTE_STATE_UPDATE', 'QUOTE_STATE_UPDATE', 'QUOTE_STATE_UPDATE']);
+    expect(audits.map((a) => a.action)).toEqual([
+      'QUOTE_STATE_UPDATE',
+      'QUOTE_STATE_UPDATE',
+      'QUOTE_STATE_UPDATE',
+    ]);
     expect(audits.every((a) => a.contentItemId === null)).toBe(true);
     const first = JSON.parse(audits[0].details as string);
     expect(first).toEqual({ quoteId: QUOTE_ID, from: 'PENDING', to: 'IN_REVIEW' });
@@ -181,11 +186,13 @@ describe('admin quotes API', () => {
           productId: '555e8400-e29b-41d4-a716-446655440000',
           projectId: null,
           applicationId: null,
-          product: { contentItem: { variants: [{ locale: 'tr', slug: 'ivory', name: 'Ivory Stone' }] } },
+          product: {
+            contentItem: { variants: [{ locale: 'tr', slug: 'ivory', name: 'Ivory Stone' }] },
+          },
           project: null,
           application: null,
         },
-      }) as never
+      }) as never,
     );
 
     const res = await ROUTES.detail();
@@ -233,8 +240,22 @@ describe('admin quotes API', () => {
   it('list is paginated, newest-first and withholds PII beyond name/company', async () => {
     mockSession(ADMIN);
     vi.mocked(prisma.quoteRequest.findMany).mockResolvedValue([
-      { id: QUOTE_ID, contactName: 'Jane Doe', company: 'Acme Marble', state: 'PENDING', locale: 'tr', submittedAt: new Date('2026-01-05T10:00:00Z') },
-      { id: '88888888-8888-4888-8888-888888888888', contactName: 'John Roe', company: null, state: 'CLOSED', locale: 'en', submittedAt: new Date('2026-01-01T10:00:00Z') },
+      {
+        id: QUOTE_ID,
+        contactName: 'Jane Doe',
+        company: 'Acme Marble',
+        state: 'PENDING',
+        locale: 'tr',
+        submittedAt: new Date('2026-01-05T10:00:00Z'),
+      },
+      {
+        id: '88888888-8888-4888-8888-888888888888',
+        contactName: 'John Roe',
+        company: null,
+        state: 'CLOSED',
+        locale: 'en',
+        submittedAt: new Date('2026-01-01T10:00:00Z'),
+      },
     ] as never);
     vi.mocked(prisma.quoteRequest.count).mockResolvedValue(42);
 
@@ -246,10 +267,20 @@ describe('admin quotes API', () => {
       expect(item).not.toHaveProperty('contactEmail');
       expect(item).not.toHaveProperty('contactPhone');
       expect(item).not.toHaveProperty('message');
-      expect(Object.keys(item).sort()).toEqual(['company', 'contactName', 'id', 'locale', 'state', 'submittedAt']);
+      expect(Object.keys(item).sort()).toEqual([
+        'company',
+        'contactName',
+        'id',
+        'locale',
+        'state',
+        'submittedAt',
+      ]);
     }
 
-    const listCall = vi.mocked(prisma.quoteRequest.findMany).mock.calls[0][0] as Record<string, unknown>;
+    const listCall = vi.mocked(prisma.quoteRequest.findMany).mock.calls[0][0] as Record<
+      string,
+      unknown
+    >;
     expect(listCall.orderBy).toEqual({ submittedAt: 'desc' });
     expect(listCall.skip).toBe(10);
     expect(listCall.take).toBe(10);
@@ -287,9 +318,9 @@ describe('admin quotes API', () => {
         contactEmail: 'jane@example.invalid',
         message: 'Need a quote.',
       }) as never,
-      ctx({ locale: 'tr' })
+      ctx({ locale: 'tr' }),
     );
     expect(res.status).toBe(200);
-    expect((contentService.createQuoteRequest as ReturnType<typeof vi.fn>)).toHaveBeenCalledTimes(1);
+    expect(contentService.createQuoteRequest as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
   });
 });

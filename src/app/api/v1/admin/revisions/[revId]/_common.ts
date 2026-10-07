@@ -14,7 +14,7 @@ export async function readJsonBody(req: Request): Promise<Record<string, unknown
     const text = await req.text();
     if (!text.trim()) return {};
     const body = JSON.parse(text);
-    return ((body ?? {}) as Record<string, unknown>);
+    return (body ?? {}) as Record<string, unknown>;
   } catch {
     throw new ValidationError('Invalid JSON body', []);
   }

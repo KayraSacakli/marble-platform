@@ -9,7 +9,11 @@ type PageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
 
   const title = locale === 'tr' ? 'İletişim' : 'Contact';
@@ -54,13 +58,15 @@ export default async function ContactPage({ params }: PageProps) {
         <div className="contact-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Bize Ulaşın' : 'Reach Out'}
           </span>
-          <h1 className="text-h1">
-            {locale === 'tr' ? 'İletişim' : 'Contact'}
-          </h1>
+          <h1 className="text-h1">{locale === 'tr' ? 'İletişim' : 'Contact'}</h1>
           <p className="contact-page__intro">
             {locale === 'tr'
               ? 'Projeleriniz için doğal taş çözümleri hakkında bizimle iletişime geçin.'
@@ -71,27 +77,21 @@ export default async function ContactPage({ params }: PageProps) {
         <div className="contact-layout">
           <div className="contact-info">
             <div className="contact-info__section">
-              <span className="contact-info__label">
-                {locale === 'tr' ? 'E-posta' : 'Email'}
-              </span>
+              <span className="contact-info__label">{locale === 'tr' ? 'E-posta' : 'Email'}</span>
               <p className="contact-info__value">
                 <a href="mailto:info@marbleplatform.com">info@marbleplatform.com</a>
               </p>
             </div>
 
             <div className="contact-info__section">
-              <span className="contact-info__label">
-                {locale === 'tr' ? 'Telefon' : 'Phone'}
-              </span>
+              <span className="contact-info__label">{locale === 'tr' ? 'Telefon' : 'Phone'}</span>
               <p className="contact-info__value">
                 <a href="tel:+902120000000">+90 (212) 000 00 00</a>
               </p>
             </div>
 
             <div className="contact-info__section">
-              <span className="contact-info__label">
-                {locale === 'tr' ? 'Adres' : 'Address'}
-              </span>
+              <span className="contact-info__label">{locale === 'tr' ? 'Adres' : 'Address'}</span>
               <p className="contact-info__value">
                 {locale === 'tr'
                   ? 'Mermer Platformu\nİstanbul, Türkiye'
@@ -137,7 +137,14 @@ export default async function ContactPage({ params }: PageProps) {
               ? 'Mimari projeleriniz için premium doğal taş seçeneklerimizi keşfedin.'
               : 'Explore our premium natural stone options for your architectural projects.'}
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)', justifyContent: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'var(--space-4)',
+              justifyContent: 'center',
+            }}
+          >
             <a href={`/${locale}/products`} className="button button--secondary button--md">
               {locale === 'tr' ? 'Mermerleri Keşfet' : 'Explore Marbles'}
             </a>

@@ -17,12 +17,7 @@ const ratioMap: Record<AspectRatioValue, string> = {
   '1': '1 / 1',
 };
 
-export function AspectRatio({
-  ratio = '16/9',
-  children,
-  className = '',
-  style,
-}: AspectRatioProps) {
+export function AspectRatio({ ratio = '16/9', children, className = '', style }: AspectRatioProps) {
   return (
     <div
       className={className}

@@ -18,7 +18,11 @@ interface TargetOption {
   name: string;
 }
 
-const KIND_OPTIONS: Array<{ kind: 'product' | 'application' | 'project'; listUrl: string; label: string }> = [
+const KIND_OPTIONS: Array<{
+  kind: 'product' | 'application' | 'project';
+  listUrl: string;
+  label: string;
+}> = [
   { kind: 'product', listUrl: '/api/v1/admin/products', label: 'Product' },
   { kind: 'application', listUrl: '/api/v1/admin/applications', label: 'Application' },
   { kind: 'project', listUrl: '/api/v1/admin/projects', label: 'Project' },
@@ -28,7 +32,11 @@ const box: React.CSSProperties = { border: '1px solid #ccc', padding: '1rem', ma
 
 function unwrapList(json: { data?: { data?: unknown[] } | unknown[] }): TargetOption[] {
   const raw = (json.data as { data?: unknown[] } | undefined)?.data ?? json.data ?? [];
-  const items = (Array.isArray(raw) ? raw : []) as Array<{ id: string; tr?: { name?: string }; en?: { name?: string } }>;
+  const items = (Array.isArray(raw) ? raw : []) as Array<{
+    id: string;
+    tr?: { name?: string };
+    en?: { name?: string };
+  }>;
   return items.map((p) => ({ id: p.id, name: p.tr?.name ?? p.en?.name ?? p.id }));
 }
 
@@ -107,7 +115,9 @@ export function JournalReferenceManager({ base }: { base: string }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`${base}/references?referenceId=${referenceId}`, { method: 'DELETE' });
+      const res = await fetch(`${base}/references?referenceId=${referenceId}`, {
+        method: 'DELETE',
+      });
       if (!res.ok) {
         setError('Detach failed.');
         return;
@@ -126,15 +136,28 @@ export function JournalReferenceManager({ base }: { base: string }) {
     <section style={box}>
       <h2>Referenced content</h2>
       {loading && <p>Loading…</p>}
-      {error && <p role="alert" style={{ color: '#b00020' }}>{error}</p>}
-      {notice && <p role="status" style={{ color: '#0a7d2c' }}>{notice}</p>}
+      {error && (
+        <p role="alert" style={{ color: '#b00020' }}>
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" style={{ color: '#0a7d2c' }}>
+          {notice}
+        </p>
+      )}
       {!loading && refs.length === 0 && <p>No references yet.</p>}
       {refs.length > 0 && (
         <ul>
           {refs.map((r) => (
             <li key={r.id}>
               [{r.targetKind}] {r.trName ?? r.enName ?? r.targetId}{' '}
-              <button type="button" onClick={() => onDetach(r.referenceId, r.trName ?? r.enName ?? r.targetId)} disabled={busy} style={{ cursor: 'pointer' }}>
+              <button
+                type="button"
+                onClick={() => onDetach(r.referenceId, r.trName ?? r.enName ?? r.targetId)}
+                disabled={busy}
+                style={{ cursor: 'pointer' }}
+              >
                 Detach
               </button>
             </li>
@@ -142,18 +165,38 @@ export function JournalReferenceManager({ base }: { base: string }) {
         </ul>
       )}
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-        <select value={targetKind} onChange={(e) => { setTargetKind(e.target.value as 'product' | 'application' | 'project'); setSelected(''); }} style={{ padding: '0.5rem' }}>
+        <select
+          value={targetKind}
+          onChange={(e) => {
+            setTargetKind(e.target.value as 'product' | 'application' | 'project');
+            setSelected('');
+          }}
+          style={{ padding: '0.5rem' }}
+        >
           {KIND_OPTIONS.map((k) => (
-            <option key={k.kind} value={k.kind}>{k.label}</option>
+            <option key={k.kind} value={k.kind}>
+              {k.label}
+            </option>
           ))}
         </select>
-        <select value={selected} onChange={(e) => setSelected(e.target.value)} style={{ padding: '0.5rem' }}>
+        <select
+          value={selected}
+          onChange={(e) => setSelected(e.target.value)}
+          style={{ padding: '0.5rem' }}
+        >
           <option value="">Select…</option>
           {available.map((o) => (
-            <option key={o.id} value={o.id}>{o.name}</option>
+            <option key={o.id} value={o.id}>
+              {o.name}
+            </option>
           ))}
         </select>
-        <button type="button" onClick={onAttach} disabled={busy || !selected} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+        <button
+          type="button"
+          onClick={onAttach}
+          disabled={busy || !selected}
+          style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+        >
           Attach
         </button>
       </div>

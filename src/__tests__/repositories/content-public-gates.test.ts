@@ -125,7 +125,10 @@ describe('seoAvailability content gates', () => {
     findMany.mockResolvedValue([
       { locale: 'en', contentItem: { type: 'PRODUCT', companyContent: null } },
       { locale: 'tr', contentItem: { type: 'PRODUCT', companyContent: null } },
-      { locale: 'de', contentItem: { type: 'COMPANY_CONTENT', companyContent: { kind: 'FACTORY' } } },
+      {
+        locale: 'de',
+        contentItem: { type: 'COMPANY_CONTENT', companyContent: { kind: 'FACTORY' } },
+      },
       { locale: 'fr', contentItem: { type: 'COMPANY_CONTENT', companyContent: { kind: 'ABOUT' } } },
       { locale: 'tr', contentItem: { type: 'PROJECT', companyContent: null } },
     ] as never);

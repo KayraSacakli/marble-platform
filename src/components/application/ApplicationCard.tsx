@@ -19,7 +19,11 @@ export function ApplicationCard({ application, locale, priority = false }: Appli
       </a>
       <div className="application-card__image-wrap">
         {application.coverImage ? (
-          <Media src={application.coverImage.src} alt={application.coverImage.alt} priority={priority} />
+          <Media
+            src={application.coverImage.src}
+            alt={application.coverImage.alt}
+            priority={priority}
+          />
         ) : (
           <div
             style={{

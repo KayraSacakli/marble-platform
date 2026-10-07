@@ -21,7 +21,13 @@ const MIME_TO_EXT: Record<string, string> = {
 
 /** Detect the real image type from magic bytes — never trust filename/MIME. */
 export function sniffImageMime(data: Buffer): string | null {
-  if (data.length >= 8 && data[0] === 0x89 && data[1] === 0x50 && data[2] === 0x4e && data[3] === 0x47) {
+  if (
+    data.length >= 8 &&
+    data[0] === 0x89 &&
+    data[1] === 0x50 &&
+    data[2] === 0x4e &&
+    data[3] === 0x47
+  ) {
     return 'image/png';
   }
   if (data.length >= 3 && data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff) {
@@ -47,7 +53,10 @@ export function sniffImageMime(data: Buffer): string | null {
 }
 
 /** Best-effort pixel dimensions (PNG/GIF/JPEG). Null when unknown. */
-export function sniffDimensions(data: Buffer, mime: string): { width: number; height: number } | null {
+export function sniffDimensions(
+  data: Buffer,
+  mime: string,
+): { width: number; height: number } | null {
   try {
     if (mime === 'image/png' && data.length >= 24) {
       return { width: data.readUInt32BE(16), height: data.readUInt32BE(20) };
@@ -61,7 +70,13 @@ export function sniffDimensions(data: Buffer, mime: string): { width: number; he
         if (data[offset] !== 0xff) break;
         const marker = data[offset + 1];
         // SOF0–SOF15 except DHT(0xC4), JPG(0xC8), DAC(0xCC).
-        if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+        if (
+          marker >= 0xc0 &&
+          marker <= 0xcf &&
+          marker !== 0xc4 &&
+          marker !== 0xc8 &&
+          marker !== 0xcc
+        ) {
           return { height: data.readUInt16BE(offset + 5), width: data.readUInt16BE(offset + 7) };
         }
         if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd9)) {
@@ -79,7 +94,11 @@ export function sniffDimensions(data: Buffer, mime: string): { width: number; he
   return null;
 }
 
-async function writeAudit(actorId: string, action: string, details: Record<string, unknown>): Promise<void> {
+async function writeAudit(
+  actorId: string,
+  action: string,
+  details: Record<string, unknown>,
+): Promise<void> {
   await prisma.auditEvent.create({
     data: { actorId, action, contentItemId: null, details: JSON.stringify(details) },
   });
@@ -209,7 +228,10 @@ export async function uploadAdminMedia(input: UploadInput) {
     throw new ValidationError('Empty file.', []);
   }
   if (input.data.length > MAX_UPLOAD_BYTES) {
-    throw new ValidationError(`File exceeds the ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} MB limit.`, []);
+    throw new ValidationError(
+      `File exceeds the ${Math.round(MAX_UPLOAD_BYTES / 1024 / 1024)} MB limit.`,
+      [],
+    );
   }
   const mime = sniffImageMime(input.data);
   if (!mime || !MIME_TO_EXT[mime]) {
@@ -232,7 +254,11 @@ export async function uploadAdminMedia(input: UploadInput) {
     },
   });
 
-  await writeAudit(input.actorId, 'MEDIA_UPLOAD', { assetId: asset.id, mime, bytes: input.data.length });
+  await writeAudit(input.actorId, 'MEDIA_UPLOAD', {
+    assetId: asset.id,
+    mime,
+    bytes: input.data.length,
+  });
   return toAdminAsset({ ...asset, _count: { presentations: 0 } });
 }
 
@@ -244,7 +270,8 @@ export async function uploadAdminMedia(input: UploadInput) {
 
 export type ProductMediaRole = 'PRIMARY' | 'GALLERY' | 'HERO';
 
-export type ManagedMediaType = 'PRODUCT' | 'COLLECTION' | 'APPLICATION' | 'PROJECT' | 'JOURNAL_ARTICLE';
+export type ManagedMediaType =
+  'PRODUCT' | 'COLLECTION' | 'APPLICATION' | 'PROJECT' | 'JOURNAL_ARTICLE';
 
 export interface ProductMediaRow {
   rowId: string;
@@ -269,7 +296,10 @@ async function findProductItemOrThrow(id: string, allowedTypes: ManagedMediaType
   return item;
 }
 
-export async function listProductMedia(productId: string, allowedTypes: ManagedMediaType[] = ['PRODUCT']): Promise<ProductMediaRow[]> {
+export async function listProductMedia(
+  productId: string,
+  allowedTypes: ManagedMediaType[] = ['PRODUCT'],
+): Promise<ProductMediaRow[]> {
   const item = await findProductItemOrThrow(productId, allowedTypes);
   const variantIds = item.variants.map((v) => v.id);
   if (variantIds.length === 0) return [];
@@ -303,14 +333,16 @@ export async function attachProductMedia(
   productId: string,
   input: { assetId: string; role: ProductMediaRole; altTr?: string; altEn?: string },
   actorId: string,
-  allowedTypes: ManagedMediaType[] = ['PRODUCT']
+  allowedTypes: ManagedMediaType[] = ['PRODUCT'],
 ): Promise<ProductMediaRow[]> {
   const item = await findProductItemOrThrow(productId, allowedTypes);
   const asset = await prisma.mediaAsset.findUnique({ where: { id: input.assetId } });
   if (!asset || asset.mediaType !== 'IMAGE') {
     throw new NotFoundError('Media not found.');
   }
-  const variantIds = item.variants.filter((v) => v.locale === 'tr' || v.locale === 'en').map((v) => v.id);
+  const variantIds = item.variants
+    .filter((v) => v.locale === 'tr' || v.locale === 'en')
+    .map((v) => v.id);
   const clash = await prisma.contentMedia.findFirst({
     where: { contentVariantId: { in: variantIds }, mediaAssetId: input.assetId },
     select: { id: true },
@@ -328,7 +360,8 @@ export async function attachProductMedia(
         mediaAssetId: input.assetId,
         role: input.role as never,
         displayOrder: count,
-        altText: variant.locale === 'en' ? input.altEn ?? input.altTr ?? null : input.altTr ?? null,
+        altText:
+          variant.locale === 'en' ? (input.altEn ?? input.altTr ?? null) : (input.altTr ?? null),
       },
     });
   }
@@ -340,7 +373,12 @@ export async function attachProductMedia(
   return listProductMedia(productId, allowedTypes);
 }
 
-export async function detachProductMedia(productId: string, assetId: string, actorId: string, allowedTypes: ManagedMediaType[] = ['PRODUCT']): Promise<{ detached: true }> {
+export async function detachProductMedia(
+  productId: string,
+  assetId: string,
+  actorId: string,
+  allowedTypes: ManagedMediaType[] = ['PRODUCT'],
+): Promise<{ detached: true }> {
   const item = await findProductItemOrThrow(productId, allowedTypes);
   const variantIds = item.variants.map((v) => v.id);
   const removed = await prisma.contentMedia.deleteMany({
@@ -364,7 +402,7 @@ export async function reorderProductMedia(
   productId: string,
   items: ReorderItem[],
   actorId: string,
-  allowedTypes: ManagedMediaType[] = ['PRODUCT']
+  allowedTypes: ManagedMediaType[] = ['PRODUCT'],
 ): Promise<ProductMediaRow[]> {
   const item = await findProductItemOrThrow(productId, allowedTypes);
   const byLocale = new Map(item.variants.map((v) => [v.locale, v.id]));
@@ -372,7 +410,7 @@ export async function reorderProductMedia(
     for (const locale of ['tr', 'en'] as const) {
       const variantId = byLocale.get(locale);
       if (!variantId) continue;
-      const alt = locale === 'en' ? entry.altEn ?? entry.altTr : entry.altTr;
+      const alt = locale === 'en' ? (entry.altEn ?? entry.altTr) : entry.altTr;
       const data: Record<string, unknown> = {};
       if (entry.displayOrder !== undefined) data.displayOrder = entry.displayOrder;
       if (alt !== undefined) data.altText = alt === '' ? null : alt;

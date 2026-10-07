@@ -14,5 +14,5 @@ export const GET = withAdminAuth(
       q: parseQueryString(url.searchParams.get('q') ?? undefined),
     });
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

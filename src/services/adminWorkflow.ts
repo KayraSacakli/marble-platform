@@ -113,7 +113,8 @@ const revisionInclude = {
 };
 
 /** Content types manageable through the admin workflow. */
-export type ManagedContentType = 'PRODUCT' | 'COLLECTION' | 'APPLICATION' | 'PROJECT' | 'JOURNAL_ARTICLE';
+export type ManagedContentType =
+  'PRODUCT' | 'COLLECTION' | 'APPLICATION' | 'PROJECT' | 'JOURNAL_ARTICLE';
 
 async function findRevisionOrThrow(id: string, allowedTypes: ManagedContentType[] = ['PRODUCT']) {
   const revision = await prisma.contentRevision.findUnique({
@@ -131,13 +132,20 @@ async function findRevisionOrThrow(id: string, allowedTypes: ManagedContentType[
       },
     },
   });
-  if (!revision || !allowedTypes.includes(revision.contentVariant.contentItem.type as ManagedContentType)) {
+  if (
+    !revision ||
+    !allowedTypes.includes(revision.contentVariant.contentItem.type as ManagedContentType)
+  ) {
     throw new NotFoundError('Revision not found.');
   }
   return revision;
 }
 
-async function isLatestRevision(variantId: string, revisionId: string, revisionNumber: number): Promise<boolean> {
+async function isLatestRevision(
+  variantId: string,
+  revisionId: string,
+  revisionNumber: number,
+): Promise<boolean> {
   const newer = await prisma.contentRevision.findFirst({
     where: { contentVariantId: variantId, revisionNumber: { gt: revisionNumber } },
     select: { id: true },
@@ -145,7 +153,11 @@ async function isLatestRevision(variantId: string, revisionId: string, revisionN
   return !newer || newer.id === revisionId;
 }
 
-async function requireLatest(revision: { contentVariantId: string; id: string; revisionNumber: number }): Promise<void> {
+async function requireLatest(revision: {
+  contentVariantId: string;
+  id: string;
+  revisionNumber: number;
+}): Promise<void> {
   if (!(await isLatestRevision(revision.contentVariantId, revision.id, revision.revisionNumber))) {
     throw new ConflictError('A newer revision exists. Refresh and review the latest revision.');
   }
@@ -193,7 +205,7 @@ export function snapshotFromVariant(
       publicationDate: Date | null;
       authorName: string | null;
     } | null;
-  } | null = null
+  } | null = null,
 ): DraftSnapshot {
   return {
     slug: variant.slug,
@@ -222,7 +234,9 @@ export function snapshotFromVariant(
       : undefined,
     journal: ext?.journal
       ? {
-          publicationDate: ext.journal.publicationDate ? ext.journal.publicationDate.toISOString() : null,
+          publicationDate: ext.journal.publicationDate
+            ? ext.journal.publicationDate.toISOString()
+            : null,
           authorName: ext.journal.authorName,
         }
       : undefined,
@@ -255,7 +269,9 @@ export async function ensureDraftRevision(variantId: string, actorId: string) {
   const open = await findOpenRevision(variantId);
   if (open) {
     if (open.status !== 'DRAFT') {
-      throw new ConflictError(`Revision #${open.revisionNumber} is ${open.status}. Resolve it before editing.`);
+      throw new ConflictError(
+        `Revision #${open.revisionNumber} is ${open.status}. Resolve it before editing.`,
+      );
     }
     return open;
   }
@@ -277,7 +293,7 @@ export async function ensureDraftRevision(variantId: string, actorId: string) {
           product: variant.contentItem.product,
           project: variant.contentItem.project,
           journal: variant.contentItem.journalArticle,
-        })
+        }),
       ),
     },
     include: revisionInclude,
@@ -296,7 +312,7 @@ export async function patchDraftSnapshot(
   revisionId: string,
   patch: DraftSnapshot,
   actorId: string,
-  allowedTypes: ManagedContentType[] = ['PRODUCT']
+  allowedTypes: ManagedContentType[] = ['PRODUCT'],
 ): Promise<void> {
   const revision = await findRevisionOrThrow(revisionId, allowedTypes);
   if (revision.status !== 'DRAFT') {
@@ -324,7 +340,11 @@ export async function patchDraftSnapshot(
   });
 }
 
-export async function submitRevision(revisionId: string, actorId: string, allowedTypes: ManagedContentType[] = ['PRODUCT']) {
+export async function submitRevision(
+  revisionId: string,
+  actorId: string,
+  allowedTypes: ManagedContentType[] = ['PRODUCT'],
+) {
   const revision = await findRevisionOrThrow(revisionId, allowedTypes);
   if (revision.status !== 'DRAFT') {
     throw new ConflictError(`Only DRAFT revisions can be submitted (current: ${revision.status}).`);
@@ -347,10 +367,17 @@ export async function submitRevision(revisionId: string, actorId: string, allowe
   return toWorkflowRevision(updated);
 }
 
-export async function approveRevision(revisionId: string, actorId: string, notes?: string, allowedTypes: ManagedContentType[] = ['PRODUCT']) {
+export async function approveRevision(
+  revisionId: string,
+  actorId: string,
+  notes?: string,
+  allowedTypes: ManagedContentType[] = ['PRODUCT'],
+) {
   const revision = await findRevisionOrThrow(revisionId, allowedTypes);
   if (revision.status !== 'IN_REVIEW') {
-    throw new ConflictError(`Only IN_REVIEW revisions can be approved (current: ${revision.status}).`);
+    throw new ConflictError(
+      `Only IN_REVIEW revisions can be approved (current: ${revision.status}).`,
+    );
   }
   await requireLatest(revision);
   const attachments = await prisma.contentMedia.findMany({
@@ -382,7 +409,12 @@ export async function approveRevision(revisionId: string, actorId: string, notes
   return toWorkflowRevision(updated);
 }
 
-export async function rejectRevision(revisionId: string, actorId: string, reason: string, allowedTypes: ManagedContentType[] = ['PRODUCT']) {
+export async function rejectRevision(
+  revisionId: string,
+  actorId: string,
+  reason: string,
+  allowedTypes: ManagedContentType[] = ['PRODUCT'],
+) {
   if (!reason.trim()) {
     throw new ValidationError('A rejection reason is required.', [
       { field: 'reason', code: 'INVALID', message: 'Rejection reason is required.' },
@@ -390,7 +422,9 @@ export async function rejectRevision(revisionId: string, actorId: string, reason
   }
   const revision = await findRevisionOrThrow(revisionId, allowedTypes);
   if (revision.status !== 'IN_REVIEW') {
-    throw new ConflictError(`Only IN_REVIEW revisions can be rejected (current: ${revision.status}).`);
+    throw new ConflictError(
+      `Only IN_REVIEW revisions can be rejected (current: ${revision.status}).`,
+    );
   }
   await requireLatest(revision);
   const [updated] = await prisma.$transaction([
@@ -417,7 +451,11 @@ export async function rejectRevision(revisionId: string, actorId: string, reason
   return toWorkflowRevision(updated);
 }
 
-async function assertSlugAvailable(locale: string, slug: string, excludeContentItemId: string): Promise<void> {
+async function assertSlugAvailable(
+  locale: string,
+  slug: string,
+  excludeContentItemId: string,
+): Promise<void> {
   const clash = await prisma.contentVariant.findFirst({
     where: { locale, slug, NOT: { contentItemId: excludeContentItemId } },
     select: { id: true },
@@ -427,10 +465,16 @@ async function assertSlugAvailable(locale: string, slug: string, excludeContentI
   }
 }
 
-export async function publishRevision(revisionId: string, actorId: string, allowedTypes: ManagedContentType[] = ['PRODUCT']) {
+export async function publishRevision(
+  revisionId: string,
+  actorId: string,
+  allowedTypes: ManagedContentType[] = ['PRODUCT'],
+) {
   const revision = await findRevisionOrThrow(revisionId, allowedTypes);
   if (revision.status !== 'APPROVED') {
-    throw new ConflictError(`Only APPROVED revisions can be published (current: ${revision.status}).`);
+    throw new ConflictError(
+      `Only APPROVED revisions can be published (current: ${revision.status}).`,
+    );
   }
   await requireLatest(revision);
   const approval = await prisma.approval.findFirst({
@@ -453,15 +497,20 @@ export async function publishRevision(revisionId: string, actorId: string, allow
   const extOps = [];
   if (contentType === 'PRODUCT' && snapshot.product) {
     const productPatch: Record<string, string | null | undefined> = {};
-    for (const key of ['internalIdentifier', 'surfaceFinish', 'dimensions', 'format', 'origin', 'applicableStandards'] as const) {
+    for (const key of [
+      'internalIdentifier',
+      'surfaceFinish',
+      'dimensions',
+      'format',
+      'origin',
+      'applicableStandards',
+    ] as const) {
       if (snapshot.product[key] !== undefined) {
         const value = snapshot.product[key];
         productPatch[key] = value === '' ? null : value;
       }
     }
-    extOps.push(
-      prisma.product.update({ where: { contentItemId }, data: productPatch })
-    );
+    extOps.push(prisma.product.update({ where: { contentItemId }, data: productPatch }));
   }
   if (contentType === 'PROJECT' && snapshot.project) {
     const projectPatch: Record<string, string | null | undefined> = {};
@@ -476,14 +525,17 @@ export async function publishRevision(revisionId: string, actorId: string, allow
   if (contentType === 'JOURNAL_ARTICLE' && snapshot.journal) {
     const journalPatch: Record<string, Date | string | null | undefined> = {};
     if (snapshot.journal.publicationDate !== undefined) {
-      const parsed = snapshot.journal.publicationDate ? new Date(snapshot.journal.publicationDate) : null;
+      const parsed = snapshot.journal.publicationDate
+        ? new Date(snapshot.journal.publicationDate)
+        : null;
       if (parsed !== null && Number.isNaN(parsed.getTime())) {
         throw new ValidationError('Approved snapshot has an invalid publication date.', []);
       }
       if (parsed !== null) journalPatch.publicationDate = parsed;
     }
     if (snapshot.journal.authorName !== undefined) {
-      journalPatch.authorName = snapshot.journal.authorName === '' ? null : snapshot.journal.authorName;
+      journalPatch.authorName =
+        snapshot.journal.authorName === '' ? null : snapshot.journal.authorName;
     }
     extOps.push(prisma.journalArticle.update({ where: { contentItemId }, data: journalPatch }));
   }
@@ -521,7 +573,10 @@ export async function publishRevision(revisionId: string, actorId: string, allow
     slug: snapshot.slug,
   });
 
-  return getContentWorkflow(revision.contentVariant.contentItemId, revision.contentVariant.contentItem.type as ManagedContentType);
+  return getContentWorkflow(
+    revision.contentVariant.contentItemId,
+    revision.contentVariant.contentItem.type as ManagedContentType,
+  );
 }
 
 export async function unpublishProduct(productId: string, locale: Locale, actorId: string) {
@@ -532,7 +587,7 @@ export async function unpublishContent(
   contentId: string,
   contentType: ManagedContentType,
   locale: Locale,
-  actorId: string
+  actorId: string,
 ) {
   const item = await prisma.contentItem.findUnique({
     where: { id: contentId },
@@ -545,7 +600,10 @@ export async function unpublishContent(
   if (variant.lifecycleState !== 'PUBLISHED') {
     throw new ConflictError(`Variant is ${variant.lifecycleState}, nothing to unpublish.`);
   }
-  await prisma.contentVariant.update({ where: { id: variant.id }, data: { lifecycleState: 'UNPUBLISHED' } });
+  await prisma.contentVariant.update({
+    where: { id: variant.id },
+    data: { lifecycleState: 'UNPUBLISHED' },
+  });
   await writeAudit(actorId, 'CONTENT_UNPUBLISH', contentId, { locale, slug: variant.slug });
   return getContentWorkflow(contentId, contentType);
 }
@@ -571,8 +629,12 @@ export async function getContentWorkflow(contentId: string, contentType: Managed
   const locales: Record<string, LocaleWorkflow> = {};
   for (const variant of item.variants) {
     if (!SUPPORTED_LOCALES.includes(variant.locale as Locale)) continue;
-    const open = variant.revisions.find((r) => (OPEN_STATUSES as string[]).includes(r.status)) ?? null;
-    const published = variant.revisions.filter((r) => r.status === 'PUBLISHED').sort((a, b) => b.revisionNumber - a.revisionNumber)[0] ?? null;
+    const open =
+      variant.revisions.find((r) => (OPEN_STATUSES as string[]).includes(r.status)) ?? null;
+    const published =
+      variant.revisions
+        .filter((r) => r.status === 'PUBLISHED')
+        .sort((a, b) => b.revisionNumber - a.revisionNumber)[0] ?? null;
     locales[variant.locale] = {
       locale: variant.locale as Locale,
       lifecycleState: variant.lifecycleState,
@@ -587,7 +649,11 @@ export async function listProductRevisions(productId: string, locale?: Locale) {
   return listContentRevisions(productId, 'PRODUCT', locale);
 }
 
-export async function listContentRevisions(contentId: string, contentType: ManagedContentType, locale?: Locale) {
+export async function listContentRevisions(
+  contentId: string,
+  contentType: ManagedContentType,
+  locale?: Locale,
+) {
   const item = await prisma.contentItem.findUnique({
     where: { id: contentId },
     include: { variants: { select: { id: true, locale: true } } },

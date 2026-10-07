@@ -36,7 +36,13 @@ export function DeleteProductButton({ id, name }: { id: string; name: string }) 
         type="button"
         onClick={onClick}
         disabled={pending}
-        style={{ color: '#b00020', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        style={{
+          color: '#b00020',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
       >
         {pending ? 'Deleting…' : 'Delete'}
       </button>

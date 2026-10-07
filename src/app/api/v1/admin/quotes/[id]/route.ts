@@ -19,7 +19,7 @@ export const GET = withAdminAuth(
     const { id } = await params;
     return getAdminQuoteRequest(parseId(id));
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // PATCH /api/v1/admin/quotes/[id] — status update only (strict schema).
@@ -33,8 +33,9 @@ export const PATCH = withAdminAuth(
       throw new ValidationError('Invalid JSON body', []);
     }
     const parsed = adminQuoteStateUpdateSchema.safeParse(body);
-    if (!parsed.success) throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
+    if (!parsed.success)
+      throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
     return setAdminQuoteState(parseId(id), parsed.data.state, admin);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

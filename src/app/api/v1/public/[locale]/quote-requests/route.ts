@@ -21,7 +21,7 @@ export const POST = createApiHandler(async (req, { params }) => {
   if (!result.success) {
     const fieldErrors = result.error.flatten().fieldErrors;
     const details = Object.entries(fieldErrors).flatMap(([field, messages]) =>
-      (messages ?? []).map((message) => ({ field, code: 'INVALID', message }))
+      (messages ?? []).map((message) => ({ field, code: 'INVALID', message })),
     );
     throw new ValidationError('Validation failed', details);
   }

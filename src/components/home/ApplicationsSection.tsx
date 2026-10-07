@@ -17,10 +17,7 @@ export function ApplicationsSection({ heading, applications, locale }: Applicati
   return (
     <section className="homepage-section">
       <Container size="lg">
-        <SectionHeader
-          eyebrow="Architecture"
-          title={displayHeading}
-        />
+        <SectionHeader eyebrow="Architecture" title={displayHeading} />
         <div className="applications-grid">
           {applications.map((application) => (
             <ApplicationCard key={application.id} application={application} locale={locale} />
@@ -31,8 +28,16 @@ export function ApplicationsSection({ heading, applications, locale }: Applicati
   );
 }
 
-function ApplicationCard({ application, locale }: { application: ApplicationSummary; locale: string }) {
-  const href = locale ? `/${locale}/applications/${application.slug}` : `/applications/${application.slug}`;
+function ApplicationCard({
+  application,
+  locale,
+}: {
+  application: ApplicationSummary;
+  locale: string;
+}) {
+  const href = locale
+    ? `/${locale}/applications/${application.slug}`
+    : `/applications/${application.slug}`;
 
   return (
     <article className="application-card">
@@ -41,13 +46,11 @@ function ApplicationCard({ application, locale }: { application: ApplicationSumm
       </a>
       <div className="application-card__image-wrap" style={{ position: 'relative' }}>
         {application.coverImage ? (
-          <Media
-            src={application.coverImage.src}
-            alt={application.coverImage.alt}
-            loading="lazy"
-          />
+          <Media src={application.coverImage.src} alt={application.coverImage.alt} loading="lazy" />
         ) : (
-          <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />
+          <div
+            style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }}
+          />
         )}
       </div>
       <div className="application-card__body">

@@ -16,7 +16,9 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
   });
 
   it('creates a quote request with valid data', async () => {
-    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(mockQuoteRequestResponse);
+    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockQuoteRequestResponse,
+    );
 
     const res = await callHandler(
       POST,
@@ -29,7 +31,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           contactEmail: 'test@example.invalid',
           message: 'I need a quote for marble.',
         },
-      }
+      },
     );
     const json = await res.json();
 
@@ -42,7 +44,9 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
   });
 
   it('includes optional fields in quote request', async () => {
-    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(mockQuoteRequestResponse);
+    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockQuoteRequestResponse,
+    );
 
     const res = await callHandler(
       POST,
@@ -61,7 +65,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
             productId: '550e8400-e29b-41d4-a716-446655440000',
           },
         },
-      }
+      },
     );
     const json = await res.json();
 
@@ -74,7 +78,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
         contactPhone: '+90 555 123 4567',
         company: 'Test Corp',
         locale: 'tr',
-      })
+      }),
     );
   });
 
@@ -86,7 +90,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
       {
         method: 'POST',
         body: { contactName: 'Test User' },
-      }
+      },
     );
     const json = await res.json();
 
@@ -110,7 +114,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           contactEmail: 'not-an-email',
           message: 'Hello',
         },
-      }
+      },
     );
     const json = await res.json();
 
@@ -130,7 +134,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           contactEmail: 'test@example.invalid',
           message: '',
         },
-      }
+      },
     );
 
     expect(res.status).toBe(422);
@@ -149,7 +153,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           message: 'Hello',
           context: { contextKind: 'INVALID_KIND' },
         },
-      }
+      },
     );
 
     expect(res.status).toBe(422);
@@ -160,7 +164,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
       POST,
       'http://localhost/api/v1/public/tr/quote-requests',
       { locale: 'tr' },
-      { method: 'POST', body: {} }
+      { method: 'POST', body: {} },
     );
     const json = await res.json();
 
@@ -169,7 +173,9 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
   });
 
   it('returns requestId header on success', async () => {
-    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(mockQuoteRequestResponse);
+    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockQuoteRequestResponse,
+    );
 
     const res = await callHandler(
       POST,
@@ -182,7 +188,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           contactEmail: 'test@example.invalid',
           message: 'Hello',
         },
-      }
+      },
     );
 
     expect(res.headers.get('x-request-id')).toBeDefined();
@@ -190,7 +196,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
 
   it('does not expose internal database errors', async () => {
     (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new Error('Database connection failed')
+      new Error('Database connection failed'),
     );
 
     const res = await callHandler(
@@ -204,7 +210,7 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           contactEmail: 'test@example.invalid',
           message: 'Hello',
         },
-      }
+      },
     );
     const json = await res.json();
 
@@ -216,7 +222,9 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
   });
 
   it('server-controlled fields are not trusted from client', async () => {
-    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(mockQuoteRequestResponse);
+    (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockQuoteRequestResponse,
+    );
 
     await callHandler(
       POST,
@@ -233,10 +241,11 @@ describe('POST /api/v1/public/[locale]/quote-requests', () => {
           state: 'RESPONDED',
           locale: 'de',
         },
-      }
+      },
     );
 
-    const callArg = (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const callArg = (contentService.createQuoteRequest as ReturnType<typeof vi.fn>).mock
+      .calls[0][0];
     expect(callArg.locale).toBe('tr');
     expect(callArg.id).toBeUndefined();
     expect(callArg.submittedAt).toBeUndefined();

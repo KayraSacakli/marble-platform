@@ -23,14 +23,17 @@ export default function ErrorPage({ reset }: ErrorPageProps) {
       <h1 className="text-h2" style={{ marginBottom: 'var(--space-4)' }}>
         Something went wrong
       </h1>
-      <p className="text-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)', maxWidth: '40ch' }}>
+      <p
+        className="text-body"
+        style={{
+          color: 'var(--color-text-secondary)',
+          marginBottom: 'var(--space-6)',
+          maxWidth: '40ch',
+        }}
+      >
         An unexpected error occurred. Please try again.
       </p>
-      <button
-        onClick={reset}
-        type="button"
-        className="button button--primary button--md"
-      >
+      <button onClick={reset} type="button" className="button button--primary button--md">
         Try again
       </button>
     </div>

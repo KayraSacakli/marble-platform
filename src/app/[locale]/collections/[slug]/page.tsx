@@ -15,7 +15,11 @@ type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
 
@@ -32,7 +36,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         description,
         url: `${SITE_URL}/${locale}/collections/${collection.slug}`,
         type: 'website',
-        images: collection.coverImage ? [{ url: collection.coverImage.src, alt: collection.coverImage.alt, width: collection.coverImage.width, height: collection.coverImage.height }] : [],
+        images: collection.coverImage
+          ? [
+              {
+                url: collection.coverImage.src,
+                alt: collection.coverImage.alt,
+                width: collection.coverImage.width,
+                height: collection.coverImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...metadataFromSeoData(collection.seo),
@@ -62,14 +75,20 @@ export default async function CollectionDetailPage({ params }: PageProps) {
         <BreadcrumbJsonLd
           items={[
             { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
-            { name: locale === 'tr' ? 'Koleksiyonlar' : 'Collections', href: `/${locale}/collections` },
+            {
+              name: locale === 'tr' ? 'Koleksiyonlar' : 'Collections',
+              href: `/${locale}/collections`,
+            },
             { name: collection.name },
           ]}
         />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
-            { label: locale === 'tr' ? 'Koleksiyonlar' : 'Collections', href: `/${locale}/collections` },
+            {
+              label: locale === 'tr' ? 'Koleksiyonlar' : 'Collections',
+              href: `/${locale}/collections`,
+            },
             { label: collection.name },
           ]}
         />
@@ -135,7 +154,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
 
         <section className="collection-cta">
           <h2 className="collection-cta__heading">
-            {locale === 'tr' ? 'Bu Koleksiyon Hakkında Konuşalım' : 'Let\'s Discuss This Collection'}
+            {locale === 'tr' ? 'Bu Koleksiyon Hakkında Konuşalım' : "Let's Discuss This Collection"}
           </h2>
           <p className="collection-cta__message">
             {locale === 'tr'

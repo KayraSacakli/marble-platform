@@ -24,7 +24,9 @@ describe('GET /api/v1/public/[locale]/products', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data).toBeDefined();
@@ -41,7 +43,9 @@ describe('GET /api/v1/public/[locale]/products', () => {
       meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.data).toEqual([]);
@@ -54,7 +58,9 @@ describe('GET /api/v1/public/[locale]/products', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     expect(res.status).toBe(200);
     expect(contentService.getProductList).toHaveBeenCalledWith('tr', { page: 1, pageSize: 24 });
   });
@@ -65,7 +71,9 @@ describe('GET /api/v1/public/[locale]/products', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/products', { locale: 'en' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/products', {
+      locale: 'en',
+    });
     expect(res.status).toBe(200);
     expect(contentService.getProductList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
   });
@@ -79,14 +87,16 @@ describe('GET /api/v1/public/[locale]/products', () => {
     const res = await callHandler(
       GET,
       'http://localhost/api/v1/public/tr/products?page=2&pageSize=10',
-      { locale: 'tr' }
+      { locale: 'tr' },
     );
     expect(res.status).toBe(200);
     expect(contentService.getProductList).toHaveBeenCalledWith('tr', { page: 2, pageSize: 10 });
   });
 
   it('returns 400 for an invalid page', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products?page=abc', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products?page=abc', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -95,12 +105,16 @@ describe('GET /api/v1/public/[locale]/products', () => {
   });
 
   it('returns 400 for a pageSize above the maximum', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products?pageSize=1000', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products?pageSize=1000', {
+      locale: 'tr',
+    });
     expect(res.status).toBe(400);
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/products', { locale: 'xx' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/products', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -114,7 +128,9 @@ describe('GET /api/v1/public/[locale]/products', () => {
       meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     expect(res.headers.get('x-request-id')).toBeDefined();
   });
 });
@@ -125,9 +141,15 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('returns product detail for valid slug', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -138,9 +160,15 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('returns 404 for missing slug', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/nonexistent', { locale: 'tr', slug: 'nonexistent' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/nonexistent',
+      { locale: 'tr', slug: 'nonexistent' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(404);
@@ -149,23 +177,41 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('returns 404 for unpublished content', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/draft-product', { locale: 'tr', slug: 'draft-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/draft-product',
+      { locale: 'tr', slug: 'draft-product' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 404 for missing translation (no fallback)', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/en/products/tr-only-product', { locale: 'en', slug: 'tr-only-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/en/products/tr-only-product',
+      { locale: 'en', slug: 'tr-only-product' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('includes SEO data in detail response', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const json = await res.json();
 
     expect(json.data.seo).toBeDefined();
@@ -176,9 +222,15 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('includes related content in product detail', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const json = await res.json();
 
     expect(json.data.collections).toBeDefined();
@@ -192,9 +244,15 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('includes quoteContextIdentifier', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const json = await res.json();
 
     expect(json.data.quoteContextIdentifier).toBeDefined();
@@ -203,9 +261,15 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('does not expose internal fields', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const json = await res.json();
     const responseStr = JSON.stringify(json);
 
@@ -218,9 +282,15 @@ describe('GET /api/v1/public/[locale]/products/[slug]', () => {
   });
 
   it('returns requestId header', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     expect(res.headers.get('x-request-id')).toBeDefined();
   });
 });

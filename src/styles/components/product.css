@@ -143,8 +143,9 @@
   color: var(--color-text-secondary);
   text-decoration: none;
   border: 1px solid transparent;
-  transition: color var(--duration-fast) var(--easing-default),
-              border-color var(--duration-fast) var(--easing-default);
+  transition:
+    color var(--duration-fast) var(--easing-default),
+    border-color var(--duration-fast) var(--easing-default);
 }
 
 .pagination__item:hover {
@@ -284,8 +285,9 @@
   background: none;
   padding: 0;
   opacity: 0.6;
-  transition: opacity var(--duration-fast) var(--easing-default),
-              border-color var(--duration-fast) var(--easing-default);
+  transition:
+    opacity var(--duration-fast) var(--easing-default),
+    border-color var(--duration-fast) var(--easing-default);
 }
 
 .product-hero__thumbnail:hover,

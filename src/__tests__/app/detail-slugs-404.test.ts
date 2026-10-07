@@ -75,7 +75,7 @@ function expectNotFoundDigest(error: unknown) {
 async function renderOrCatch(
   Page: typeof ProductDetailPage,
   locale: string,
-  slug: string
+  slug: string,
 ): Promise<{ rendered: boolean; error?: unknown }> {
   try {
     await Page({ params: Promise.resolve({ locale, slug }) });
@@ -139,14 +139,20 @@ describe('Valid slugs still render (HTTP 200)', () => {
     vi.mocked(journalModule.getJournalArticle).mockResolvedValueOnce(journalFixture);
     const result = await renderOrCatch(JournalDetailPage, 'tr', 'stone-selection-guide');
     expect(result.rendered).toBe(true);
-    expect(vi.mocked(journalModule.getJournalArticle)).toHaveBeenCalledWith('tr', 'stone-selection-guide');
+    expect(vi.mocked(journalModule.getJournalArticle)).toHaveBeenCalledWith(
+      'tr',
+      'stone-selection-guide',
+    );
   });
 
   it('renders EN journal detail', async () => {
     vi.mocked(journalModule.getJournalArticle).mockResolvedValueOnce(journalFixture);
     const result = await renderOrCatch(JournalDetailPage, 'en', 'stone-selection-guide');
     expect(result.rendered).toBe(true);
-    expect(vi.mocked(journalModule.getJournalArticle)).toHaveBeenCalledWith('en', 'stone-selection-guide');
+    expect(vi.mocked(journalModule.getJournalArticle)).toHaveBeenCalledWith(
+      'en',
+      'stone-selection-guide',
+    );
   });
 });
 

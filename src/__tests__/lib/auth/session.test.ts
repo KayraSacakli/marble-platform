@@ -75,7 +75,7 @@ describe('getAdminSessionUser', () => {
   it('rejects expired sessions', async () => {
     mockCookie('old');
     vi.mocked(prisma.adminSession.findUnique).mockResolvedValue(
-      sessionRow({ expiresAt: new Date(Date.now() - 1000) }) as never
+      sessionRow({ expiresAt: new Date(Date.now() - 1000) }) as never,
     );
     vi.mocked(prisma.adminSession.delete).mockResolvedValue({} as never);
     await expect(getAdminSessionUser()).resolves.toBeNull();
@@ -105,7 +105,7 @@ describe('requireAdminSession / requireAdminRole', () => {
     expect(() => requireAdminRole(lower, 'ADMIN')).not.toThrow();
     const editor = { id: 'u', email: 'e', name: null, roles: ['EDITOR'] };
     expect(() => requireAdminRole(editor, 'ADMIN')).toThrowError(
-      expect.objectContaining({ statusCode: 403 })
+      expect.objectContaining({ statusCode: 403 }),
     );
   });
 
@@ -114,7 +114,7 @@ describe('requireAdminSession / requireAdminRole', () => {
     // code path that accepts role information from request input.
     const user = { id: 'u', email: 'e', name: null, roles: [] as string[] };
     expect(() => requireAdminRole(user, 'ADMIN', 'EDITOR')).toThrowError(
-      expect.objectContaining({ statusCode: 403 })
+      expect.objectContaining({ statusCode: 403 }),
     );
   });
 });

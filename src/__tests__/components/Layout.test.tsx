@@ -18,7 +18,11 @@ describe('Grid', () => {
   });
 
   it('applies 12-column grid by default', () => {
-    render(<Grid><div>Item</div></Grid>);
+    render(
+      <Grid>
+        <div>Item</div>
+      </Grid>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       display: 'grid',
       gridTemplateColumns: 'repeat(12, 1fr)',
@@ -26,21 +30,33 @@ describe('Grid', () => {
   });
 
   it('applies custom column count', () => {
-    render(<Grid columns={4}><div>Item</div></Grid>);
+    render(
+      <Grid columns={4}>
+        <div>Item</div>
+      </Grid>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       gridTemplateColumns: 'repeat(4, 1fr)',
     });
   });
 
   it('applies md gap by default', () => {
-    render(<Grid><div>Item</div></Grid>);
+    render(
+      <Grid>
+        <div>Item</div>
+      </Grid>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       gap: 'var(--grid-gutter)',
     });
   });
 
   it('applies sm gap', () => {
-    render(<Grid gap="sm"><div>Item</div></Grid>);
+    render(
+      <Grid gap="sm">
+        <div>Item</div>
+      </Grid>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       gap: 'var(--space-4)',
     });
@@ -60,7 +76,11 @@ describe('Stack', () => {
   });
 
   it('applies flex column layout', () => {
-    render(<Stack><div>Item</div></Stack>);
+    render(
+      <Stack>
+        <div>Item</div>
+      </Stack>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       display: 'flex',
       flexDirection: 'column',
@@ -68,14 +88,22 @@ describe('Stack', () => {
   });
 
   it('applies md spacing by default', () => {
-    render(<Stack><div>Item</div></Stack>);
+    render(
+      <Stack>
+        <div>Item</div>
+      </Stack>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       gap: 'var(--space-6)',
     });
   });
 
   it('applies sm spacing', () => {
-    render(<Stack spacing="sm"><div>Item</div></Stack>);
+    render(
+      <Stack spacing="sm">
+        <div>Item</div>
+      </Stack>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       gap: 'var(--space-4)',
     });
@@ -95,7 +123,11 @@ describe('Cluster', () => {
   });
 
   it('applies flex wrap layout', () => {
-    render(<Cluster><span>Item</span></Cluster>);
+    render(
+      <Cluster>
+        <span>Item</span>
+      </Cluster>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       display: 'flex',
       flexWrap: 'wrap',
@@ -103,7 +135,11 @@ describe('Cluster', () => {
   });
 
   it('applies md gap by default', () => {
-    render(<Cluster><span>Item</span></Cluster>);
+    render(
+      <Cluster>
+        <span>Item</span>
+      </Cluster>,
+    );
     expect(screen.getByText('Item').parentElement).toHaveStyle({
       gap: 'var(--space-4)',
     });

@@ -27,7 +27,7 @@ export const GET = withAdminAuth(
     const { id } = await params;
     return { media: await listProductMedia(parseProductId(id)) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/products/[id]/media — attach — ADMIN, EDITOR
@@ -42,14 +42,15 @@ export const POST = withAdminAuth(
     }
     const parsed = adminMediaAttachSchema.safeParse(body);
     if (!parsed.success) {
-      const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(([field, messages]) =>
-        (messages ?? []).map((message) => ({ field, code: 'INVALID', message }))
+      const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(
+        ([field, messages]) =>
+          (messages ?? []).map((message) => ({ field, code: 'INVALID', message })),
       );
       throw new ValidationError('Validation failed', details);
     }
     return { media: await attachProductMedia(parseProductId(id), parsed.data, admin.id) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // PATCH /api/v1/admin/products/[id]/media — reorder + alt text — ADMIN, EDITOR
@@ -64,14 +65,15 @@ export const PATCH = withAdminAuth(
     }
     const parsed = adminMediaReorderSchema.safeParse(body);
     if (!parsed.success) {
-      const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(([field, messages]) =>
-        (messages ?? []).map((message) => ({ field, code: 'INVALID', message }))
+      const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(
+        ([field, messages]) =>
+          (messages ?? []).map((message) => ({ field, code: 'INVALID', message })),
       );
       throw new ValidationError('Validation failed', details);
     }
     return { media: await reorderProductMedia(parseProductId(id), parsed.data.items, admin.id) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // DELETE /api/v1/admin/products/[id]/media?assetId= — detach — ADMIN, EDITOR
@@ -83,5 +85,5 @@ export const DELETE = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid media id.');
     return detachProductMedia(parseProductId(id), parsed.data, admin.id);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

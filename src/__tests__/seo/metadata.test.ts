@@ -31,7 +31,9 @@ vi.mock('@/lib/data/products', () => ({
 }));
 
 vi.mock('@/lib/data/collections', () => ({
-  getCollections: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
+  getCollections: vi
+    .fn()
+    .mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
   getCollection: vi.fn(async (locale: string, slug: string) => ({
     id: 'coll-001',
     name: 'Classic Collection',
@@ -53,7 +55,9 @@ vi.mock('@/lib/data/collections', () => ({
 }));
 
 vi.mock('@/lib/data/applications', () => ({
-  getApplications: vi.fn().mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
+  getApplications: vi
+    .fn()
+    .mockResolvedValue({ data: [], meta: { page: 1, totalPages: 0, total: 0 } }),
   getApplication: vi.fn(async (locale: string, slug: string) => ({
     id: 'app-001',
     name: 'Flooring',
@@ -126,9 +130,33 @@ vi.mock('@/lib/data/journal', () => ({
 }));
 
 vi.mock('@/lib/data/company', () => ({
-  getAbout: vi.fn().mockResolvedValue({ id: 'about-1', name: 'About Us', slug: 'about-us', description: 'About description', coverImage: null }),
-  getQuarry: vi.fn().mockResolvedValue({ id: 'quarry-1', name: 'Our Quarry', slug: 'our-quarry', description: 'Quarry description', coverImage: null }),
-  getFactory: vi.fn().mockResolvedValue({ id: 'factory-1', name: 'Our Factory', slug: 'our-factory', description: 'Factory description', coverImage: null }),
+  getAbout: vi
+    .fn()
+    .mockResolvedValue({
+      id: 'about-1',
+      name: 'About Us',
+      slug: 'about-us',
+      description: 'About description',
+      coverImage: null,
+    }),
+  getQuarry: vi
+    .fn()
+    .mockResolvedValue({
+      id: 'quarry-1',
+      name: 'Our Quarry',
+      slug: 'our-quarry',
+      description: 'Quarry description',
+      coverImage: null,
+    }),
+  getFactory: vi
+    .fn()
+    .mockResolvedValue({
+      id: 'factory-1',
+      name: 'Our Factory',
+      slug: 'our-factory',
+      description: 'Factory description',
+      coverImage: null,
+    }),
 }));
 
 describe('Products List Page Metadata', () => {
@@ -165,11 +193,15 @@ describe('Collections List Page Metadata', () => {
 describe('Product Detail Page Metadata', () => {
   it('generates correct metadata with x-default and openGraph', async () => {
     const { generateMetadata } = await import('@/app/[locale]/products/[slug]/page');
-    const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr', slug: 'calacatta-gold' }) });
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: 'tr', slug: 'calacatta-gold' }),
+    });
 
     expect(metadata.title).toBe('Calacatta Gold');
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr/products/calacatta-gold`);
-    expect(metadata.alternates?.languages?.['x-default']).toBe(`${SITE_URL}/tr/products/calacatta-gold`);
+    expect(metadata.alternates?.languages?.['x-default']).toBe(
+      `${SITE_URL}/tr/products/calacatta-gold`,
+    );
     expect(metadata.openGraph).toBeDefined();
     expect(metadata.openGraph?.type).toBe('website');
     expect(metadata.twitter?.card).toBe('summary_large_image');
@@ -179,44 +211,60 @@ describe('Product Detail Page Metadata', () => {
 describe('Collection Detail Page Metadata', () => {
   it('generates correct metadata', async () => {
     const { generateMetadata } = await import('@/app/[locale]/collections/[slug]/page');
-    const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr', slug: 'classic-collection' }) });
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: 'tr', slug: 'classic-collection' }),
+    });
 
     expect(metadata.title).toBe('Classic Collection');
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr/collections/classic-collection`);
-    expect(metadata.alternates?.languages?.['x-default']).toBe(`${SITE_URL}/tr/collections/classic-collection`);
+    expect(metadata.alternates?.languages?.['x-default']).toBe(
+      `${SITE_URL}/tr/collections/classic-collection`,
+    );
   });
 });
 
 describe('Application Detail Page Metadata', () => {
   it('generates correct metadata', async () => {
     const { generateMetadata } = await import('@/app/[locale]/applications/[slug]/page');
-    const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr', slug: 'flooring' }) });
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: 'tr', slug: 'flooring' }),
+    });
 
     expect(metadata.title).toBe('Flooring');
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr/applications/flooring`);
-    expect(metadata.alternates?.languages?.['x-default']).toBe(`${SITE_URL}/tr/applications/flooring`);
+    expect(metadata.alternates?.languages?.['x-default']).toBe(
+      `${SITE_URL}/tr/applications/flooring`,
+    );
   });
 });
 
 describe('Project Detail Page Metadata', () => {
   it('generates correct metadata', async () => {
     const { generateMetadata } = await import('@/app/[locale]/projects/[slug]/page');
-    const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr', slug: 'marriott-hotel' }) });
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: 'tr', slug: 'marriott-hotel' }),
+    });
 
     expect(metadata.title).toBe('Marriott Hotel');
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr/projects/marriott-hotel`);
-    expect(metadata.alternates?.languages?.['x-default']).toBe(`${SITE_URL}/tr/projects/marriott-hotel`);
+    expect(metadata.alternates?.languages?.['x-default']).toBe(
+      `${SITE_URL}/tr/projects/marriott-hotel`,
+    );
   });
 });
 
 describe('Journal Detail Page Metadata', () => {
   it('generates correct metadata with article type', async () => {
     const { generateMetadata } = await import('@/app/[locale]/journal/[slug]/page');
-    const metadata = await generateMetadata({ params: Promise.resolve({ locale: 'tr', slug: 'marble-trends-2026' }) });
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: 'tr', slug: 'marble-trends-2026' }),
+    });
 
     expect(metadata.title).toBe('Marble Trends 2026');
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/tr/journal/marble-trends-2026`);
-    expect(metadata.alternates?.languages?.['x-default']).toBe(`${SITE_URL}/tr/journal/marble-trends-2026`);
+    expect(metadata.alternates?.languages?.['x-default']).toBe(
+      `${SITE_URL}/tr/journal/marble-trends-2026`,
+    );
     expect(metadata.openGraph?.type).toBe('article');
   });
 });
@@ -279,11 +327,26 @@ describe('Quote Page Metadata', () => {
 describe('Hreflang Consistency', () => {
   it('all detail pages include x-default', async () => {
     const pages = [
-      { module: '@/app/[locale]/products/[slug]/page', params: { locale: 'tr', slug: 'calacatta-gold' } },
-      { module: '@/app/[locale]/collections/[slug]/page', params: { locale: 'tr', slug: 'classic-collection' } },
-      { module: '@/app/[locale]/applications/[slug]/page', params: { locale: 'tr', slug: 'flooring' } },
-      { module: '@/app/[locale]/projects/[slug]/page', params: { locale: 'tr', slug: 'marriott-hotel' } },
-      { module: '@/app/[locale]/journal/[slug]/page', params: { locale: 'tr', slug: 'marble-trends-2026' } },
+      {
+        module: '@/app/[locale]/products/[slug]/page',
+        params: { locale: 'tr', slug: 'calacatta-gold' },
+      },
+      {
+        module: '@/app/[locale]/collections/[slug]/page',
+        params: { locale: 'tr', slug: 'classic-collection' },
+      },
+      {
+        module: '@/app/[locale]/applications/[slug]/page',
+        params: { locale: 'tr', slug: 'flooring' },
+      },
+      {
+        module: '@/app/[locale]/projects/[slug]/page',
+        params: { locale: 'tr', slug: 'marriott-hotel' },
+      },
+      {
+        module: '@/app/[locale]/journal/[slug]/page',
+        params: { locale: 'tr', slug: 'marble-trends-2026' },
+      },
     ];
 
     for (const { module: mod, params } of pages) {

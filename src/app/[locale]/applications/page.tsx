@@ -15,7 +15,11 @@ type PageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -35,7 +39,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    ...gatedMetadata(locale, '/applications', sectionLocales(await getSeoAvailability(), 'applications')),
+    ...gatedMetadata(
+      locale,
+      '/applications',
+      sectionLocales(await getSeoAvailability(), 'applications'),
+    ),
   };
 }
 
@@ -72,13 +80,15 @@ export default async function ApplicationsPage({ params, searchParams }: PagePro
         <div className="application-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Mimari Kullanım' : 'Architectural Use'}
           </span>
-          <h1 className="text-h1">
-            {locale === 'tr' ? 'Uygulamalar' : 'Applications'}
-          </h1>
+          <h1 className="text-h1">{locale === 'tr' ? 'Uygulamalar' : 'Applications'}</h1>
           <p className="application-page__intro">
             {locale === 'tr'
               ? 'Mermerin mimaride ve mekânda nasıl kullanıldığını keşfedin.'

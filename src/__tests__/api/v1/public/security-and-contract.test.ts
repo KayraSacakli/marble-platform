@@ -2,7 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/v1/public/[locale]/products/route';
 import { GET as GET_DETAIL } from '@/app/api/v1/public/[locale]/products/[slug]/route';
 import { GET as GET_COLL_DETAIL } from '@/app/api/v1/public/[locale]/collections/[slug]/route';
-import { callHandler, mockProductSummary, mockProductDetail, mockCollectionDetail } from './helpers';
+import {
+  callHandler,
+  mockProductSummary,
+  mockProductDetail,
+  mockCollectionDetail,
+} from './helpers';
 import { NotFoundError } from '@/lib/api/errors';
 
 vi.mock('@/services/content', () => ({
@@ -26,7 +31,9 @@ describe('Security / Response Leakage', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('internalUser');
@@ -39,9 +46,15 @@ describe('Security / Response Leakage', () => {
   });
 
   it('detail response does not contain approval internals', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('approverId');
@@ -50,9 +63,15 @@ describe('Security / Response Leakage', () => {
   });
 
   it('detail response does not contain revision data', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('ContentRevision');
@@ -62,9 +81,15 @@ describe('Security / Response Leakage', () => {
   });
 
   it('detail response does not contain audit data', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('AuditEvent');
@@ -72,9 +97,15 @@ describe('Security / Response Leakage', () => {
   });
 
   it('detail response does not contain raw Prisma internals', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('$connect');
@@ -83,9 +114,15 @@ describe('Security / Response Leakage', () => {
   });
 
   it('error response does not contain stack traces', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/nonexistent', { locale: 'tr', slug: 'nonexistent' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/nonexistent',
+      { locale: 'tr', slug: 'nonexistent' },
+    );
     const json = await res.json();
 
     expect(json.error.stack).toBeUndefined();
@@ -94,10 +131,13 @@ describe('Security / Response Leakage', () => {
 
   it('error response does not contain database messages', async () => {
     (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
-      new Error('relation "public.content_variants" does not exist')
+      new Error('relation "public.content_variants" does not exist'),
     );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test', { locale: 'tr', slug: 'test' });
+    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test', {
+      locale: 'tr',
+      slug: 'test',
+    });
     const json = await res.json();
 
     expect(json.error.message).not.toContain('relation');
@@ -111,9 +151,15 @@ describe('Related Content Depth', () => {
   });
 
   it('product detail related products are summaries only (depth 1)', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockProductDetail);
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockProductDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/products/test-product', { locale: 'tr', slug: 'test-product' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/products/test-product',
+      { locale: 'tr', slug: 'test-product' },
+    );
     const json = await res.json();
 
     expect(json.data.relatedProducts).toBeDefined();
@@ -134,9 +180,15 @@ describe('Related Content Depth', () => {
   });
 
   it('collection detail products are summaries only (depth 1)', async () => {
-    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockCollectionDetail);
+    (contentService.getCollectionDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockCollectionDetail,
+    );
 
-    const res = await callHandler(GET_COLL_DETAIL, 'http://localhost/api/v1/public/tr/collections/test-collection', { locale: 'tr', slug: 'test-collection' });
+    const res = await callHandler(
+      GET_COLL_DETAIL,
+      'http://localhost/api/v1/public/tr/collections/test-collection',
+      { locale: 'tr', slug: 'test-collection' },
+    );
     const json = await res.json();
 
     if (json.data.products && json.data.products.length > 0) {
@@ -158,7 +210,9 @@ describe('Pagination Contract', () => {
       meta: { page: 1, pageSize: 24, total: 50, totalPages: 3 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.meta).toBeDefined();
@@ -174,7 +228,9 @@ describe('Pagination Contract', () => {
       meta: { page: 1, pageSize: 24, total: 100, totalPages: 5 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/products', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.meta.totalPages).toBe(5);
@@ -207,7 +263,9 @@ describe('Locale Handling', () => {
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/products', { locale: 'xx' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/products', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -223,12 +281,14 @@ describe('Locale Handling', () => {
   });
 
   it('missing translation returns 404 (no fallback)', async () => {
-    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getProductDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
     const res = await callHandler(
       GET_DETAIL,
       'http://localhost/api/v1/public/en/products/tr-only-product',
-      { locale: 'en', slug: 'tr-only-product' }
+      { locale: 'en', slug: 'tr-only-product' },
     );
     expect(res.status).toBe(404);
   });

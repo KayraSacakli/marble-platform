@@ -1,6 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET as WORKFLOW } from '@/app/api/v1/admin/products/[id]/workflow/route';
-import { GET as REVISIONS, POST as NEW_DRAFT } from '@/app/api/v1/admin/products/[id]/revisions/route';
+import {
+  GET as REVISIONS,
+  POST as NEW_DRAFT,
+} from '@/app/api/v1/admin/products/[id]/revisions/route';
 import { POST as SUBMIT } from '@/app/api/v1/admin/revisions/[revId]/submit/route';
 import { POST as APPROVE } from '@/app/api/v1/admin/revisions/[revId]/approve/route';
 import { POST as REJECT } from '@/app/api/v1/admin/revisions/[revId]/reject/route';
@@ -13,11 +16,38 @@ import { contentRepository } from '@/repositories/content';
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
-    contentItem: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), delete: vi.fn(), count: vi.fn(), update: vi.fn() },
+    contentItem: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+      update: vi.fn(),
+    },
     contentVariant: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
-    contentRevision: { findFirst: vi.fn(), findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
-    contentMedia: { findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), deleteMany: vi.fn(), updateMany: vi.fn(), count: vi.fn() },
-    mediaAsset: { findMany: vi.fn(), findUnique: vi.fn(), findFirst: vi.fn(), create: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    contentRevision: {
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+    },
+    contentMedia: {
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      deleteMany: vi.fn(),
+      updateMany: vi.fn(),
+      count: vi.fn(),
+    },
+    mediaAsset: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
     product: { update: vi.fn() },
     approval: { create: vi.fn(), findFirst: vi.fn() },
     adminSession: { findUnique: vi.fn(), delete: vi.fn() },
@@ -41,16 +71,20 @@ function mockSession(user: typeof ADMIN | null) {
   } as never);
   vi.mocked(prisma.adminSession.findUnique).mockResolvedValue(
     user
-      ? {
+      ? ({
           id: 's-1',
           expiresAt: new Date(Date.now() + 60_000),
           user: { ...user, isActive: true, roles: user.roles.map((name) => ({ role: { name } })) },
-        } as never
-      : null
+        } as never)
+      : null,
   );
 }
 
-function revisionRow(status: string, revisionNumber = 2, snapshot: Record<string, unknown> | null = { slug: 'draft-slug', name: 'Draft Name' }) {
+function revisionRow(
+  status: string,
+  revisionNumber = 2,
+  snapshot: Record<string, unknown> | null = { slug: 'draft-slug', name: 'Draft Name' },
+) {
   return {
     id: REV_ID,
     revisionNumber,
@@ -89,13 +123,25 @@ describe('workflow authZ', () => {
 
   it.each([
     ['workflow', () => WORKFLOW(new Request('http://localhost/x') as never, ctx({ id: PROD_ID }))],
-    ['revisions-list', () => REVISIONS(new Request('http://localhost/x') as never, ctx({ id: PROD_ID }))],
-    ['new-draft', () => NEW_DRAFT(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID }))],
+    [
+      'revisions-list',
+      () => REVISIONS(new Request('http://localhost/x') as never, ctx({ id: PROD_ID })),
+    ],
+    [
+      'new-draft',
+      () => NEW_DRAFT(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID })),
+    ],
     ['submit', () => SUBMIT(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }))],
     ['approve', () => APPROVE(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }))],
-    ['reject', () => REJECT(req('http://localhost/x', 'POST', { reason: 'no' }), ctx({ revId: REV_ID }))],
+    [
+      'reject',
+      () => REJECT(req('http://localhost/x', 'POST', { reason: 'no' }), ctx({ revId: REV_ID })),
+    ],
     ['publish', () => PUBLISH(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }))],
-    ['unpublish', () => UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID }))],
+    [
+      'unpublish',
+      () => UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID })),
+    ],
   ])('%s returns 401 unauthenticated', async (_name, call) => {
     mockSession(null);
     const res = await call();
@@ -106,7 +152,10 @@ describe('workflow authZ', () => {
     mockSession(EDITOR);
     vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('DRAFT') as never);
     vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue(null);
-    vi.mocked(prisma.contentRevision.update).mockResolvedValue({ ...revisionRow('IN_REVIEW'), approvals: [] } as never);
+    vi.mocked(prisma.contentRevision.update).mockResolvedValue({
+      ...revisionRow('IN_REVIEW'),
+      approvals: [],
+    } as never);
     vi.mocked(prisma.auditEvent.create).mockResolvedValue({} as never);
 
     const submitted = await SUBMIT(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }));
@@ -140,13 +189,18 @@ describe('workflow state machine', () => {
     // submit
     vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('DRAFT') as never);
     vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue(null);
-    vi.mocked(prisma.contentRevision.update).mockResolvedValue({ ...revisionRow('IN_REVIEW'), approvals: [] } as never);
+    vi.mocked(prisma.contentRevision.update).mockResolvedValue({
+      ...revisionRow('IN_REVIEW'),
+      approvals: [],
+    } as never);
     const submitted = await SUBMIT(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }));
     expect(submitted.status).toBe(200);
     expect((await submitted.json()).data.revision.status).toBe('IN_REVIEW');
 
     // approve (+approval row with actor + locale)
-    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('IN_REVIEW') as never);
+    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(
+      revisionRow('IN_REVIEW') as never,
+    );
     vi.mocked(prisma.contentMedia.findMany).mockResolvedValue([{ mediaAssetId: 'm-1' }] as never);
     vi.mocked(prisma.$transaction).mockImplementation(async (ops: never) => {
       const results = [];
@@ -154,8 +208,14 @@ describe('workflow state machine', () => {
       return results;
     });
     vi.mocked(prisma.approval.create).mockResolvedValue({} as never);
-    vi.mocked(prisma.contentRevision.update).mockResolvedValue({ ...revisionRow('APPROVED'), approvals: [] } as never);
-    const approved = await APPROVE(req('http://localhost/x', 'POST', { notes: 'looks good' }), ctx({ revId: REV_ID }));
+    vi.mocked(prisma.contentRevision.update).mockResolvedValue({
+      ...revisionRow('APPROVED'),
+      approvals: [],
+    } as never);
+    const approved = await APPROVE(
+      req('http://localhost/x', 'POST', { notes: 'looks good' }),
+      ctx({ revId: REV_ID }),
+    );
     expect(approved.status).toBe(200);
     const approvalArg = vi.mocked(prisma.approval.create).mock.calls[0][0];
     expect(approvalArg.data.outcome).toBe('APPROVED');
@@ -163,22 +223,30 @@ describe('workflow state machine', () => {
     expect(approvalArg.data.coveredLocale).toBe('tr');
 
     // publish (approved + latest + approval evidence)
-    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('APPROVED') as never);
+    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(
+      revisionRow('APPROVED') as never,
+    );
     vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.approval.findFirst).mockResolvedValue({ id: 'ap-1' } as never);
     vi.mocked(prisma.contentVariant.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.contentVariant.update).mockResolvedValue({} as never);
     vi.mocked(prisma.product.update).mockResolvedValue({} as never);
     vi.mocked(prisma.contentItem.update).mockResolvedValue({} as never);
-    vi.mocked(prisma.contentItem.findUnique).mockResolvedValue({ id: PROD_ID, type: 'PRODUCT', variants: [] } as never);
+    vi.mocked(prisma.contentItem.findUnique).mockResolvedValue({
+      id: PROD_ID,
+      type: 'PRODUCT',
+      variants: [],
+    } as never);
     const published = await PUBLISH(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }));
     expect(published.status).toBe(200);
 
     const actions = vi.mocked(prisma.auditEvent.create).mock.calls.map((c) => c[0].data.action);
     expect(actions).toEqual(
-      expect.arrayContaining(['CONTENT_SUBMIT_REVIEW', 'CONTENT_APPROVE', 'CONTENT_PUBLISH'])
+      expect.arrayContaining(['CONTENT_SUBMIT_REVIEW', 'CONTENT_APPROVE', 'CONTENT_PUBLISH']),
     );
-    expect(JSON.stringify(vi.mocked(prisma.auditEvent.create).mock.calls)).not.toMatch(/password|token/i);
+    expect(JSON.stringify(vi.mocked(prisma.auditEvent.create).mock.calls)).not.toMatch(
+      /password|token/i,
+    );
   });
 
   it('rejects invalid transitions', async () => {
@@ -188,18 +256,24 @@ describe('workflow state machine', () => {
     expect(badApprove.status).toBe(409);
 
     // publish an IN_REVIEW → 409
-    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('IN_REVIEW') as never);
+    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(
+      revisionRow('IN_REVIEW') as never,
+    );
     const badPublish = await PUBLISH(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }));
     expect(badPublish.status).toBe(409);
 
     // submit an already-submitted → 409
-    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('IN_REVIEW') as never);
+    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(
+      revisionRow('IN_REVIEW') as never,
+    );
     const badSubmit = await SUBMIT(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }));
     expect(badSubmit.status).toBe(409);
   });
 
   it('rejects stale revisions when a newer one exists', async () => {
-    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('IN_REVIEW', 2) as never);
+    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(
+      revisionRow('IN_REVIEW', 2) as never,
+    );
     vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue({ id: 'newer' } as never);
     const res = await APPROVE(req('http://localhost/x', 'POST'), ctx({ revId: REV_ID }));
     expect(res.status).toBe(409);
@@ -239,9 +313,15 @@ describe('workflow state machine', () => {
       displayOrder: null,
       contentItem: { id: PROD_ID, product: null },
     } as never);
-    vi.mocked(prisma.contentRevision.create).mockResolvedValue({ id: 'rev-9', revisionNumber: 4 } as never);
+    vi.mocked(prisma.contentRevision.create).mockResolvedValue({
+      id: 'rev-9',
+      revisionNumber: 4,
+    } as never);
 
-    const res = await NEW_DRAFT(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID }));
+    const res = await NEW_DRAFT(
+      req('http://localhost/x', 'POST', { locale: 'tr' }),
+      ctx({ id: PROD_ID }),
+    );
     expect(res.status).toBe(200);
     expect(vi.mocked(prisma.contentRevision.create).mock.calls[0][0].data.status).toBe('DRAFT');
   });
@@ -255,7 +335,9 @@ describe('workflow state machine', () => {
     const workflowItem = {
       id: PROD_ID,
       type: 'PRODUCT',
-      variants: [{ id: 'v-tr', locale: 'tr', lifecycleState: 'UNPUBLISHED', slug: 'demo', revisions: [] }],
+      variants: [
+        { id: 'v-tr', locale: 'tr', lifecycleState: 'UNPUBLISHED', slug: 'demo', revisions: [] },
+      ],
     };
     let calls = 0;
     vi.mocked(prisma.contentItem.findUnique).mockImplementation(async () => {
@@ -263,10 +345,13 @@ describe('workflow state machine', () => {
       return (calls === 1 ? publishedItem : workflowItem) as never;
     });
     vi.mocked(prisma.contentVariant.update).mockResolvedValue({} as never);
-    const res = await UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID }));
+    const res = await UNPUBLISH(
+      req('http://localhost/x', 'POST', { locale: 'tr' }),
+      ctx({ id: PROD_ID }),
+    );
     expect(res.status).toBe(200);
     expect(vi.mocked(prisma.contentVariant.update)).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { lifecycleState: 'UNPUBLISHED' } })
+      expect.objectContaining({ data: { lifecycleState: 'UNPUBLISHED' } }),
     );
     const actions = vi.mocked(prisma.auditEvent.create).mock.calls.map((c) => c[0].data.action);
     expect(actions).toContain('CONTENT_UNPUBLISH');
@@ -276,17 +361,28 @@ describe('workflow state machine', () => {
       type: 'PRODUCT',
       variants: [{ id: 'v-tr', locale: 'tr', lifecycleState: 'DRAFT', slug: 'demo' }],
     } as never);
-    const again = await UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'tr' }), ctx({ id: PROD_ID }));
+    const again = await UNPUBLISH(
+      req('http://localhost/x', 'POST', { locale: 'tr' }),
+      ctx({ id: PROD_ID }),
+    );
     expect(again.status).toBe(409);
   });
 
   it('records rejection reason and allows a new draft afterwards', async () => {
-    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(revisionRow('IN_REVIEW') as never);
+    vi.mocked(prisma.contentRevision.findUnique).mockResolvedValue(
+      revisionRow('IN_REVIEW') as never,
+    );
     vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue(null);
-    vi.mocked(prisma.contentRevision.update).mockResolvedValue({ ...revisionRow('REJECTED'), approvals: [] } as never);
+    vi.mocked(prisma.contentRevision.update).mockResolvedValue({
+      ...revisionRow('REJECTED'),
+      approvals: [],
+    } as never);
     vi.mocked(prisma.approval.create).mockResolvedValue({} as never);
 
-    const rejected = await REJECT(req('http://localhost/x', 'POST', { reason: 'Blurry photo' }), ctx({ revId: REV_ID }));
+    const rejected = await REJECT(
+      req('http://localhost/x', 'POST', { reason: 'Blurry photo' }),
+      ctx({ revId: REV_ID }),
+    );
     expect(rejected.status).toBe(200);
     const approvalArg = vi.mocked(prisma.approval.create).mock.calls[0][0];
     expect(approvalArg.data.outcome).toBe('REJECTED');
@@ -297,16 +393,21 @@ describe('workflow state machine', () => {
     expect(noReason.status).toBe(422);
   });
 
-    it('blocks edits to non-draft revisions and published rows', async () => {    // PATCH products with an open APPROVED revision → 409, variant untouched.
+  it('blocks edits to non-draft revisions and published rows', async () => {
+    // PATCH products with an open APPROVED revision → 409, variant untouched.
     vi.mocked(prisma.contentItem.findUnique).mockResolvedValue({
       id: PROD_ID,
       type: 'PRODUCT',
       variants: [{ id: 'v-tr', locale: 'tr', lifecycleState: 'PUBLISHED' }],
     } as never);
-    vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue({ id: 'rev-a', status: 'APPROVED', revisionNumber: 3 } as never);
+    vi.mocked(prisma.contentRevision.findFirst).mockResolvedValue({
+      id: 'rev-a',
+      status: 'APPROVED',
+      revisionNumber: 3,
+    } as never);
     const res = await EDIT_PRODUCT(
       req(`http://localhost/api/v1/admin/products/${PROD_ID}`, 'PATCH', { tr: { name: 'X' } }),
-      { params: Promise.resolve({ id: PROD_ID }) }
+      { params: Promise.resolve({ id: PROD_ID }) },
     );
     expect(res.status).toBe(409);
     expect(vi.mocked(prisma.contentVariant.update)).not.toHaveBeenCalled();
@@ -352,18 +453,30 @@ describe('7-locale admin API (Phase 19A)', () => {
     } as never);
     vi.mocked(prisma.contentRevision.findMany).mockResolvedValue([] as never);
 
-    const ok = await REVISIONS(new Request('http://localhost/x?locale=de') as never, ctx({ id: PROD_ID }));
+    const ok = await REVISIONS(
+      new Request('http://localhost/x?locale=de') as never,
+      ctx({ id: PROD_ID }),
+    );
     expect(ok.status).toBe(200);
 
-    const bad = await REVISIONS(new Request('http://localhost/x?locale=xx') as never, ctx({ id: PROD_ID }));
+    const bad = await REVISIONS(
+      new Request('http://localhost/x?locale=xx') as never,
+      ctx({ id: PROD_ID }),
+    );
     expect(bad.status).toBe(400);
   });
 
   it('validates the unpublish locale against all seven supported locales', async () => {
-    const accepted = await UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'de' }), ctx({ id: PROD_ID }));
+    const accepted = await UNPUBLISH(
+      req('http://localhost/x', 'POST', { locale: 'de' }),
+      ctx({ id: PROD_ID }),
+    );
     expect(accepted.status).toBe(404); // locale accepted; no variant matched in the mocked database
 
-    const rejected = await UNPUBLISH(req('http://localhost/x', 'POST', { locale: 'xx' }), ctx({ id: PROD_ID }));
+    const rejected = await UNPUBLISH(
+      req('http://localhost/x', 'POST', { locale: 'xx' }),
+      ctx({ id: PROD_ID }),
+    );
     expect(rejected.status).toBe(422);
   });
 });

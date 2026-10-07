@@ -12,12 +12,7 @@ export function ProjectGrid({ projects, locale }: ProjectGridProps) {
   return (
     <div className="project-listing-grid">
       {projects.map((project, index) => (
-        <ProjectCard
-          key={project.id}
-          project={project}
-          locale={locale}
-          priority={index < 3}
-        />
+        <ProjectCard key={project.id} project={project} locale={locale} priority={index < 3} />
       ))}
     </div>
   );

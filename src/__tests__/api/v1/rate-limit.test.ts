@@ -314,7 +314,10 @@ describe('public quote rate limiting', () => {
   });
 
   it('sets x-request-id on validation errors', async () => {
-    const res = await QUOTE(quoteRequest(uniqueIp(), { contactName: 'Test User' }) as never, quoteCtx);
+    const res = await QUOTE(
+      quoteRequest(uniqueIp(), { contactName: 'Test User' }) as never,
+      quoteCtx,
+    );
     const json = await res.json();
 
     expect(res.status).toBe(422);

@@ -285,8 +285,20 @@ describe('Homepage — Projects Section', () => {
 
 describe('Homepage — Journal Section', () => {
   const articles = [
-    { id: '1', title: 'Marble Trends', slug: 'marble-trends', summary: 'Latest trends', publicationDate: '2024-01-15' },
-    { id: '2', title: 'Stone Care', slug: 'stone-care', summary: 'How to care', publicationDate: '2024-02-20' },
+    {
+      id: '1',
+      title: 'Marble Trends',
+      slug: 'marble-trends',
+      summary: 'Latest trends',
+      publicationDate: '2024-01-15',
+    },
+    {
+      id: '2',
+      title: 'Stone Care',
+      slug: 'stone-care',
+      summary: 'How to care',
+      publicationDate: '2024-02-20',
+    },
   ];
 
   it('renders section heading', () => {
@@ -347,12 +359,7 @@ describe('Homepage — CTA', () => {
   });
 
   it('renders primary CTA link', () => {
-    render(
-      <HomepageCTA
-        heading="CTA"
-        primaryCTA={{ label: 'Get Quote', href: '/quote' }}
-      />,
-    );
+    render(<HomepageCTA heading="CTA" primaryCTA={{ label: 'Get Quote', href: '/quote' }} />);
     expect(screen.getByText('Get Quote').getAttribute('href')).toBe('/quote');
   });
 
@@ -369,10 +376,7 @@ describe('Homepage — CTA', () => {
 
   it('omits message when not provided', () => {
     const { container } = render(
-      <HomepageCTA
-        heading="CTA"
-        primaryCTA={{ label: 'Go', href: '/go' }}
-      />,
+      <HomepageCTA heading="CTA" primaryCTA={{ label: 'Go', href: '/go' }} />,
     );
     expect(container.querySelector('.homepage-cta__message')).toBeNull();
   });
@@ -416,12 +420,7 @@ describe('Homepage — Accessibility', () => {
   });
 
   it('CTA section has heading', () => {
-    render(
-      <HomepageCTA
-        heading="Contact Us"
-        primaryCTA={{ label: 'Go', href: '/go' }}
-      />,
-    );
+    render(<HomepageCTA heading="Contact Us" primaryCTA={{ label: 'Go', href: '/go' }} />);
     const heading = screen.getByRole('heading', { level: 2 });
     expect(heading).toBeDefined();
   });

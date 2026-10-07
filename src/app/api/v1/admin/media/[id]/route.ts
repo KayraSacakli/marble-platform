@@ -13,7 +13,7 @@ export const GET = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid media id.');
     return getAdminMedia(parsed.data);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // DELETE /api/v1/admin/media/[id] — ADMIN only
@@ -24,5 +24,5 @@ export const DELETE = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid media id.');
     return deleteAdminMedia(parsed.data, admin.id);
   },
-  { roles: ['ADMIN'] }
+  { roles: ['ADMIN'] },
 );

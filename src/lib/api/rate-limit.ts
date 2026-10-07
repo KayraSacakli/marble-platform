@@ -104,7 +104,7 @@ function sweepExpired(now: number): void {
  */
 export function checkRateLimit(
   config: RateLimitConfig,
-  request: Request
+  request: Request,
 ): { allowed: boolean; retryAfterSeconds: number } {
   const now = Date.now();
   const key = `${config.bucket}|${getClientIp(request)}`;
@@ -149,7 +149,10 @@ export function checkRateLimit(
 export function enforceRateLimit(config: RateLimitConfig, request: Request): void {
   const result = checkRateLimit(config, request);
   if (!result.allowed) {
-    throw new RateLimitError('Too many requests. Please try again later.', result.retryAfterSeconds);
+    throw new RateLimitError(
+      'Too many requests. Please try again later.',
+      result.retryAfterSeconds,
+    );
   }
 }
 

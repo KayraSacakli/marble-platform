@@ -11,7 +11,13 @@ import {
 
 const box: React.CSSProperties = { border: '1px solid #ccc', padding: '1rem', marginTop: '1rem' };
 
-export function QuoteStatusControl({ quoteId, state }: { quoteId: string; state: QuoteRequestState }) {
+export function QuoteStatusControl({
+  quoteId,
+  state,
+}: {
+  quoteId: string;
+  state: QuoteRequestState;
+}) {
   const router = useRouter();
   const [roles, setRoles] = useState<string[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +47,7 @@ export function QuoteStatusControl({ quoteId, state }: { quoteId: string; state:
   const isAdmin = roles?.includes('ADMIN') ?? false;
 
   const nextStates = ALLOWED_QUOTE_TRANSITIONS[state].filter(
-    (target) => !ADMIN_ONLY_QUOTE_TARGETS.includes(target) || isAdmin
+    (target) => !ADMIN_ONLY_QUOTE_TARGETS.includes(target) || isAdmin,
   );
 
   const transition = useCallback(
@@ -76,7 +82,7 @@ export function QuoteStatusControl({ quoteId, state }: { quoteId: string; state:
         setBusy(false);
       }
     },
-    [quoteId, router]
+    [quoteId, router],
   );
 
   return (
@@ -100,7 +106,9 @@ export function QuoteStatusControl({ quoteId, state }: { quoteId: string; state:
           <span>Loading…</span>
         ) : nextStates.length === 0 ? (
           <span style={{ opacity: 0.7 }}>
-            {state === 'CLOSED' ? 'Closed — no further changes.' : 'No further transitions available for your role.'}
+            {state === 'CLOSED'
+              ? 'Closed — no further changes.'
+              : 'No further transitions available for your role.'}
           </span>
         ) : (
           nextStates.map((next) => (

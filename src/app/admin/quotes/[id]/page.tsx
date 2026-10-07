@@ -11,7 +11,12 @@ const row: React.CSSProperties = { padding: '0.4rem 0', borderBottom: '1px solid
 
 function contextLink(kind: string, id: string | null, name: string | null, slug: string | null) {
   if (!id) return null;
-  const base = kind === 'PRODUCT' ? '/admin/products' : kind === 'PROJECT' ? '/admin/projects' : '/admin/applications';
+  const base =
+    kind === 'PRODUCT'
+      ? '/admin/products'
+      : kind === 'PROJECT'
+        ? '/admin/projects'
+        : '/admin/applications';
   return (
     <p key={kind} style={row}>
       <strong>{kind}</strong>: <Link href={`${base}/${id}`}>{name ?? slug ?? id}</Link>
@@ -19,7 +24,11 @@ function contextLink(kind: string, id: string | null, name: string | null, slug:
   );
 }
 
-export default async function AdminQuoteDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdminQuoteDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     await requireAdminSession();
   } catch {
@@ -35,7 +44,14 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
   }
 
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', padding: '0 1.5rem', fontFamily: 'system-ui, sans-serif' }}>
+    <main
+      style={{
+        maxWidth: 760,
+        margin: '2rem auto',
+        padding: '0 1.5rem',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
       <p>
         <Link href="/admin/quotes">← Quote requests</Link>
       </p>
@@ -69,14 +85,34 @@ export default async function AdminQuoteDetailPage({ params }: { params: Promise
         {quote.context && (
           <div style={row}>
             <strong>Requested context ({quote.context.contextKind}):</strong>
-            {quote.context.contextKind === 'PRODUCT' && contextLink('PRODUCT', quote.context.productId, quote.context.product?.trName ?? null, quote.context.product?.trSlug ?? null)}
-            {quote.context.contextKind === 'PROJECT' && contextLink('PROJECT', quote.context.projectId, quote.context.project?.trName ?? null, quote.context.project?.trSlug ?? null)}
-            {quote.context.contextKind === 'APPLICATION' && contextLink('APPLICATION', quote.context.applicationId, quote.context.application?.trName ?? null, quote.context.application?.trSlug ?? null)}
+            {quote.context.contextKind === 'PRODUCT' &&
+              contextLink(
+                'PRODUCT',
+                quote.context.productId,
+                quote.context.product?.trName ?? null,
+                quote.context.product?.trSlug ?? null,
+              )}
+            {quote.context.contextKind === 'PROJECT' &&
+              contextLink(
+                'PROJECT',
+                quote.context.projectId,
+                quote.context.project?.trName ?? null,
+                quote.context.project?.trSlug ?? null,
+              )}
+            {quote.context.contextKind === 'APPLICATION' &&
+              contextLink(
+                'APPLICATION',
+                quote.context.applicationId,
+                quote.context.application?.trName ?? null,
+                quote.context.application?.trSlug ?? null,
+              )}
           </div>
         )}
         <p style={row}>
           <strong>Last processed:</strong>{' '}
-          {quote.processedAt ? `${new Date(quote.processedAt).toLocaleString('en-GB')} by ${quote.processorEmail ?? '—'}` : '—'}
+          {quote.processedAt
+            ? `${new Date(quote.processedAt).toLocaleString('en-GB')} by ${quote.processorEmail ?? '—'}`
+            : '—'}
         </p>
       </section>
 

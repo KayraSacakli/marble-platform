@@ -15,7 +15,11 @@ type PageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -72,13 +76,15 @@ export default async function JournalPage({ params, searchParams }: PageProps) {
         <div className="journal-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Bilgi ve Görüşler' : 'Insights & Perspectives'}
           </span>
-          <h1 className="text-h1">
-            {locale === 'tr' ? 'Dergi' : 'Journal'}
-          </h1>
+          <h1 className="text-h1">{locale === 'tr' ? 'Dergi' : 'Journal'}</h1>
           <p className="journal-page__intro">
             {locale === 'tr'
               ? 'Doğal taş, mimarlık ve tasarım üzerine derinlemesine yazılar.'

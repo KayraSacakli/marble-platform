@@ -29,7 +29,7 @@ export function isSeoLocale(value: string): value is SEOLocale {
  */
 export function buildFullAlternates(path: string): Record<string, string> {
   const languages: Record<string, string> = Object.fromEntries(
-    SEO_LOCALES.map((l) => [l, `${SITE_URL}/${l}${path}`])
+    SEO_LOCALES.map((l) => [l, `${SITE_URL}/${l}${path}`]),
   );
   languages['x-default'] = buildXDefault(path);
   return languages;
@@ -53,7 +53,7 @@ export function buildXDefault(path: string): string {
 export function buildPageAlternates(
   locale: string,
   path: string,
-  contentLocales?: readonly string[]
+  contentLocales?: readonly string[],
 ): Metadata['alternates'] {
   if (!isSeoLocale(locale)) return undefined;
 
@@ -61,7 +61,7 @@ export function buildPageAlternates(
   const canonicalLocale = active.includes(locale) ? locale : preferredContentLocale(active);
 
   const languages: Record<string, string> = Object.fromEntries(
-    active.map((l) => [l, `${SITE_URL}/${l}${path}`])
+    active.map((l) => [l, `${SITE_URL}/${l}${path}`]),
   );
   languages['x-default'] = `${SITE_URL}/${preferredContentLocale(active)}${path}`;
 

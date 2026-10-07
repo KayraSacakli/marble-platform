@@ -134,7 +134,11 @@ const productInclude = {
   variants: { orderBy: { locale: 'asc' as const } },
 };
 
-async function assertSlugAvailable(locale: string, slug: string, excludeContentItemId?: string): Promise<void> {
+async function assertSlugAvailable(
+  locale: string,
+  slug: string,
+  excludeContentItemId?: string,
+): Promise<void> {
   const clash = await prisma.contentVariant.findFirst({
     where: {
       locale,
@@ -152,7 +156,7 @@ function variantData(
   locale: Locale,
   input: AdminProductVariantInput,
   isNew: boolean,
-  lifecycleState: 'PUBLISHED' | 'DRAFT' = 'PUBLISHED'
+  lifecycleState: 'PUBLISHED' | 'DRAFT' = 'PUBLISHED',
 ) {
   return {
     locale,
@@ -171,9 +175,23 @@ function variantData(
   };
 }
 
-function extensionData(input: { internalIdentifier?: string; surfaceFinish?: string; dimensions?: string; format?: string; origin?: string; applicableStandards?: string }) {
+function extensionData(input: {
+  internalIdentifier?: string;
+  surfaceFinish?: string;
+  dimensions?: string;
+  format?: string;
+  origin?: string;
+  applicableStandards?: string;
+}) {
   const data: Record<string, string | undefined> = {};
-  for (const key of ['internalIdentifier', 'surfaceFinish', 'dimensions', 'format', 'origin', 'applicableStandards'] as const) {
+  for (const key of [
+    'internalIdentifier',
+    'surfaceFinish',
+    'dimensions',
+    'format',
+    'origin',
+    'applicableStandards',
+  ] as const) {
     if (input[key] !== undefined) {
       data[key] = input[key] === '' ? undefined : input[key];
     }
@@ -237,24 +255,38 @@ export async function getAdminProduct(id: string): Promise<AdminProduct> {
   for (const locale of SUPPORTED_LOCALES) {
     const view = product.variants[locale];
     if (!view) continue;
-    const variant = (item as unknown as ProductWithVariants).variants.find((v) => v.locale === locale);
+    const variant = (item as unknown as ProductWithVariants).variants.find(
+      (v) => v.locale === locale,
+    );
     if (!variant) continue;
     const open = await findOpenRevision(variant.id);
-    if (!open || (open.status !== 'DRAFT' && open.status !== 'IN_REVIEW' && open.status !== 'APPROVED')) continue;
+    if (
+      !open ||
+      (open.status !== 'DRAFT' && open.status !== 'IN_REVIEW' && open.status !== 'APPROVED')
+    )
+      continue;
     const snapshot = parseSnapshot(open.materialSnapshot);
     if (snapshot.slug !== undefined) view.slug = snapshot.slug;
     if (snapshot.name !== undefined) view.name = snapshot.name;
     if (snapshot.description !== undefined) view.description = snapshot.description;
     if (snapshot.tagline !== undefined) view.tagline = snapshot.tagline ?? null;
     if (snapshot.seoTitle !== undefined) view.seoTitle = snapshot.seoTitle ?? null;
-    if (snapshot.seoDescription !== undefined) view.seoDescription = snapshot.seoDescription ?? null;
+    if (snapshot.seoDescription !== undefined)
+      view.seoDescription = snapshot.seoDescription ?? null;
     if (snapshot.seoCanonical !== undefined) view.seoCanonical = snapshot.seoCanonical ?? null;
     if (snapshot.seoRobots !== undefined) view.seoRobots = snapshot.seoRobots ?? null;
     if (snapshot.isFeatured !== undefined) view.isFeatured = snapshot.isFeatured;
     if (snapshot.featuredOrder !== undefined) view.featuredOrder = snapshot.featuredOrder;
     if (snapshot.displayOrder !== undefined) view.displayOrder = snapshot.displayOrder;
     if (snapshot.product) {
-      for (const key of ['internalIdentifier', 'surfaceFinish', 'dimensions', 'format', 'origin', 'applicableStandards'] as const) {
+      for (const key of [
+        'internalIdentifier',
+        'surfaceFinish',
+        'dimensions',
+        'format',
+        'origin',
+        'applicableStandards',
+      ] as const) {
         if (snapshot.product[key] !== undefined) {
           (product as unknown as Record<string, unknown>)[key] = snapshot.product[key] ?? null;
         }
@@ -265,7 +297,10 @@ export async function getAdminProduct(id: string): Promise<AdminProduct> {
   return product;
 }
 
-export async function createAdminProduct(input: AdminProductCreateInput, actorId: string): Promise<AdminProduct> {
+export async function createAdminProduct(
+  input: AdminProductCreateInput,
+  actorId: string,
+): Promise<AdminProduct> {
   const locales = SUPPORTED_LOCALES.filter((l) => input[l]);
   for (const locale of locales) {
     const localeInput = input[locale];
@@ -328,8 +363,8 @@ export async function createAdminProduct(input: AdminProductCreateInput, actorId
                 origin: input.origin ?? null,
                 applicableStandards: input.applicableStandards ?? null,
               },
-            }
-          )
+            },
+          ),
         ),
       },
     });
@@ -353,7 +388,7 @@ export async function createAdminProduct(input: AdminProductCreateInput, actorId
 export async function updateAdminProduct(
   id: string,
   input: AdminProductUpdateInput,
-  actorId: string
+  actorId: string,
 ): Promise<AdminProduct> {
   const item = await findProductItemOrThrow(id);
   const typed = item as unknown as ProductWithVariants;
@@ -366,7 +401,14 @@ export async function updateAdminProduct(
   }
 
   const extPatch: Record<string, string | null | undefined> = {};
-  for (const key of ['internalIdentifier', 'surfaceFinish', 'dimensions', 'format', 'origin', 'applicableStandards'] as const) {
+  for (const key of [
+    'internalIdentifier',
+    'surfaceFinish',
+    'dimensions',
+    'format',
+    'origin',
+    'applicableStandards',
+  ] as const) {
     if (input[key] !== undefined) {
       extPatch[key] = input[key] === '' ? null : input[key];
     }
@@ -384,7 +426,19 @@ export async function updateAdminProduct(
       const draft = await ensureDraftRevision(variant.id, actorId);
       const snapshotPatch: DraftSnapshot = {};
       if (patch) {
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of [
+          'slug',
+          'name',
+          'description',
+          'tagline',
+          'seoTitle',
+          'seoDescription',
+          'seoCanonical',
+          'seoRobots',
+          'isFeatured',
+          'featuredOrder',
+          'displayOrder',
+        ] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -425,7 +479,19 @@ export async function updateAdminProduct(
       const open = await findOpenRevision(variant.id);
       if (open && open.status === 'DRAFT') {
         const snapshotPatch: DraftSnapshot = {};
-        for (const key of ['slug', 'name', 'description', 'tagline', 'seoTitle', 'seoDescription', 'seoCanonical', 'seoRobots', 'isFeatured', 'featuredOrder', 'displayOrder'] as const) {
+        for (const key of [
+          'slug',
+          'name',
+          'description',
+          'tagline',
+          'seoTitle',
+          'seoDescription',
+          'seoCanonical',
+          'seoRobots',
+          'isFeatured',
+          'featuredOrder',
+          'displayOrder',
+        ] as const) {
           if (patch[key] !== undefined) {
             (snapshotPatch as Record<string, unknown>)[key] = patch[key];
           }
@@ -440,14 +506,19 @@ export async function updateAdminProduct(
     }
   }
 
-  await writeAudit(actorId, 'PRODUCT_UPDATE', id, { patchedLocales: SUPPORTED_LOCALES.filter((l) => input[l]) });
+  await writeAudit(actorId, 'PRODUCT_UPDATE', id, {
+    patchedLocales: SUPPORTED_LOCALES.filter((l) => input[l]),
+  });
 
   const updated = await findProductItemOrThrow(id);
   void updated;
   return getAdminProduct(id);
 }
 
-export async function deleteAdminProduct(id: string, actorId: string): Promise<{ deleted: true; id: string }> {
+export async function deleteAdminProduct(
+  id: string,
+  actorId: string,
+): Promise<{ deleted: true; id: string }> {
   const item = await findProductItemOrThrow(id);
   const snapshot = toAdminProduct(item as unknown as ProductWithVariants);
 

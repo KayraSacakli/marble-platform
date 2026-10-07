@@ -48,14 +48,10 @@ export function JournalCard({ article, locale, priority = false }: JournalCardPr
               })}
             </time>
           )}
-          {article.author && (
-            <span className="journal-card__author">{article.author}</span>
-          )}
+          {article.author && <span className="journal-card__author">{article.author}</span>}
         </div>
         <h3 className="journal-card__title">{article.title}</h3>
-        {article.summary && (
-          <p className="journal-card__summary">{article.summary}</p>
-        )}
+        {article.summary && <p className="journal-card__summary">{article.summary}</p>}
       </div>
     </article>
   );

@@ -17,10 +17,19 @@ export function ErrorState({ message = 'Something went wrong.', retry }: ErrorSt
         margin: '0 auto',
       }}
     >
-      <h2 className="text-h3" style={{ marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)' }}>
+      <h2
+        className="text-h3"
+        style={{ marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)' }}
+      >
         Error
       </h2>
-      <p className="text-body" style={{ color: 'var(--color-text-secondary)', marginBottom: retry ? 'var(--space-5)' : undefined }}>
+      <p
+        className="text-body"
+        style={{
+          color: 'var(--color-text-secondary)',
+          marginBottom: retry ? 'var(--space-5)' : undefined,
+        }}
+      >
         {message}
       </p>
       {retry && (

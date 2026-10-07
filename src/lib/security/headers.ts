@@ -50,7 +50,7 @@ function defaultSecurityHeaders(): SecurityHeadersConfig {
  */
 export function applySecurityHeaders(
   response: NextResponse,
-  config?: SecurityHeadersConfig
+  config?: SecurityHeadersConfig,
 ): NextResponse {
   const headers = { ...defaultSecurityHeaders(), ...config };
 
@@ -82,9 +82,7 @@ export function applySecurityHeaders(
 /**
  * Get security headers as a plain object (for middleware usage).
  */
-export function getSecurityHeaders(
-  config?: SecurityHeadersConfig
-): Record<string, string> {
+export function getSecurityHeaders(config?: SecurityHeadersConfig): Record<string, string> {
   const headers = { ...defaultSecurityHeaders(), ...config };
   const result: Record<string, string> = {};
 

@@ -12,12 +12,23 @@ export default async function NewAdminApplicationPage() {
     redirect('/admin/login');
   }
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', padding: '0 1.5rem', fontFamily: 'system-ui, sans-serif' }}>
+    <main
+      style={{
+        maxWidth: 760,
+        margin: '2rem auto',
+        padding: '0 1.5rem',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
       <p>
         <Link href="/admin/applications">← Applications</Link>
       </p>
       <h1>New application</h1>
-      <TaxonomyForm base="/api/v1/admin/applications" backHref="/admin/applications" mode="create" />
+      <TaxonomyForm
+        base="/api/v1/admin/applications"
+        backHref="/admin/applications"
+        mode="create"
+      />
     </main>
   );
 }

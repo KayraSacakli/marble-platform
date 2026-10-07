@@ -17,10 +17,7 @@ export function CollectionsSection({ heading, collections, locale }: Collections
   return (
     <section className="homepage-section">
       <Container size="lg">
-        <SectionHeader
-          eyebrow="Material Language"
-          title={displayHeading}
-        />
+        <SectionHeader eyebrow="Material Language" title={displayHeading} />
         <div className="collections-grid">
           {collections.map((collection) => (
             <CollectionCard key={collection.id} collection={collection} locale={locale} />
@@ -32,7 +29,9 @@ export function CollectionsSection({ heading, collections, locale }: Collections
 }
 
 function CollectionCard({ collection, locale }: { collection: CollectionSummary; locale: string }) {
-  const href = locale ? `/${locale}/collections/${collection.slug}` : `/collections/${collection.slug}`;
+  const href = locale
+    ? `/${locale}/collections/${collection.slug}`
+    : `/collections/${collection.slug}`;
 
   return (
     <article className="collection-card">
@@ -41,13 +40,11 @@ function CollectionCard({ collection, locale }: { collection: CollectionSummary;
       </a>
       <div className="collection-card__image-wrap" style={{ position: 'relative' }}>
         {collection.coverImage ? (
-          <Media
-            src={collection.coverImage.src}
-            alt={collection.coverImage.alt}
-            loading="lazy"
-          />
+          <Media src={collection.coverImage.src} alt={collection.coverImage.alt} loading="lazy" />
         ) : (
-          <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }} />
+          <div
+            style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-tertiary)' }}
+          />
         )}
       </div>
       <div className="collection-card__body">

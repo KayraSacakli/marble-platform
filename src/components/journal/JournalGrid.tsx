@@ -12,12 +12,7 @@ export function JournalGrid({ articles, locale }: JournalGridProps) {
   return (
     <div className="journal-listing-grid">
       {articles.map((article, index) => (
-        <JournalCard
-          key={article.id}
-          article={article}
-          locale={locale}
-          priority={index < 3}
-        />
+        <JournalCard key={article.id} article={article} locale={locale} priority={index < 3} />
       ))}
     </div>
   );

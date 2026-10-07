@@ -24,7 +24,9 @@ describe('GET /api/v1/public/[locale]/journal', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/journal', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/journal', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.data).toHaveLength(1);
@@ -39,13 +41,17 @@ describe('GET /api/v1/public/[locale]/journal', () => {
       meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/journal', { locale: 'en' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/journal', {
+      locale: 'en',
+    });
     expect(res.status).toBe(200);
     expect(contentService.getJournalList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/journal', { locale: 'xx' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/journal', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -59,9 +65,15 @@ describe('GET /api/v1/public/[locale]/journal/[slug]', () => {
   });
 
   it('returns journal detail for valid slug', async () => {
-    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockJournalDetail);
+    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockJournalDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/journal/test-journal-article', { locale: 'tr', slug: 'test-journal-article' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/journal/test-journal-article',
+      { locale: 'tr', slug: 'test-journal-article' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -76,30 +88,54 @@ describe('GET /api/v1/public/[locale]/journal/[slug]', () => {
   });
 
   it('returns 404 for missing slug', async () => {
-    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/journal/nonexistent', { locale: 'tr', slug: 'nonexistent' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/journal/nonexistent',
+      { locale: 'tr', slug: 'nonexistent' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 404 for unpublished content', async () => {
-    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/journal/draft-article', { locale: 'tr', slug: 'draft-article' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/journal/draft-article',
+      { locale: 'tr', slug: 'draft-article' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 404 for missing translation', async () => {
-    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/en/journal/tr-only-article', { locale: 'en', slug: 'tr-only-article' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/en/journal/tr-only-article',
+      { locale: 'en', slug: 'tr-only-article' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('includes SEO data', async () => {
-    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockJournalDetail);
+    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockJournalDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/journal/test-journal-article', { locale: 'tr', slug: 'test-journal-article' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/journal/test-journal-article',
+      { locale: 'tr', slug: 'test-journal-article' },
+    );
     const json = await res.json();
 
     expect(json.data.seo).toBeDefined();
@@ -107,9 +143,15 @@ describe('GET /api/v1/public/[locale]/journal/[slug]', () => {
   });
 
   it('does not expose internal fields', async () => {
-    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockJournalDetail);
+    (contentService.getJournalDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockJournalDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/journal/test-journal-article', { locale: 'tr', slug: 'test-journal-article' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/journal/test-journal-article',
+      { locale: 'tr', slug: 'test-journal-article' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('internalUser');

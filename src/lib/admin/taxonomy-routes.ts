@@ -80,17 +80,18 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
         q: parseQueryString(url.searchParams.get('q') ?? undefined),
       });
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   const CREATE = withAdminAuth(
     async (req: NextRequest, _ctx, admin) => {
       const parsed = createSchema.safeParse(await readJson(req));
-      if (!parsed.success) throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
+      if (!parsed.success)
+        throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
       type CreateInput = Parameters<typeof createAdminTaxonomy>[1];
       return createAdminTaxonomy(kind, parsed.data as CreateInput, admin.id);
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   // GET detail + PATCH update + DELETE remove
@@ -99,18 +100,19 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       const { id } = await params;
       return getAdminTaxonomy(kind, parseId(id));
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   const UPDATE = withAdminAuth(
     async (req: NextRequest, { params }, admin) => {
       const { id } = await params;
       const parsed = updateSchema.safeParse(await readJson(req));
-      if (!parsed.success) throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
+      if (!parsed.success)
+        throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
       type UpdateInput = Parameters<typeof updateAdminTaxonomy>[2];
       return updateAdminTaxonomy(kind, parseId(id), parsed.data as UpdateInput, admin.id);
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   const REMOVE = withAdminAuth(
@@ -118,7 +120,7 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       const { id } = await params;
       return deleteAdminTaxonomy(kind, parseId(id), admin.id);
     },
-    { roles: ['ADMIN'] }
+    { roles: ['ADMIN'] },
   );
 
   // Relations: GET list + POST attach + DELETE detach
@@ -127,17 +129,20 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       const { id } = await params;
       return { products: await listRelatedProducts(kind, parseId(id)) };
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   const ATTACH = withAdminAuth(
     async (req: NextRequest, { params }, admin) => {
       const { id } = await params;
       const parsed = adminRelationAttachSchema.safeParse(await readJson(req));
-      if (!parsed.success) throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
-      return { products: await attachRelatedProduct(kind, parseId(id), parsed.data.productId, admin.id) };
+      if (!parsed.success)
+        throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
+      return {
+        products: await attachRelatedProduct(kind, parseId(id), parsed.data.productId, admin.id),
+      };
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   const DETACH = withAdminAuth(
@@ -148,7 +153,7 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       if (!parsed.success) throw new BadRequestError('Invalid product id.');
       return detachRelatedProduct(kind, parseId(id), parsed.data, admin.id);
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   // Workflow: GET status
@@ -157,7 +162,7 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       const { id } = await params;
       return getContentWorkflow(parseId(id), kind);
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   // Revisions: GET list + POST ensure draft
@@ -173,7 +178,7 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       }
       return { revisions: await listContentRevisions(parseId(id), kind, locale) };
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   const NEW_DRAFT = withAdminAuth(
@@ -193,7 +198,7 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       const draft = await ensureDraftRevision(item.variants[0].id, admin.id);
       return { revision: draft, workflow: await getContentWorkflow(contentId, kind) };
     },
-    { roles: [...editorRoles] }
+    { roles: [...editorRoles] },
   );
 
   // Unpublish (ADMIN only)
@@ -205,8 +210,21 @@ export function buildTaxonomyRoutes(options: TaxonomyRouteOptions) {
       if (!parsed.success) throw new ValidationError('A valid locale (tr|en) is required.', []);
       return { workflow: await unpublishContent(parseId(id), kind, parsed.data, admin.id) };
     },
-    { roles: ['ADMIN'] }
+    { roles: ['ADMIN'] },
   );
 
-  return { LIST, CREATE, DETAIL, UPDATE, REMOVE, PRODUCTS, ATTACH, DETACH, WORKFLOW, REVISIONS, NEW_DRAFT, UNPUBLISH };
+  return {
+    LIST,
+    CREATE,
+    DETAIL,
+    UPDATE,
+    REMOVE,
+    PRODUCTS,
+    ATTACH,
+    DETACH,
+    WORKFLOW,
+    REVISIONS,
+    NEW_DRAFT,
+    UNPUBLISH,
+  };
 }

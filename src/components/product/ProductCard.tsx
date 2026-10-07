@@ -12,16 +12,16 @@ export function ProductCard({ product, priority = false, locale }: ProductCardPr
 
   return (
     <article className="product-card">
-      <a
-        href={href}
-        className="card-link-overlay"
-        aria-label={product.name}
-      >
+      <a href={href} className="card-link-overlay" aria-label={product.name}>
         <span className="sr-only">{product.name}</span>
       </a>
       <div className="product-card__image-wrap">
         {product.primaryImage ? (
-          <Media src={product.primaryImage.src} alt={product.primaryImage.alt} priority={priority} />
+          <Media
+            src={product.primaryImage.src}
+            alt={product.primaryImage.alt}
+            priority={priority}
+          />
         ) : (
           <div
             style={{
@@ -41,9 +41,7 @@ export function ProductCard({ product, priority = false, locale }: ProductCardPr
       </div>
       <div className="product-card__body">
         <h3 className="product-card__name">{product.name}</h3>
-        {product.tagline && (
-          <p className="product-card__tagline">{product.tagline}</p>
-        )}
+        {product.tagline && <p className="product-card__tagline">{product.tagline}</p>}
       </div>
     </article>
   );

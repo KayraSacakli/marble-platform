@@ -23,7 +23,7 @@ export class AppError extends Error {
       isOperational?: boolean;
       details?: Array<{ field: string; code: string; message: string }>;
       cause?: Error;
-    }
+    },
   ) {
     super(message, { cause: options?.cause });
     this.name = 'AppError';
@@ -50,7 +50,10 @@ export class AppError extends Error {
 // ============================================================
 
 export class BadRequestError extends AppError {
-  constructor(message = 'The request is invalid.', details?: Array<{ field: string; code: string; message: string }>) {
+  constructor(
+    message = 'The request is invalid.',
+    details?: Array<{ field: string; code: string; message: string }>,
+  ) {
     super(message, 400, 'BAD_REQUEST', { details });
     this.name = 'BadRequestError';
   }
@@ -78,7 +81,10 @@ export class NotFoundError extends AppError {
 }
 
 export class ConflictError extends AppError {
-  constructor(message = 'The request conflicts with the current state.', details?: Array<{ field: string; code: string; message: string }>) {
+  constructor(
+    message = 'The request conflicts with the current state.',
+    details?: Array<{ field: string; code: string; message: string }>,
+  ) {
     super(message, 409, 'CONFLICT', { details });
     this.name = 'ConflictError';
   }
@@ -87,7 +93,7 @@ export class ConflictError extends AppError {
 export class ValidationError extends AppError {
   constructor(
     message = 'The request contains invalid parameters.',
-    details: Array<{ field: string; code: string; message: string }>
+    details: Array<{ field: string; code: string; message: string }>,
   ) {
     super(message, 422, 'VALIDATION_ERROR', { details });
     this.name = 'ValidationError';
@@ -116,7 +122,10 @@ export class InternalError extends AppError {
 // Error response builder
 // ============================================================
 
-export function createErrorResponse(error: AppError, requestId?: string): NextResponse<ApiErrorResponse> {
+export function createErrorResponse(
+  error: AppError,
+  requestId?: string,
+): NextResponse<ApiErrorResponse> {
   const body: ApiErrorResponse = {
     error: {
       ...error.toJSON(),

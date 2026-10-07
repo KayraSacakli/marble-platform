@@ -48,7 +48,11 @@ function toNumberOrUndefined(value: string): number | undefined {
   return Number.isInteger(n) && n >= 0 ? n : undefined;
 }
 
-const inputStyle: React.CSSProperties = { padding: '0.5rem', width: '100%', boxSizing: 'border-box' };
+const inputStyle: React.CSSProperties = {
+  padding: '0.5rem',
+  width: '100%',
+  boxSizing: 'border-box',
+};
 
 function LocaleFields({
   locale,
@@ -65,15 +69,72 @@ function LocaleFields({
     <fieldset style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
       <legend>{locale.toUpperCase()} content</legend>
       <div style={{ display: 'grid', gap: '0.75rem' }}>
-        <label>Slug (lowercase-hyphen) *<input required value={value.slug} onChange={(e) => set('slug', e.target.value)} style={inputStyle} /></label>
-        <label>Name *<input required value={value.name} onChange={(e) => set('name', e.target.value)} style={inputStyle} /></label>
-        <label>Description<textarea value={value.description} onChange={(e) => set('description', e.target.value)} rows={4} style={inputStyle} /></label>
-        <label>Tagline<input value={value.tagline} onChange={(e) => set('tagline', e.target.value)} style={inputStyle} /></label>
-        <label>SEO title<input value={value.seoTitle} onChange={(e) => set('seoTitle', e.target.value)} style={inputStyle} /></label>
-        <label>SEO description<input value={value.seoDescription} onChange={(e) => set('seoDescription', e.target.value)} style={inputStyle} /></label>
-        <label>SEO canonical<input value={value.seoCanonical} onChange={(e) => set('seoCanonical', e.target.value)} style={inputStyle} /></label>
-        <label>SEO robots
-          <select value={value.seoRobots} onChange={(e) => set('seoRobots', e.target.value)} style={inputStyle}>
+        <label>
+          Slug (lowercase-hyphen) *
+          <input
+            required
+            value={value.slug}
+            onChange={(e) => set('slug', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Name *
+          <input
+            required
+            value={value.name}
+            onChange={(e) => set('name', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Description
+          <textarea
+            value={value.description}
+            onChange={(e) => set('description', e.target.value)}
+            rows={4}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Tagline
+          <input
+            value={value.tagline}
+            onChange={(e) => set('tagline', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          SEO title
+          <input
+            value={value.seoTitle}
+            onChange={(e) => set('seoTitle', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          SEO description
+          <input
+            value={value.seoDescription}
+            onChange={(e) => set('seoDescription', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          SEO canonical
+          <input
+            value={value.seoCanonical}
+            onChange={(e) => set('seoCanonical', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          SEO robots
+          <select
+            value={value.seoRobots}
+            onChange={(e) => set('seoRobots', e.target.value)}
+            style={inputStyle}
+          >
             <option value="">(default)</option>
             <option value="INDEX">INDEX</option>
             <option value="NOINDEX">NOINDEX</option>
@@ -82,10 +143,31 @@ function LocaleFields({
           </select>
         </label>
         <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <input type="checkbox" checked={value.isFeatured} onChange={(e) => set('isFeatured', e.target.checked)} /> Featured
+          <input
+            type="checkbox"
+            checked={value.isFeatured}
+            onChange={(e) => set('isFeatured', e.target.checked)}
+          />{' '}
+          Featured
         </label>
-        <label>Featured order (number, optional)<input inputMode="numeric" value={value.featuredOrder} onChange={(e) => set('featuredOrder', e.target.value)} style={inputStyle} /></label>
-        <label>Display order (number, optional)<input inputMode="numeric" value={value.displayOrder} onChange={(e) => set('displayOrder', e.target.value)} style={inputStyle} /></label>
+        <label>
+          Featured order (number, optional)
+          <input
+            inputMode="numeric"
+            value={value.featuredOrder}
+            onChange={(e) => set('featuredOrder', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
+        <label>
+          Display order (number, optional)
+          <input
+            inputMode="numeric"
+            value={value.displayOrder}
+            onChange={(e) => set('displayOrder', e.target.value)}
+            style={inputStyle}
+          />
+        </label>
       </div>
     </fieldset>
   );
@@ -203,9 +285,21 @@ export function TaxonomyForm({
       )}
       <LocaleFields locale="tr" value={values.tr} onChange={(tr) => setValues({ ...values, tr })} />
       <LocaleFields locale="en" value={values.en} onChange={(en) => setValues({ ...values, en })} />
-      {error && <p role="alert" style={{ color: '#b00020' }}>{error}</p>}
-      {success && <p role="status" style={{ color: '#0a7d2c' }}>{success}</p>}
-      <button type="submit" disabled={pending} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+      {error && (
+        <p role="alert" style={{ color: '#b00020' }}>
+          {error}
+        </p>
+      )}
+      {success && (
+        <p role="status" style={{ color: '#0a7d2c' }}>
+          {success}
+        </p>
+      )}
+      <button
+        type="submit"
+        disabled={pending}
+        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+      >
         {pending ? 'Saving…' : mode === 'create' ? 'Create' : 'Save changes'}
       </button>
     </form>

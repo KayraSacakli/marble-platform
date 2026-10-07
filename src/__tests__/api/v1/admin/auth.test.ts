@@ -37,8 +37,18 @@ function routeCtx() {
   return { params: Promise.resolve({}) };
 }
 
-const adminUser = { id: 'u-1', email: 'admin@marble-platform.local', name: 'Admin', roles: ['ADMIN'] };
-const editorUser = { id: 'u-2', email: 'editor@marble-platform.local', name: 'Editor', roles: ['EDITOR'] };
+const adminUser = {
+  id: 'u-1',
+  email: 'admin@marble-platform.local',
+  name: 'Admin',
+  roles: ['ADMIN'],
+};
+const editorUser = {
+  id: 'u-2',
+  email: 'editor@marble-platform.local',
+  name: 'Editor',
+  roles: ['EDITOR'],
+};
 const plainUser = { id: 'u-3', email: 'plain@marble-platform.local', name: 'Plain', roles: [] };
 
 function dbUser(user: { id: string; email: string; name: string; roles: string[] }) {
@@ -59,7 +69,7 @@ function mockSession(user: { id: string; email: string; name: string; roles: str
   vi.mocked(prisma.adminSession.findUnique).mockResolvedValue(
     user
       ? ({ id: 's-1', expiresAt: new Date(Date.now() + 60_000), user: dbUser(user) } as never)
-      : null
+      : null,
   );
   vi.mocked(prisma.adminSession.delete).mockResolvedValue({} as never);
 }
@@ -70,12 +80,18 @@ describe('POST /api/v1/admin/auth/login', () => {
   });
 
   it('logs in with valid credentials and sets a secure session cookie', async () => {
-    vi.mocked(loginAdmin).mockResolvedValue({ user: adminUser, token: 'raw-token', expiresAt: new Date() });
+    vi.mocked(loginAdmin).mockResolvedValue({
+      user: adminUser,
+      token: 'raw-token',
+      expiresAt: new Date(),
+    });
 
-    const res = await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', {
-      email: 'admin@marble-platform.local',
-      password: 'Admin123!ChangeMe',
-    }));
+    const res = await LOGIN(
+      postJson('http://localhost/api/v1/admin/auth/login', {
+        email: 'admin@marble-platform.local',
+        password: 'Admin123!ChangeMe',
+      }),
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -93,10 +109,12 @@ describe('POST /api/v1/admin/auth/login', () => {
   it('rejects invalid credentials with 401 and sets no cookie', async () => {
     vi.mocked(loginAdmin).mockRejectedValue(new UnauthorizedError('Invalid email or password.'));
 
-    const res = await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', {
-      email: 'admin@marble-platform.local',
-      password: 'wrong',
-    }));
+    const res = await LOGIN(
+      postJson('http://localhost/api/v1/admin/auth/login', {
+        email: 'admin@marble-platform.local',
+        password: 'wrong',
+      }),
+    );
     const json = await res.json();
 
     expect(res.status).toBe(401);
@@ -105,7 +123,9 @@ describe('POST /api/v1/admin/auth/login', () => {
   });
 
   it('rejects invalid payload with 422', async () => {
-    const res = await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', { email: 'not-an-email' }));
+    const res = await LOGIN(
+      postJson('http://localhost/api/v1/admin/auth/login', { email: 'not-an-email' }),
+    );
     expect(res.status).toBe(422);
     expect(vi.mocked(loginAdmin)).not.toHaveBeenCalled();
   });
@@ -114,22 +134,34 @@ describe('POST /api/v1/admin/auth/login', () => {
     const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     try {
-      vi.mocked(loginAdmin).mockResolvedValue({ user: adminUser, token: 'raw-token', expiresAt: new Date() });
-      await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', {
-        email: 'admin@marble-platform.local',
-        password: 'Admin123!ChangeMe',
-      }));
+      vi.mocked(loginAdmin).mockResolvedValue({
+        user: adminUser,
+        token: 'raw-token',
+        expiresAt: new Date(),
+      });
+      await LOGIN(
+        postJson('http://localhost/api/v1/admin/auth/login', {
+          email: 'admin@marble-platform.local',
+          password: 'Admin123!ChangeMe',
+        }),
+      );
       expect(logSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/^\[\S+\] admin\.login\.success email=admin@marble-platform\.local ip=/)
+        expect.stringMatching(
+          /^\[\S+\] admin\.login\.success email=admin@marble-platform\.local ip=/,
+        ),
       );
 
       vi.mocked(loginAdmin).mockRejectedValue(new UnauthorizedError('Invalid email or password.'));
-      await LOGIN(postJson('http://localhost/api/v1/admin/auth/login', {
-        email: 'admin@marble-platform.local',
-        password: 'wrong',
-      }));
+      await LOGIN(
+        postJson('http://localhost/api/v1/admin/auth/login', {
+          email: 'admin@marble-platform.local',
+          password: 'wrong',
+        }),
+      );
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/^\[\S+\] admin\.login\.failure email=admin@marble-platform\.local ip=\S+ reason=UnauthorizedError$/)
+        expect.stringMatching(
+          /^\[\S+\] admin\.login\.failure email=admin@marble-platform\.local ip=\S+ reason=UnauthorizedError$/,
+        ),
       );
     } finally {
       logSpy.mockRestore();
@@ -146,7 +178,10 @@ describe('POST /api/v1/admin/auth/logout', () => {
   it('clears the session for an authenticated user', async () => {
     mockSession(adminUser);
 
-    const res = await LOGOUT(new Request('http://localhost/api/v1/admin/auth/logout', { method: 'POST' }) as never, routeCtx());
+    const res = await LOGOUT(
+      new Request('http://localhost/api/v1/admin/auth/logout', { method: 'POST' }) as never,
+      routeCtx(),
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -158,7 +193,10 @@ describe('POST /api/v1/admin/auth/logout', () => {
   it('returns 401 without a session', async () => {
     mockSession(null);
 
-    const res = await LOGOUT(new Request('http://localhost/api/v1/admin/auth/logout', { method: 'POST' }) as never, routeCtx());
+    const res = await LOGOUT(
+      new Request('http://localhost/api/v1/admin/auth/logout', { method: 'POST' }) as never,
+      routeCtx(),
+    );
     expect(res.status).toBe(401);
   });
 });
@@ -196,28 +234,43 @@ describe('withAdminAuth role authorization', () => {
 
   it('allows ADMIN', async () => {
     mockSession(adminUser);
-    const res = await okHandler(new Request('http://localhost/api/v1/admin/x') as never, routeCtx());
+    const res = await okHandler(
+      new Request('http://localhost/api/v1/admin/x') as never,
+      routeCtx(),
+    );
     expect(res.status).toBe(200);
   });
 
   it('allows EDITOR only when the route permits it', async () => {
     mockSession(editorUser);
-    const denied = await okHandler(new Request('http://localhost/api/v1/admin/x') as never, routeCtx());
+    const denied = await okHandler(
+      new Request('http://localhost/api/v1/admin/x') as never,
+      routeCtx(),
+    );
     expect(denied.status).toBe(403);
 
     const editorHandler = withAdminAuth(async () => ({ ok: true }), { roles: ['ADMIN', 'EDITOR'] });
-    const allowed = await editorHandler(new Request('http://localhost/api/v1/admin/x') as never, routeCtx());
+    const allowed = await editorHandler(
+      new Request('http://localhost/api/v1/admin/x') as never,
+      routeCtx(),
+    );
     expect(allowed.status).toBe(200);
   });
 
   it('rejects role-less users with 403 and unauthenticated with 401', async () => {
     mockSession(plainUser);
-    const forbidden = await okHandler(new Request('http://localhost/api/v1/admin/x') as never, routeCtx());
+    const forbidden = await okHandler(
+      new Request('http://localhost/api/v1/admin/x') as never,
+      routeCtx(),
+    );
     expect(forbidden.status).toBe(403);
     expect((await forbidden.json()).error.code).toBe('FORBIDDEN');
 
     mockSession(null);
-    const unauthorized = await okHandler(new Request('http://localhost/api/v1/admin/x') as never, routeCtx());
+    const unauthorized = await okHandler(
+      new Request('http://localhost/api/v1/admin/x') as never,
+      routeCtx(),
+    );
     expect(unauthorized.status).toBe(401);
     expect((await unauthorized.json()).error.code).toBe('UNAUTHORIZED');
   });

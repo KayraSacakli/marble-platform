@@ -39,9 +39,7 @@ export function ProjectCard({ project, locale, priority = false }: ProjectCardPr
       </div>
       <div className="project-card__body">
         <h3 className="project-card__name">{project.name}</h3>
-        {project.description && (
-          <p className="project-card__desc">{project.description}</p>
-        )}
+        {project.description && <p className="project-card__desc">{project.description}</p>}
       </div>
     </article>
   );

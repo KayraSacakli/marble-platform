@@ -10,19 +10,21 @@ import { WorkflowPanel } from '../../_components/WorkflowPanel';
 export const dynamic = 'force-dynamic';
 
 function toFormValues(c: Awaited<ReturnType<typeof getAdminTaxonomy>>): TaxonomyFormValues {
-  const pick = (v: {
-    slug: string;
-    name: string | null;
-    description: string | null;
-    tagline: string | null;
-    seoTitle: string | null;
-    seoDescription: string | null;
-    seoCanonical: string | null;
-    seoRobots: string | null;
-    isFeatured: boolean;
-    featuredOrder: number | null;
-    displayOrder: number | null;
-  } | null) => ({
+  const pick = (
+    v: {
+      slug: string;
+      name: string | null;
+      description: string | null;
+      tagline: string | null;
+      seoTitle: string | null;
+      seoDescription: string | null;
+      seoCanonical: string | null;
+      seoRobots: string | null;
+      isFeatured: boolean;
+      featuredOrder: number | null;
+      displayOrder: number | null;
+    } | null,
+  ) => ({
     slug: v?.slug ?? '',
     name: v?.name ?? '',
     description: v?.description ?? '',
@@ -38,7 +40,11 @@ function toFormValues(c: Awaited<ReturnType<typeof getAdminTaxonomy>>): Taxonomy
   return { tr: pick(c.tr), en: pick(c.en) };
 }
 
-export default async function EditAdminApplicationPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditAdminApplicationPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     await requireAdminSession();
   } catch {
@@ -53,7 +59,14 @@ export default async function EditAdminApplicationPage({ params }: { params: Pro
   }
   const title = application.tr?.name ?? application.en?.name ?? id;
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', padding: '0 1.5rem', fontFamily: 'system-ui, sans-serif' }}>
+    <main
+      style={{
+        maxWidth: 760,
+        margin: '2rem auto',
+        padding: '0 1.5rem',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
       <p>
         <Link href="/admin/applications">← Applications</Link>
       </p>
@@ -68,7 +81,10 @@ export default async function EditAdminApplicationPage({ params }: { params: Pro
         contentId={application.id}
         initial={toFormValues(application)}
       />
-      <RelationManager base={`/api/v1/admin/applications/${application.id}`} title="Attached products" />
+      <RelationManager
+        base={`/api/v1/admin/applications/${application.id}`}
+        title="Attached products"
+      />
       <WorkflowPanel kind="applications" contentId={application.id} />
     </main>
   );

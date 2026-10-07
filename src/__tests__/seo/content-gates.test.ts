@@ -42,7 +42,9 @@ describe('GET /api/v1/public/[locale]/seo/availability', () => {
   it('returns availability for every locale', async () => {
     (contentService.getSeoAvailability as ReturnType<typeof vi.fn>).mockResolvedValue(AVAILABILITY);
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/seo/availability', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/seo/availability', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -54,11 +56,12 @@ describe('GET /api/v1/public/[locale]/seo/availability', () => {
 
 describe('getSeoAvailability', () => {
   it('reads the data envelope from the availability endpoint', async () => {
-    const fetchMock = vi.fn(async () =>
-      new Response(JSON.stringify({ data: AVAILABILITY }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ data: AVAILABILITY }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
     );
     vi.stubGlobal('fetch', fetchMock);
 
@@ -70,7 +73,10 @@ describe('getSeoAvailability', () => {
   });
 
   it('fails loudly when the endpoint is unavailable', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response('down', { status: 503 })));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('down', { status: 503 })),
+    );
 
     await expect(getSeoAvailability()).rejects.toThrow(/SEO availability/);
   });

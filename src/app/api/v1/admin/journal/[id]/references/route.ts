@@ -32,7 +32,7 @@ export const GET = withAdminAuth(
     const { id } = await params;
     return { references: await listJournalReferences(parseId(id)) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/journal/[id]/references { targetKind, targetId } — ADMIN, EDITOR
@@ -40,10 +40,18 @@ export const POST = withAdminAuth(
   async (req: NextRequest, { params }, admin) => {
     const { id } = await params;
     const parsed = adminJournalReferenceSchema.safeParse(await readJson(req));
-    if (!parsed.success) throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
-    return { references: await attachJournalReference(parseId(id), parsed.data.targetKind, parsed.data.targetId, admin.id) };
+    if (!parsed.success)
+      throw new ValidationError('Validation failed', toValidationDetails(parsed.error));
+    return {
+      references: await attachJournalReference(
+        parseId(id),
+        parsed.data.targetKind,
+        parsed.data.targetId,
+        admin.id,
+      ),
+    };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // DELETE /api/v1/admin/journal/[id]/references?referenceId= — ADMIN, EDITOR
@@ -55,5 +63,5 @@ export const DELETE = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid reference id.');
     return detachJournalReference(parseId(id), parsed.data, admin.id);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

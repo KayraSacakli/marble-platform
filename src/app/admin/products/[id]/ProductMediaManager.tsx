@@ -54,7 +54,10 @@ export function ProductMediaManager({ base }: { base: string }) {
     }
     const mediaJson = await mediaRes.json();
     const libJson = await libRes.json();
-    return { rows: mediaJson.data.media as MediaRow[], library: libJson.data.data as LibraryAsset[] };
+    return {
+      rows: mediaJson.data.media as MediaRow[],
+      library: libJson.data.data as LibraryAsset[],
+    };
   }, [base]);
 
   const applyRows = useCallback((list: MediaRow[], lib: LibraryAsset[]) => {
@@ -65,8 +68,8 @@ export function ProductMediaManager({ base }: { base: string }) {
       if (!next[row.assetId]) {
         next[row.assetId] = {
           displayOrder: String(row.displayOrder),
-          altTr: row.variant === 'tr' ? row.altText ?? '' : '',
-          altEn: row.variant === 'en' ? row.altText ?? '' : '',
+          altTr: row.variant === 'tr' ? (row.altText ?? '') : '',
+          altEn: row.variant === 'en' ? (row.altText ?? '') : '',
         };
       } else {
         if (row.variant === 'tr') next[row.assetId].altTr = row.altText ?? '';
@@ -87,10 +90,14 @@ export function ProductMediaManager({ base }: { base: string }) {
       },
       (err: unknown) => {
         if (!cancelled) {
-          setError(err instanceof Error && err.message === 'auth' ? 'Session expired. Please sign in again.' : 'Failed to load media.');
+          setError(
+            err instanceof Error && err.message === 'auth'
+              ? 'Session expired. Please sign in again.'
+              : 'Failed to load media.',
+          );
           setLoading(false);
         }
-      }
+      },
     );
     return () => {
       cancelled = true;
@@ -140,7 +147,10 @@ export function ProductMediaManager({ base }: { base: string }) {
       });
       if (!at.ok) {
         const atJson = await at.json().catch(() => null);
-        setError(atJson?.error?.message ?? 'Uploaded, but attach failed. Attach it from the library below.');
+        setError(
+          atJson?.error?.message ??
+            'Uploaded, but attach failed. Attach it from the library below.',
+        );
         await refresh();
         return;
       }
@@ -231,21 +241,46 @@ export function ProductMediaManager({ base }: { base: string }) {
     <section style={box}>
       <h2>Product media</h2>
       {loading && <p>Loading media…</p>}
-      {error && <p role="alert" style={{ color: '#b00020' }}>{error}</p>}
-      {notice && <p role="status" style={{ color: '#0a7d2c' }}>{notice}</p>}
+      {error && (
+        <p role="alert" style={{ color: '#b00020' }}>
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" style={{ color: '#0a7d2c' }}>
+          {notice}
+        </p>
+      )}
 
       {!loading && primaryRows.length === 0 && <p>No media attached yet.</p>}
       {primaryRows.map((row) => {
-        const edit = edits[row.assetId] ?? { displayOrder: String(row.displayOrder), altTr: '', altEn: '' };
+        const edit = edits[row.assetId] ?? {
+          displayOrder: String(row.displayOrder),
+          altTr: '',
+          altEn: '',
+        };
         const setEdit = (patch: Partial<RowEdit>) =>
           setEdits((prev) => ({ ...prev, [row.assetId]: { ...edit, ...patch } }));
         return (
-          <div key={row.assetId} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', borderTop: '1px solid #eee', padding: '0.75rem 0' }}>
+          <div
+            key={row.assetId}
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              alignItems: 'flex-start',
+              borderTop: '1px solid #eee',
+              padding: '0.75rem 0',
+            }}
+          >
             <Image
               src={row.src}
               alt=""
               width={120}
-              height={row.width && row.height ? Math.max(1, Math.round((120 * row.height) / row.width)) : 90}
+              height={
+                row.width && row.height
+                  ? Math.max(1, Math.round((120 * row.height) / row.width))
+                  : 90
+              }
               style={{ objectFit: 'cover', background: '#f0f0f0' }}
             />
             <div style={{ display: 'grid', gap: '0.5rem', flex: 1 }}>
@@ -258,10 +293,29 @@ export function ProductMediaManager({ base }: { base: string }) {
                   style={{ width: 64, padding: '0.25rem' }}
                 />
               </span>
-              <label>Alt TR <input value={edit.altTr} onChange={(e) => setEdit({ altTr: e.target.value })} style={{ width: '100%', padding: '0.25rem' }} /></label>
-              <label>Alt EN <input value={edit.altEn} onChange={(e) => setEdit({ altEn: e.target.value })} style={{ width: '100%', padding: '0.25rem' }} /></label>
+              <label>
+                Alt TR{' '}
+                <input
+                  value={edit.altTr}
+                  onChange={(e) => setEdit({ altTr: e.target.value })}
+                  style={{ width: '100%', padding: '0.25rem' }}
+                />
+              </label>
+              <label>
+                Alt EN{' '}
+                <input
+                  value={edit.altEn}
+                  onChange={(e) => setEdit({ altEn: e.target.value })}
+                  style={{ width: '100%', padding: '0.25rem' }}
+                />
+              </label>
               <span>
-                <button type="button" onClick={() => onDetach(row.assetId)} disabled={busy} style={{ cursor: 'pointer' }}>
+                <button
+                  type="button"
+                  onClick={() => onDetach(row.assetId)}
+                  disabled={busy}
+                  style={{ cursor: 'pointer' }}
+                >
                   Detach
                 </button>
               </span>
@@ -270,15 +324,31 @@ export function ProductMediaManager({ base }: { base: string }) {
         );
       })}
       {primaryRows.length > 0 && (
-        <button type="button" onClick={onSaveOrder} disabled={busy} style={{ padding: '0.5rem 1rem', cursor: 'pointer', marginTop: '0.5rem' }}>
+        <button
+          type="button"
+          onClick={onSaveOrder}
+          disabled={busy}
+          style={{ padding: '0.5rem 1rem', cursor: 'pointer', marginTop: '0.5rem' }}
+        >
           {busy ? 'Saving…' : 'Save order + alt text'}
         </button>
       )}
 
       <h3>Upload new image</h3>
-      <form onSubmit={onUpload} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-        <input type="file" name="file" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" />
-        <select value={uploadRole} onChange={(e) => setUploadRole(e.target.value as 'PRIMARY' | 'GALLERY' | 'HERO')} style={{ padding: '0.5rem' }}>
+      <form
+        onSubmit={onUpload}
+        style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}
+      >
+        <input
+          type="file"
+          name="file"
+          accept="image/png,image/jpeg,image/gif,image/webp,image/avif"
+        />
+        <select
+          value={uploadRole}
+          onChange={(e) => setUploadRole(e.target.value as 'PRIMARY' | 'GALLERY' | 'HERO')}
+          style={{ padding: '0.5rem' }}
+        >
           <option value="GALLERY">GALLERY</option>
           <option value="PRIMARY">PRIMARY</option>
           <option value="HERO">HERO</option>
@@ -287,13 +357,19 @@ export function ProductMediaManager({ base }: { base: string }) {
           {busy ? 'Uploading…' : 'Upload + attach'}
         </button>
       </form>
-      <p style={{ opacity: 0.7, fontSize: '0.875rem' }}>PNG, JPEG, GIF, WebP or AVIF, max 5 MB. SVG is not accepted.</p>
+      <p style={{ opacity: 0.7, fontSize: '0.875rem' }}>
+        PNG, JPEG, GIF, WebP or AVIF, max 5 MB. SVG is not accepted.
+      </p>
 
       {unattached.length > 0 && (
         <div style={{ marginTop: '1rem' }}>
           <h3>Attach existing upload</h3>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <select value={attachId} onChange={(e) => setAttachId(e.target.value)} style={{ padding: '0.5rem' }}>
+            <select
+              value={attachId}
+              onChange={(e) => setAttachId(e.target.value)}
+              style={{ padding: '0.5rem' }}
+            >
               <option value="">Select…</option>
               {unattached.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -301,7 +377,12 @@ export function ProductMediaManager({ base }: { base: string }) {
                 </option>
               ))}
             </select>
-            <button type="button" onClick={onAttachExisting} disabled={busy || !attachId} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+            <button
+              type="button"
+              onClick={onAttachExisting}
+              disabled={busy || !attachId}
+              style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+            >
               Attach as gallery
             </button>
           </div>

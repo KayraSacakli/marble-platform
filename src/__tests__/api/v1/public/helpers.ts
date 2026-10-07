@@ -14,10 +14,13 @@ export function createRouteContext(params: Record<string, string>) {
 }
 
 export async function callHandler(
-  handler: (req: NextRequest, ctx: { params: Promise<Record<string, string>> }) => Promise<Response>,
+  handler: (
+    req: NextRequest,
+    ctx: { params: Promise<Record<string, string>> },
+  ) => Promise<Response>,
   url: string,
   params: Record<string, string>,
-  options?: { method?: string; body?: unknown }
+  options?: { method?: string; body?: unknown },
 ): Promise<Response> {
   const req = createMockRequest(url, options);
   const ctx = createRouteContext(params);
@@ -180,7 +183,13 @@ export const mockHomepage = {
   sections: [
     { type: 'featured_products', products: [mockProductSummary] },
     { type: 'featured_collections', collections: [mockCollectionSummary] },
-    { type: 'final_cta', heading: 'Get a Quote', message: 'Ready to help', primaryCTA: { label: 'Quote', href: '/en/quote' }, secondaryCTA: { label: 'Contact', href: '/en/contact' } },
+    {
+      type: 'final_cta',
+      heading: 'Get a Quote',
+      message: 'Ready to help',
+      primaryCTA: { label: 'Quote', href: '/en/quote' },
+      secondaryCTA: { label: 'Contact', href: '/en/contact' },
+    },
   ],
   sectionOrder: ['featured_products', 'featured_collections', 'final_cta'],
   seo: mockSEO,
@@ -217,9 +226,7 @@ export const mockFooter = {
     { label: 'Projects', href: '/en/projects', visible: true },
     { label: 'Journal', href: '/en/journal', visible: true },
   ],
-  conversion: [
-    { label: 'Request Quote', href: '/en/quote', visible: true },
-  ],
+  conversion: [{ label: 'Request Quote', href: '/en/quote', visible: true }],
   legal: [],
   language: [
     { label: 'Türkçe', href: '/tr', active: false, available: true },

@@ -61,7 +61,9 @@ export function buildClearedSessionCookie(): string {
  * Create a new admin session for an active user. Returns the raw token
  * (to be set as cookie) and its expiry. Only the hash is persisted.
  */
-export async function createAdminSession(userId: string): Promise<{ token: string; expiresAt: Date }> {
+export async function createAdminSession(
+  userId: string,
+): Promise<{ token: string; expiresAt: Date }> {
   const token = randomBytes(32).toString('hex');
   const expiresAt = new Date(Date.now() + ADMIN_SESSION_TTL_MS);
   await prisma.adminSession.create({
@@ -147,7 +149,10 @@ export type AdminRole = 'ADMIN' | 'EDITOR';
  * Require one of the given roles (403 otherwise).
  * Role membership comes from the database, not the client.
  */
-export function requireAdminRole(user: AdminSessionUser, ...allowed: AdminRole[]): AdminSessionUser {
+export function requireAdminRole(
+  user: AdminSessionUser,
+  ...allowed: AdminRole[]
+): AdminSessionUser {
   const owned = user.roles.map((role) => role.toUpperCase());
   if (!allowed.some((role) => owned.includes(role))) {
     throw new ForbiddenError('You do not have permission to perform this action.');

@@ -133,6 +133,10 @@ describe('checkRateLimit / enforceRateLimit', () => {
 describe('rate limit configs', () => {
   it('matches the Phase 18D-1 budgets', () => {
     expect(ADMIN_LOGIN_RATE_LIMIT).toEqual({ bucket: 'admin-login', limit: 5, windowMs: 60_000 });
-    expect(PUBLIC_QUOTE_RATE_LIMIT).toEqual({ bucket: 'public-quote', limit: 10, windowMs: 60_000 });
+    expect(PUBLIC_QUOTE_RATE_LIMIT).toEqual({
+      bucket: 'public-quote',
+      limit: 10,
+      windowMs: 60_000,
+    });
   });
 });

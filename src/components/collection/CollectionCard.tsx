@@ -19,7 +19,11 @@ export function CollectionCard({ collection, locale, priority = false }: Collect
       </a>
       <div className="collection-card__image-wrap">
         {collection.coverImage ? (
-          <Media src={collection.coverImage.src} alt={collection.coverImage.alt} priority={priority} />
+          <Media
+            src={collection.coverImage.src}
+            alt={collection.coverImage.alt}
+            priority={priority}
+          />
         ) : (
           <div
             style={{

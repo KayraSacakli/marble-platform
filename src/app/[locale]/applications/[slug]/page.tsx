@@ -15,7 +15,11 @@ type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
 
@@ -32,7 +36,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         description,
         url: `${SITE_URL}/${locale}/applications/${application.slug}`,
         type: 'website',
-        images: application.coverImage ? [{ url: application.coverImage.src, alt: application.coverImage.alt, width: application.coverImage.width, height: application.coverImage.height }] : [],
+        images: application.coverImage
+          ? [
+              {
+                url: application.coverImage.src,
+                alt: application.coverImage.alt,
+                width: application.coverImage.width,
+                height: application.coverImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...metadataFromSeoData(application.seo),
@@ -62,14 +75,20 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         <BreadcrumbJsonLd
           items={[
             { name: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
-            { name: locale === 'tr' ? 'Uygulamalar' : 'Applications', href: `/${locale}/applications` },
+            {
+              name: locale === 'tr' ? 'Uygulamalar' : 'Applications',
+              href: `/${locale}/applications`,
+            },
             { name: application.name },
           ]}
         />
         <Breadcrumb
           items={[
             { label: locale === 'tr' ? 'Ana Sayfa' : 'Home', href: `/${locale}` },
-            { label: locale === 'tr' ? 'Uygulamalar' : 'Applications', href: `/${locale}/applications` },
+            {
+              label: locale === 'tr' ? 'Uygulamalar' : 'Applications',
+              href: `/${locale}/applications`,
+            },
             { label: application.name },
           ]}
         />
@@ -97,7 +116,9 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
         {application.products.length > 0 && (
           <section className="application-products">
             <h2 className="application-products__heading">
-              {locale === 'tr' ? 'Bu Uygulamada Kullanılan Ürünler' : 'Products Used in This Application'}
+              {locale === 'tr'
+                ? 'Bu Uygulamada Kullanılan Ürünler'
+                : 'Products Used in This Application'}
             </h2>
             <div className="collection-grid">
               {application.products.map((product, index) => (
@@ -156,7 +177,7 @@ export default async function ApplicationDetailPage({ params }: PageProps) {
 
         <section className="application-cta">
           <h2 className="application-cta__heading">
-            {locale === 'tr' ? 'Bu Uygulama Hakkında Konuşalım' : 'Let\'s Discuss This Application'}
+            {locale === 'tr' ? 'Bu Uygulama Hakkında Konuşalım' : "Let's Discuss This Application"}
           </h2>
           <p className="application-cta__message">
             {locale === 'tr'

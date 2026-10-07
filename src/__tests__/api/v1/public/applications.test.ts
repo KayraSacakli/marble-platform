@@ -24,7 +24,9 @@ describe('GET /api/v1/public/[locale]/applications', () => {
       meta: { page: 1, pageSize: 24, total: 1, totalPages: 1 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/applications', { locale: 'tr' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/tr/applications', {
+      locale: 'tr',
+    });
     const json = await res.json();
 
     expect(json.data.data).toHaveLength(1);
@@ -37,13 +39,17 @@ describe('GET /api/v1/public/[locale]/applications', () => {
       meta: { page: 1, pageSize: 24, total: 0, totalPages: 0 },
     });
 
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/applications', { locale: 'en' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/en/applications', {
+      locale: 'en',
+    });
     expect(res.status).toBe(200);
     expect(contentService.getApplicationList).toHaveBeenCalledWith('en', { page: 1, pageSize: 24 });
   });
 
   it('returns 400 for invalid locale', async () => {
-    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/applications', { locale: 'xx' });
+    const res = await callHandler(GET, 'http://localhost/api/v1/public/xx/applications', {
+      locale: 'xx',
+    });
     const json = await res.json();
 
     expect(res.status).toBe(400);
@@ -57,9 +63,15 @@ describe('GET /api/v1/public/[locale]/applications/[slug]', () => {
   });
 
   it('returns application detail for valid slug', async () => {
-    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockApplicationDetail);
+    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockApplicationDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/applications/test-application', { locale: 'tr', slug: 'test-application' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/applications/test-application',
+      { locale: 'tr', slug: 'test-application' },
+    );
     const json = await res.json();
 
     expect(res.status).toBe(200);
@@ -70,23 +82,41 @@ describe('GET /api/v1/public/[locale]/applications/[slug]', () => {
   });
 
   it('returns 404 for missing slug', async () => {
-    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/applications/nonexistent', { locale: 'tr', slug: 'nonexistent' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/applications/nonexistent',
+      { locale: 'tr', slug: 'nonexistent' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('returns 404 for unpublished content', async () => {
-    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockRejectedValue(new NotFoundError());
+    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new NotFoundError(),
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/applications/draft-app', { locale: 'tr', slug: 'draft-app' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/applications/draft-app',
+      { locale: 'tr', slug: 'draft-app' },
+    );
     expect(res.status).toBe(404);
   });
 
   it('includes SEO data', async () => {
-    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockApplicationDetail);
+    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockApplicationDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/applications/test-application', { locale: 'tr', slug: 'test-application' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/applications/test-application',
+      { locale: 'tr', slug: 'test-application' },
+    );
     const json = await res.json();
 
     expect(json.data.seo).toBeDefined();
@@ -95,9 +125,15 @@ describe('GET /api/v1/public/[locale]/applications/[slug]', () => {
   });
 
   it('does not expose internal fields', async () => {
-    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockResolvedValue(mockApplicationDetail);
+    (contentService.getApplicationDetail as ReturnType<typeof vi.fn>).mockResolvedValue(
+      mockApplicationDetail,
+    );
 
-    const res = await callHandler(GET_DETAIL, 'http://localhost/api/v1/public/tr/applications/test-application', { locale: 'tr', slug: 'test-application' });
+    const res = await callHandler(
+      GET_DETAIL,
+      'http://localhost/api/v1/public/tr/applications/test-application',
+      { locale: 'tr', slug: 'test-application' },
+    );
     const str = JSON.stringify(await res.json());
 
     expect(str).not.toContain('internalUser');

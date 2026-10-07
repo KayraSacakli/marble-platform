@@ -17,8 +17,9 @@ function parseId(id: string): string {
 function parseBodyError(body: unknown, schema: typeof adminProductUpdateSchema) {
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
-    const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(([field, messages]) =>
-      (messages ?? []).map((message) => ({ field, code: 'INVALID', message }))
+    const details = Object.entries(parsed.error.flatten().fieldErrors).flatMap(
+      ([field, messages]) =>
+        (messages ?? []).map((message) => ({ field, code: 'INVALID', message })),
     );
     throw new ValidationError('Validation failed', details);
   }
@@ -31,7 +32,7 @@ export const GET = withAdminAuth(
     const { id } = await params;
     return getAdminProduct(parseId(id));
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // PATCH /api/v1/admin/products/[id] — ADMIN, EDITOR
@@ -44,9 +45,13 @@ export const PATCH = withAdminAuth(
     } catch {
       throw new ValidationError('Invalid JSON body', []);
     }
-    return updateAdminProduct(parseId(id), parseBodyError(body, adminProductUpdateSchema), admin.id);
+    return updateAdminProduct(
+      parseId(id),
+      parseBodyError(body, adminProductUpdateSchema),
+      admin.id,
+    );
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // DELETE /api/v1/admin/products/[id] — ADMIN only
@@ -55,5 +60,5 @@ export const DELETE = withAdminAuth(
     const { id } = await params;
     return deleteAdminProduct(parseId(id), admin.id);
   },
-  { roles: ['ADMIN'] }
+  { roles: ['ADMIN'] },
 );

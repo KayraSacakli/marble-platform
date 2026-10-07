@@ -2,7 +2,11 @@ import { z } from 'zod';
 import type { NextRequest } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/admin-handler';
 import { BadRequestError, ValidationError } from '@/lib/api/errors';
-import { listProjectRelations, attachProjectRelation, detachProjectRelation } from '@/services/adminEditorial';
+import {
+  listProjectRelations,
+  attachProjectRelation,
+  detachProjectRelation,
+} from '@/services/adminEditorial';
 
 const idParam = z.string().uuid('Invalid project id.');
 const targetParam = z.string().uuid('Invalid application id.');
@@ -27,7 +31,7 @@ export const GET = withAdminAuth(
     const { id } = await params;
     return { items: await listProjectRelations('applications', parseId(id)) };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // POST /api/v1/admin/projects/[id]/applications { applicationId } — ADMIN, EDITOR
@@ -37,9 +41,11 @@ export const POST = withAdminAuth(
     const body = (await readJson(req)) as { applicationId?: unknown };
     const parsed = targetParam.safeParse(body.applicationId);
     if (!parsed.success) throw new BadRequestError('Invalid application id.');
-    return { items: await attachProjectRelation('applications', parseId(id), parsed.data, admin.id) };
+    return {
+      items: await attachProjectRelation('applications', parseId(id), parsed.data, admin.id),
+    };
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );
 
 // DELETE /api/v1/admin/projects/[id]/applications?applicationId= — ADMIN, EDITOR
@@ -51,5 +57,5 @@ export const DELETE = withAdminAuth(
     if (!parsed.success) throw new BadRequestError('Invalid application id.');
     return detachProjectRelation('applications', parseId(id), parsed.data, admin.id);
   },
-  { roles: ['ADMIN', 'EDITOR'] }
+  { roles: ['ADMIN', 'EDITOR'] },
 );

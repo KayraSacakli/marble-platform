@@ -18,13 +18,14 @@ const { getProducts, getProduct } = await import('@/lib/data/products');
 
 const networkError = () => new ApiClientError('Network error', 0, 'NETWORK_ERROR');
 const timeoutError = () => new ApiClientError('Request timed out', 408, 'TIMEOUT');
-const serverError = () => new ApiClientError('HTTP 500: Internal Server Error', 500, 'INTERNAL_ERROR');
+const serverError = () =>
+  new ApiClientError('HTTP 500: Internal Server Error', 500, 'INTERNAL_ERROR');
 const notFoundError = () => new ApiClientError('Not found', 404, 'NOT_FOUND');
 
 const NOT_FOUND_DIGEST = 'NEXT_HTTP_ERROR_FALLBACK;404';
 
 async function renderOrThrow(
-  page: () => Promise<unknown>
+  page: () => Promise<unknown>,
 ): Promise<{ rendered: boolean; error?: unknown }> {
   try {
     await page();
@@ -46,7 +47,7 @@ describe('Temporary fetch failures propagate instead of becoming fake 404s', () 
     vi.mocked(getHomepage).mockRejectedValue(error);
 
     const result = await renderOrThrow(() =>
-      HomePage({ params: Promise.resolve({ locale: 'tr' }) })
+      HomePage({ params: Promise.resolve({ locale: 'tr' }) }),
     );
 
     expect(result.rendered).toBe(false);
@@ -59,7 +60,7 @@ describe('Temporary fetch failures propagate instead of becoming fake 404s', () 
     vi.mocked(getHomepage).mockRejectedValue(error);
 
     const result = await renderOrThrow(() =>
-      HomePage({ params: Promise.resolve({ locale: 'en' }) })
+      HomePage({ params: Promise.resolve({ locale: 'en' }) }),
     );
 
     expect(result.error).toBe(error);
@@ -73,7 +74,7 @@ describe('Temporary fetch failures propagate instead of becoming fake 404s', () 
       ProductsPage({
         params: Promise.resolve({ locale: 'tr' }),
         searchParams: Promise.resolve({}),
-      })
+      }),
     );
 
     expect(result.rendered).toBe(false);
@@ -85,7 +86,7 @@ describe('Temporary fetch failures propagate instead of becoming fake 404s', () 
     vi.mocked(getProduct).mockRejectedValue(error);
 
     const result = await renderOrThrow(() =>
-      ProductDetailPage({ params: Promise.resolve({ locale: 'tr', slug: 'some-slug' }) })
+      ProductDetailPage({ params: Promise.resolve({ locale: 'tr', slug: 'some-slug' }) }),
     );
 
     expect(result.rendered).toBe(false);
@@ -96,7 +97,7 @@ describe('Temporary fetch failures propagate instead of becoming fake 404s', () 
     vi.mocked(getProduct).mockRejectedValue(notFoundError());
 
     const result = await renderOrThrow(() =>
-      ProductDetailPage({ params: Promise.resolve({ locale: 'tr', slug: 'missing-slug' }) })
+      ProductDetailPage({ params: Promise.resolve({ locale: 'tr', slug: 'missing-slug' }) }),
     );
 
     expect(result.rendered).toBe(false);

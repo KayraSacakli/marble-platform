@@ -43,9 +43,7 @@ export async function Footer({ locale }: FooterProps) {
         <div className="footer__grid">
           {visibleCompany.length > 0 && (
             <div className="footer__group">
-              <h3 className="footer__heading">
-                {locale === 'tr' ? 'Şirket' : 'Company'}
-              </h3>
+              <h3 className="footer__heading">{locale === 'tr' ? 'Şirket' : 'Company'}</h3>
               <ul className="footer__list">
                 {visibleCompany.map((link) => (
                   <li key={link.href}>
@@ -60,9 +58,7 @@ export async function Footer({ locale }: FooterProps) {
 
           {visibleCatalogue.length > 0 && (
             <div className="footer__group">
-              <h3 className="footer__heading">
-                {locale === 'tr' ? 'Katalog' : 'Catalogue'}
-              </h3>
+              <h3 className="footer__heading">{locale === 'tr' ? 'Katalog' : 'Catalogue'}</h3>
               <ul className="footer__list">
                 {visibleCatalogue.map((link) => (
                   <li key={link.href}>
@@ -77,9 +73,7 @@ export async function Footer({ locale }: FooterProps) {
 
           {visibleConversion.length > 0 && (
             <div className="footer__group">
-              <h3 className="footer__heading">
-                {locale === 'tr' ? 'İletişim' : 'Contact'}
-              </h3>
+              <h3 className="footer__heading">{locale === 'tr' ? 'İletişim' : 'Contact'}</h3>
               <ul className="footer__list">
                 {visibleConversion.map((link) => (
                   <li key={link.href}>
@@ -94,9 +88,7 @@ export async function Footer({ locale }: FooterProps) {
 
           {visibleLegal.length > 0 && (
             <div className="footer__group">
-              <h3 className="footer__heading">
-                {locale === 'tr' ? 'Yasal' : 'Legal'}
-              </h3>
+              <h3 className="footer__heading">{locale === 'tr' ? 'Yasal' : 'Legal'}</h3>
               <ul className="footer__list">
                 {visibleLegal.map((link) => (
                   <li key={link.href}>

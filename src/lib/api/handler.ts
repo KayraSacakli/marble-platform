@@ -15,7 +15,7 @@ export type RouteContext<P = Record<string, string>> = {
 export type RouteHandler<T = unknown, P = Record<string, string>> = (
   request: NextRequest,
   context: RouteContext<P>,
-  ctx: RequestContext
+  ctx: RequestContext,
 ) => Promise<T>;
 
 export type HandledResponse = NextResponse | Response;
@@ -30,9 +30,10 @@ export type HandledResponse = NextResponse | Response;
 // - Standardized error responses
 // ============================================================
 
-export function createApiHandler<T = HandledResponse, P extends Record<string, string> = Record<string, string>>(
-  handler: RouteHandler<T, P>
-) {
+export function createApiHandler<
+  T = HandledResponse,
+  P extends Record<string, string> = Record<string, string>,
+>(handler: RouteHandler<T, P>) {
   return async (request: NextRequest, context: RouteContext<P>): Promise<NextResponse> => {
     const requestId = generateRequestId();
 
@@ -52,7 +53,10 @@ export function createApiHandler<T = HandledResponse, P extends Record<string, s
         return result as unknown as NextResponse;
       }
 
-      return NextResponse.json({ data: result }, { status: 200, headers: { 'x-request-id': requestId } });
+      return NextResponse.json(
+        { data: result },
+        { status: 200, headers: { 'x-request-id': requestId } },
+      );
     } catch (error) {
       if (isAppError(error)) {
         return createErrorResponse(error, requestId);

@@ -10,7 +10,21 @@ import { WorkflowPanel } from '../../_components/WorkflowPanel';
 export const dynamic = 'force-dynamic';
 
 function toFormValues(p: Awaited<ReturnType<typeof getAdminProduct>>): ProductFormValues {
-  const pick = (v: { slug: string; name: string | null; description: string | null; tagline: string | null; seoTitle: string | null; seoDescription: string | null; seoCanonical: string | null; seoRobots: string | null; isFeatured: boolean; featuredOrder: number | null; displayOrder: number | null } | null) => ({
+  const pick = (
+    v: {
+      slug: string;
+      name: string | null;
+      description: string | null;
+      tagline: string | null;
+      seoTitle: string | null;
+      seoDescription: string | null;
+      seoCanonical: string | null;
+      seoRobots: string | null;
+      isFeatured: boolean;
+      featuredOrder: number | null;
+      displayOrder: number | null;
+    } | null,
+  ) => ({
     slug: v?.slug ?? '',
     name: v?.name ?? '',
     description: v?.description ?? '',
@@ -35,7 +49,11 @@ function toFormValues(p: Awaited<ReturnType<typeof getAdminProduct>>): ProductFo
   };
 }
 
-export default async function EditAdminProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditAdminProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   try {
     await requireAdminSession();
   } catch {
@@ -50,7 +68,14 @@ export default async function EditAdminProductPage({ params }: { params: Promise
   }
   const title = product.tr?.name ?? product.en?.name ?? id;
   return (
-    <main style={{ maxWidth: 760, margin: '2rem auto', padding: '0 1.5rem', fontFamily: 'system-ui, sans-serif' }}>
+    <main
+      style={{
+        maxWidth: 760,
+        margin: '2rem auto',
+        padding: '0 1.5rem',
+        fontFamily: 'system-ui, sans-serif',
+      }}
+    >
       <p>
         <Link href="/admin/products">← Products</Link>
       </p>

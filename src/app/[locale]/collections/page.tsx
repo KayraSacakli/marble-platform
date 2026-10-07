@@ -15,7 +15,11 @@ type PageProps = {
   searchParams: Promise<{ page?: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -35,7 +39,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },
-    ...gatedMetadata(locale, '/collections', sectionLocales(await getSeoAvailability(), 'collections')),
+    ...gatedMetadata(
+      locale,
+      '/collections',
+      sectionLocales(await getSeoAvailability(), 'collections'),
+    ),
   };
 }
 
@@ -72,13 +80,15 @@ export default async function CollectionsPage({ params, searchParams }: PageProp
         <div className="collection-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Malzeme Koleksiyonları' : 'Material Collections'}
           </span>
-          <h1 className="text-h1">
-            {locale === 'tr' ? 'Koleksiyonlar' : 'Collections'}
-          </h1>
+          <h1 className="text-h1">{locale === 'tr' ? 'Koleksiyonlar' : 'Collections'}</h1>
           <p className="collection-page__intro">
             {locale === 'tr'
               ? 'Her koleksiyon, benzersiz bir taş ailesini ve malzeme karakterini temsil eder.'

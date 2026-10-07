@@ -24,10 +24,13 @@ function publicBaseUrl(): string {
 }
 
 export async function getSeoAvailability(): Promise<SeoAvailability> {
-  const response = await fetch(`${publicBaseUrl()}/api/v1/public/${DEFAULT_LOCALE}/seo/availability`, {
-    headers: { Accept: 'application/json' },
-    next: { revalidate: AVAILABILITY_REVALIDATE_SECONDS },
-  });
+  const response = await fetch(
+    `${publicBaseUrl()}/api/v1/public/${DEFAULT_LOCALE}/seo/availability`,
+    {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: AVAILABILITY_REVALIDATE_SECONDS },
+    },
+  );
 
   if (!response.ok) {
     throw new Error(`Unable to load SEO availability (HTTP ${response.status}).`);
@@ -61,7 +64,11 @@ export function anyContentLocales(availability: SeoAvailability): Locale[] {
  * `alternates` (+ `robots` for locales without content) for a page whose
  * content availability was resolved per locale.
  */
-export function gatedMetadata(locale: string, path: string, contentLocales: readonly Locale[]): Metadata {
+export function gatedMetadata(
+  locale: string,
+  path: string,
+  contentLocales: readonly Locale[],
+): Metadata {
   const alternates = buildPageAlternates(locale, path, contentLocales);
   if (!isSeoLocale(locale) || contentLocales.includes(locale as Locale)) {
     return { alternates };

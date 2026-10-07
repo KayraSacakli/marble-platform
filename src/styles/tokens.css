@@ -5,33 +5,33 @@
 
 :root {
   /* ---- Colors: Backgrounds ---- */
-  --color-bg-primary: #F5F0EB;
-  --color-bg-secondary: #EDE7DF;
-  --color-bg-tertiary: #E5DDD3;
-  --color-bg-dark: #2C2C2C;
-  --color-bg-darker: #1A1A1A;
-  --color-bg-white: #FFFFFF;
+  --color-bg-primary: #f5f0eb;
+  --color-bg-secondary: #ede7df;
+  --color-bg-tertiary: #e5ddd3;
+  --color-bg-dark: #2c2c2c;
+  --color-bg-darker: #1a1a1a;
+  --color-bg-white: #ffffff;
 
   /* ---- Colors: Text ---- */
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #5A5A5A;
-  --color-text-tertiary: #8A8078;
-  --color-text-inverse: #F5F0EB;
-  --color-text-on-dark: #D4CFC9;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5a5a5a;
+  --color-text-tertiary: #8a8078;
+  --color-text-inverse: #f5f0eb;
+  --color-text-on-dark: #d4cfc9;
 
   /* ---- Colors: Borders ---- */
-  --color-border-subtle: #D9D2CA;
-  --color-border-medium: #C4BAA9;
+  --color-border-subtle: #d9d2ca;
+  --color-border-medium: #c4baa9;
 
   /* ---- Colors: Accent ---- */
-  --color-accent: #8B7355;
-  --color-accent-hover: #6B5740;
-  --color-accent-subtle: #C4B49A;
+  --color-accent: #8b7355;
+  --color-accent-hover: #6b5740;
+  --color-accent-subtle: #c4b49a;
 
   /* ---- Colors: State ---- */
-  --color-error: #B44A4A;
-  --color-success: #4A7A4A;
-  --color-warning: #8B7355;
+  --color-error: #b44a4a;
+  --color-success: #4a7a4a;
+  --color-warning: #8b7355;
 
   /* ---- Colors: Overlay ---- */
   --color-surface-overlay: rgba(0, 0, 0, 0.6);

@@ -62,7 +62,7 @@ export function RelationManager({
         items.map((p: { id: string; tr?: { name?: string }; en?: { name?: string } }) => ({
           id: p.id,
           name: p.tr?.name ?? p.en?.name ?? p.id,
-        }))
+        })),
       );
     } catch {
       setError('Failed to load products.');
@@ -113,7 +113,9 @@ export function RelationManager({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`${base}/${relationPath}?${idField}=${productId}`, { method: 'DELETE' });
+      const res = await fetch(`${base}/${relationPath}?${idField}=${productId}`, {
+        method: 'DELETE',
+      });
       if (!res.ok) {
         setError('Detach failed.');
         return;
@@ -132,15 +134,28 @@ export function RelationManager({
     <section style={box}>
       <h2>{title}</h2>
       {loading && <p>Loading…</p>}
-      {error && <p role="alert" style={{ color: '#b00020' }}>{error}</p>}
-      {notice && <p role="status" style={{ color: '#0a7d2c' }}>{notice}</p>}
+      {error && (
+        <p role="alert" style={{ color: '#b00020' }}>
+          {error}
+        </p>
+      )}
+      {notice && (
+        <p role="status" style={{ color: '#0a7d2c' }}>
+          {notice}
+        </p>
+      )}
       {!loading && attached.length === 0 && <p>No products attached.</p>}
       {attached.length > 0 && (
         <ul>
           {attached.map((a) => (
             <li key={a.id}>
               {a.trName ?? a.enName ?? a.id} {a.trSlug && <code>{a.trSlug}</code>}{' '}
-              <button type="button" onClick={() => onDetach(a.id, a.trName ?? a.enName ?? a.id)} disabled={busy} style={{ cursor: 'pointer' }}>
+              <button
+                type="button"
+                onClick={() => onDetach(a.id, a.trName ?? a.enName ?? a.id)}
+                disabled={busy}
+                style={{ cursor: 'pointer' }}
+              >
                 Detach
               </button>
             </li>
@@ -148,7 +163,11 @@ export function RelationManager({
         </ul>
       )}
       <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-        <select value={selected} onChange={(e) => setSelected(e.target.value)} style={{ padding: '0.5rem' }}>
+        <select
+          value={selected}
+          onChange={(e) => setSelected(e.target.value)}
+          style={{ padding: '0.5rem' }}
+        >
           <option value="">Select a product…</option>
           {available.map((o) => (
             <option key={o.id} value={o.id}>
@@ -156,7 +175,12 @@ export function RelationManager({
             </option>
           ))}
         </select>
-        <button type="button" onClick={onAttach} disabled={busy || !selected} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+        <button
+          type="button"
+          onClick={onAttach}
+          disabled={busy || !selected}
+          style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+        >
           Attach
         </button>
       </div>

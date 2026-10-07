@@ -67,27 +67,47 @@ describe('ErrorMessage', () => {
 
 describe('Field', () => {
   it('renders children', () => {
-    render(<Field name="test"><input /></Field>);
+    render(
+      <Field name="test">
+        <input />
+      </Field>,
+    );
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('renders label when provided', () => {
-    render(<Field name="test" label="Email"><input /></Field>);
+    render(
+      <Field name="test" label="Email">
+        <input />
+      </Field>,
+    );
     expect(screen.getByText('Email')).toBeInTheDocument();
   });
 
   it('renders helper text when provided', () => {
-    render(<Field name="test" helperText="Enter email"><input /></Field>);
+    render(
+      <Field name="test" helperText="Enter email">
+        <input />
+      </Field>,
+    );
     expect(screen.getByText('Enter email')).toBeInTheDocument();
   });
 
   it('renders error when provided', () => {
-    render(<Field name="test" error="Required"><input /></Field>);
+    render(
+      <Field name="test" error="Required">
+        <input />
+      </Field>,
+    );
     expect(screen.getByText('Required')).toBeInTheDocument();
   });
 
   it('hides helper text when error is shown', () => {
-    render(<Field name="test" helperText="Help" error="Error"><input /></Field>);
+    render(
+      <Field name="test" helperText="Help" error="Error">
+        <input />
+      </Field>,
+    );
     expect(screen.queryByText('Help')).not.toBeInTheDocument();
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
@@ -129,12 +149,20 @@ describe('Textarea', () => {
 
 describe('Select', () => {
   it('renders as combobox', () => {
-    render(<Select><option>A</option></Select>);
+    render(
+      <Select>
+        <option>A</option>
+      </Select>,
+    );
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   it('sets aria-invalid when error is true', () => {
-    render(<Select error><option>A</option></Select>);
+    render(
+      <Select error>
+        <option>A</option>
+      </Select>,
+    );
     expect(screen.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
   });
 });

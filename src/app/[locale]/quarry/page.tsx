@@ -14,7 +14,11 @@ type PageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
@@ -31,7 +35,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         description,
         url: `${SITE_URL}/${locale}/quarry`,
         type: 'website',
-        images: quarry.coverImage ? [{ url: quarry.coverImage.src, alt: quarry.coverImage.alt, width: quarry.coverImage.width, height: quarry.coverImage.height }] : [],
+        images: quarry.coverImage
+          ? [
+              {
+                url: quarry.coverImage.src,
+                alt: quarry.coverImage.alt,
+                width: quarry.coverImage.width,
+                height: quarry.coverImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...gatedMetadata(locale, '/quarry', companyLocales(await getSeoAvailability(), 'quarry')),
@@ -74,14 +87,16 @@ export default async function QuarryPage({ params }: PageProps) {
         <div className="company-page__header">
           <span
             className="text-label"
-            style={{ color: 'var(--color-text-secondary)', display: 'block', marginBottom: 'var(--space-3)' }}
+            style={{
+              color: 'var(--color-text-secondary)',
+              display: 'block',
+              marginBottom: 'var(--space-3)',
+            }}
           >
             {locale === 'tr' ? 'Doğal Kaynağımız' : 'Our Natural Source'}
           </span>
           <h1 className="text-h1">{quarry.name}</h1>
-          {quarry.description && (
-            <p className="company-page__intro">{quarry.description}</p>
-          )}
+          {quarry.description && <p className="company-page__intro">{quarry.description}</p>}
         </div>
 
         <div className="company-hero">
@@ -93,11 +108,7 @@ export default async function QuarryPage({ params }: PageProps) {
 
           {quarry.coverImage && (
             <div className="company-hero__media">
-              <Media
-                src={quarry.coverImage.src}
-                alt={quarry.coverImage.alt}
-                loading="eager"
-              />
+              <Media src={quarry.coverImage.src} alt={quarry.coverImage.alt} loading="eager" />
             </div>
           )}
         </div>

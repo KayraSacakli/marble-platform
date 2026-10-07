@@ -16,7 +16,11 @@ type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
 
@@ -33,7 +37,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         description,
         url: `${SITE_URL}/${locale}/products/${product.slug}`,
         type: 'website',
-        images: product.primaryImage ? [{ url: product.primaryImage.src, alt: product.primaryImage.alt, width: product.primaryImage.width, height: product.primaryImage.height }] : [],
+        images: product.primaryImage
+          ? [
+              {
+                url: product.primaryImage.src,
+                alt: product.primaryImage.alt,
+                width: product.primaryImage.width,
+                height: product.primaryImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...metadataFromSeoData(product.seo),
@@ -91,12 +104,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
           <div className="product-hero__info">
             <h1 className="product-hero__name">{product.name}</h1>
 
-            {product.tagline && (
-              <p className="product-hero__tagline">{product.tagline}</p>
-            )}
+            {product.tagline && <p className="product-hero__tagline">{product.tagline}</p>}
 
             <div className="product-hero__cta">
-              <a href={`/${locale}/quote?product=${product.quoteContextIdentifier}`} className="button button--primary button--lg">
+              <a
+                href={`/${locale}/quote?product=${product.quoteContextIdentifier}`}
+                className="button button--primary button--lg"
+              >
                 {locale === 'tr' ? 'Teklif İste' : 'Request a Quote'}
               </a>
             </div>
@@ -140,14 +154,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         <section className="product-quote-cta">
           <h2 className="product-quote-cta__heading">
-            {locale === 'tr' ? 'Bu Ürün Hakkında Konuşalım' : 'Let\'s Discuss This Product'}
+            {locale === 'tr' ? 'Bu Ürün Hakkında Konuşalım' : "Let's Discuss This Product"}
           </h2>
           <p className="product-quote-cta__message">
             {locale === 'tr'
               ? 'Projeniz için doğru malzemeyi seçmenize yardımcı olalım.'
               : 'Let us help you choose the right material for your project.'}
           </p>
-          <a href={`/${locale}/quote?product=${product.quoteContextIdentifier}`} className="button button--primary button--lg">
+          <a
+            href={`/${locale}/quote?product=${product.quoteContextIdentifier}`}
+            className="button button--primary button--lg"
+          >
             {locale === 'tr' ? 'Teklif İste' : 'Request a Quote'}
           </a>
         </section>

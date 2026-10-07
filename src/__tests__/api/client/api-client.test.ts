@@ -38,9 +38,7 @@ describe('ApiClient', () => {
     });
 
     it('throws for invalid locale', async () => {
-      await expect(
-        client.get('xx' as never, '/test')
-      ).rejects.toThrow('Invalid locale');
+      await expect(client.get('xx' as never, '/test')).rejects.toThrow('Invalid locale');
     });
   });
 
@@ -54,7 +52,7 @@ describe('ApiClient', () => {
       await client.get('tr', '/products');
       expect(fetchSpy).toHaveBeenCalledWith(
         'http://localhost:3000/api/v1/public/tr/products',
-        expect.objectContaining({ method: 'GET' })
+        expect.objectContaining({ method: 'GET' }),
       );
     });
 
@@ -67,7 +65,7 @@ describe('ApiClient', () => {
       await client.get('tr', '/products', { page: 2, pageSize: 12 });
       expect(fetchSpy).toHaveBeenCalledWith(
         'http://localhost:3000/api/v1/public/tr/products?page=2&pageSize=12',
-        expect.anything()
+        expect.anything(),
       );
     });
 
@@ -80,7 +78,7 @@ describe('ApiClient', () => {
       await client.get('tr', '/products', { page: 1, pageSize: undefined });
       expect(fetchSpy).toHaveBeenCalledWith(
         'http://localhost:3000/api/v1/public/tr/products?page=1',
-        expect.anything()
+        expect.anything(),
       );
     });
   });
@@ -168,7 +166,7 @@ describe('ApiClient', () => {
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify({ name: 'Test' }),
-        })
+        }),
       );
     });
   });

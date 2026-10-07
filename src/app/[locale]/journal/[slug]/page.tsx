@@ -15,7 +15,11 @@ type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
 
@@ -33,7 +37,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         url: `${SITE_URL}/${locale}/journal/${article.slug}`,
         type: 'article',
         publishedTime: article.publicationDate,
-        images: article.coverImage ? [{ url: article.coverImage.src, alt: article.coverImage.alt, width: article.coverImage.width, height: article.coverImage.height }] : [],
+        images: article.coverImage
+          ? [
+              {
+                url: article.coverImage.src,
+                alt: article.coverImage.alt,
+                width: article.coverImage.width,
+                height: article.coverImage.height,
+              },
+            ]
+          : [],
       },
       twitter: { card: 'summary_large_image', title, description },
       ...metadataFromSeoData(article.seo),
@@ -88,32 +101,27 @@ export default async function JournalDetailPage({ params }: PageProps) {
             <div className="journal-article__meta">
               {article.publicationDate && (
                 <time className="journal-article__date" dateTime={article.publicationDate}>
-                  {new Date(article.publicationDate).toLocaleDateString(locale === 'tr' ? 'tr-TR' : 'en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
+                  {new Date(article.publicationDate).toLocaleDateString(
+                    locale === 'tr' ? 'tr-TR' : 'en-US',
+                    {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    },
+                  )}
                 </time>
               )}
-              {article.author && (
-                <span className="journal-article__author">{article.author}</span>
-              )}
+              {article.author && <span className="journal-article__author">{article.author}</span>}
             </div>
 
             <h1 className="journal-article__title">{article.title}</h1>
 
-            {article.summary && (
-              <p className="journal-article__summary">{article.summary}</p>
-            )}
+            {article.summary && <p className="journal-article__summary">{article.summary}</p>}
           </header>
 
           {article.coverImage && (
             <div className="journal-article__hero">
-              <Media
-                src={article.coverImage.src}
-                alt={article.coverImage.alt}
-                loading="eager"
-              />
+              <Media src={article.coverImage.src} alt={article.coverImage.alt} loading="eager" />
             </div>
           )}
 
@@ -131,12 +139,12 @@ export default async function JournalDetailPage({ params }: PageProps) {
               </h2>
               <div className="collection-grid">
                 {article.relatedProducts.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  priority={index < 3}
-                  locale={locale}
-                />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    priority={index < 3}
+                    locale={locale}
+                  />
                 ))}
               </div>
             </section>
