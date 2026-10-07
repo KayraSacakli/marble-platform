@@ -1,6 +1,6 @@
 # SESSION HANDOFF — marble-platform
 
-Generated: 2026-10-01. Last updated: 2026-10-06 (Phase 18D-6 final sweep). Source of truth: repository + live git/server state at generation time.
+Generated: 2026-10-01. Last updated: 2026-10-07 (Phase 19A close). Source of truth: repository + live git/server state at generation time.
 
 ---
 
@@ -9,8 +9,8 @@ Generated: 2026-10-01. Last updated: 2026-10-06 (Phase 18D-6 final sweep). Sourc
 - **Purpose**: Marble/stone manufacturer showcase site with a full CMS administration layer. Public marketing pages (products, collections, applications, projects, journal, company pages) backed by a public JSON API (`/api/v1/public/{locale}/...`), plus authenticated admin CRUD (`/admin`, `/api/v1/admin/...`).
 - **Stack**: Next.js 16.3.5 (App Router, Turbopack), React 19.2.8, TypeScript ~5, Prisma 6.19.3 + PostgreSQL (`localhost:5432/marble_platform_dev`), Vitest 5.0.1, ESLint. Note: this Next.js version has breaking changes vs training data — read `node_modules/next/dist/docs/` before writing Next-specific code (see `AGENTS.md`).
 - **Branch**: `master` (only branch worked on).
-- **HEAD**: `f3831084245293b59bc83a83ed64712a08b87321` — `feat(admin): complete CMS administration and publishing workflow`.
-- **Phase status**: Phase 17 CLOSED (`f383108`). **PHASE 18: CLOSED / PASS** — every sub-phase 18A, 18B, 18C, 18D-1, 18D-2, 18D-3, 18D-4, 18D-5, 18D-6 CLOSED (PASS). See §4, §10–§14. Checkpoint commit `d0b432c` (18A–18D-5) already on `origin/master`; the 18D-6 closing commit is the docs-only commit containing this handoff (hash = `git log -1`, reported in the closing session report). Next: **Phase 19 not defined — nothing pending in Phase 18.**
+- **HEAD**: `6f56a88` — `chore: remove accidentally committed format log` (pre-close state; the Phase 19A closing commit is `git log -1` after this docs update).
+- **Phase status**: Phase 17 CLOSED (`f383108`). Phase 18 CLOSED / PASS (§4, §10–§14). **PHASE 19A: CLOSED / PASS** — 7-locale SEO gates, content-gated sitemap/hreflang, list pagination, admin 7-locale validation + `seoRobots`, locale-prefixed internal links and the detail canonical double-locale fix (§15). Next: **Phase 19B (not yet defined).**
 
 ---
 
@@ -411,14 +411,66 @@ Served `/tr/products/demo-dark-stone` HTML: `product-hero__thumbnails` container
 
 ---
 
+## 15. PHASE 19A — 7-LOCALE SEO GATES + CANONICAL FIX (CLOSED / PASS, 2026-10-07)
+
+Scope: content-driven locale SEO (index/hreflang/sitemap per locale), list pagination, admin 7-locale + `seoRobots` plumbing, locale-prefixed internal links, and the detail-page canonical double-locale fix. No feature work, no 404/fallback contract change.
+
+### 15.1 What changed
+
+- **7-locale SEO gate**: `SEO_LOCALES = SUPPORTED_LOCALES` (`src/lib/seo/constants.ts`); `buildPageAlternates(locale, path, contentLocales)` + `preferredContentLocale()`; new `src/types/seo.ts` (`SeoAvailability`), `src/lib/seo/gates.ts` (`getSeoAvailability`, `gatedMetadata`, `metadataFromSeoData`, `sectionLocales`, `companyLocales`, `anyContentLocales`), new public endpoint `GET /api/v1/public/{locale}/seo/availability` served from `ContentRepository.seoAvailability()` (single pass over ACTIVE published variants).
+- **Gates wired**: 16 public pages use `gatedMetadata()`; the 5 detail pages use `metadataFromSeoData()`; `src/app/sitemap.ts` builds static + detail URLs only for locales that actually have content; `/quote` is `noindex` in every locale.
+- **List pagination**: `parsePagination()` in `src/lib/api/validation.ts`, `DEFAULT_PAGINATION` in the content service, `Pagination` UI on the 5 list pages; public list routes accept `page`/`pageSize` (invalid values → 400 instead of silent coercion).
+- **Admin 7-locale + `seoRobots`**: create/update schemas accept es/fr/de/it/ar (tr/en required on create), `localeSchema` replaces hardcoded `tr|en` enums in unpublish/revisions/taxonomy routes, workflow services typed on `Locale`, admin forms gained a SEO robots select. `seoRobots` already exists in `prisma/schema.prisma` (init migration) — **no migration**.
+- **Locale-prefixed internal links**: Card/Grid components take a `locale` prop; product → quote links use `/{locale}/quote`; footer language switcher lists every supported locale.
+- **Docs**: 8 spec files corrected (`marbles` → `products` URL segment, link graph, API/CMS contract tables).
+
+### 15.2 Canonical double-locale fix (the one post-smoke bug)
+
+- **Symptom**: detail canonical/hreflang rendered `/tr/tr/products/{slug}` and `/en/en/products/{slug}`; homepage API canonical `/en/en`.
+- **Root cause**: `buildCanonical(locale, path)` = `SITE_URL/{locale}{path}` while callers already passed locale-prefixed paths (`src/services/content.ts:410,463,522,583,648` → `/${locale}/products/${slug}`; `:778,787-789` → `/${locale}`), so the locale was applied twice. Phase 19A's switch of detail pages from `buildPageAlternates()` to `metadataFromSeoData()` (which reads `seo.canonical`) made the pre-existing bug visible in HTML.
+- **Fix** (`src/lib/api/seo.ts` only): `buildCanonical()` strips a leading `/{locale}` (exact match or `/{locale}/…` prefix) before prepending the locale, so it is added **exactly once** for every caller. No other file touched.
+- **Verified**: `/tr/products/demo-dark-stone` canonical `…/tr/products/demo-dark-stone`, hreflang `tr/en/x-default` correct; `/en/...` likewise; API `seo.canonical` and homepage API canonical correct; no `/tr/tr`, `/en/en`, `/es/es` anywhere in HTML or sitemap.
+
+### 15.3 Behaviour matrix (unchanged contracts, verified on the final build)
+
+| Class | Locales | Status | robots | canonical | hreflang / sitemap |
+|---|---|---|---|---|---|
+| Home + 5 list pages + contact | tr, en | 200, real content | index (no robots meta) | self | advertised, in sitemap |
+| Home + 5 list pages + contact | es, fr, de, it, ar | 200, **English shell + empty state, 0 cards** (fallback body, no content substitution) | **`noindex, follow`** | falls back to a locale that has content (`/tr`, `/tr/products`, …) | **excluded** from hreflang and sitemap |
+| Company pages `about/factory/quarry` + detail `[slug]` | es, fr, de, it, ar | **404** | `noindex` (404 page) | n/a | **excluded** |
+| `/quote` | all | 200 | **`noindex, follow`** | self | never in sitemap |
+
+404 for content-less company/detail locales is the **expected, contract-compliant** behaviour — `docs/04_API_CONTRACT.md:9,164`, `docs/05_CMS_CONTRACT.md:68-70`, `docs/06_SEO_URL_ARCHITECTURE.md:42` all mandate "no implicit fallback"; the EN-fallback+noindex treatment applies only to list/home (no content substitution, English UI shell, empty sections).
+
+### 15.4 Verification (all PASS, 2026-10-07)
+
+| Check | Result |
+|---|---|
+| `npm test` | **845/845 PASS (62 files)** — run on the final HEAD |
+| `npm run typecheck` | **EXIT=0** |
+| `npm run lint` | **EXIT=0** — 0 errors, 2 pre-existing `_locale` warnings (`src/repositories/content.ts:328,541`) |
+| `npm run build` (clean `.next`, API copy on :3000, `NEXT_PUBLIC_SITE_URL=http://localhost:3000` + valid `NEXTAUTH_SECRET`) | **EXIT=0**, `BUILD_ID=rFNAy7NoIQg_qAmX21pRQ` |
+| Runtime smoke (`next start` :3000, `curl --max-time 8`) | `/tr/products/demo-dark-stone` 200 canonical exact ✓; `/en/products/demo-dark-stone` 200 canonical exact ✓; `/es/products/demo-dark-stone` **404** ✓; `/es/about` `/es/factory` `/es/quarry` **404** ✓; `/es` 200 `noindex, follow` canonical `/tr` ✓; `/es/products` 200 `noindex, follow` canonical `/tr/products` ✓; `/tr/quote` `noindex, follow` ✓; **no double-locale** in any page |
+| Sitemap | **56 URLs = tr 28 + en 28**, duplicate **0**, double-locale **0**, es/fr/de/it/ar **0**, `/quote` absent |
+| Pagination | API `pageSize=4`: page1 first slug `demo-dark-stone`, page2 first slug `demo-navy-stone`, `totalPages=2` ✓; default `pageSize=24` → `totalPages=1` → `?page=2` renders the empty state |
+| Internal links | only locale-less internal hrefs are `/favicon.ico` + `/apple-touch-icon.png`; `/marbles` occurrences = 0 |
+
+### 15.5 Git state at 19A close
+
+- Phase 19A code landed in `7551e50` (wip checkpoint) + `3f34fdb` (prettier baseline, carries the `buildCanonical` fix) + `107efd9` + `6f56a88`, all pushed.
+- This docs update is the Phase 19A closing commit: `feat(seo): complete phase 19A locale seo and canonical fixes` (hash = `git log -1`); `HEAD == origin/master`, working tree clean.
+- At close the production `next start` server was left running on `:3000` (log `%TEMP%\opencode\p19a-close-3000.log`); temp API copy for builds lives at `%TEMP%\opencode\marble-api-copy`.
+
+---
+
 ## NEXT
 
-**Phase 18 = CLOSED / PASS.** Nothing pending inside Phase 18 — all §9 MUST (4/4), §9 SHOULD (8/8) and all 10 exit criteria are PASS, and 18A–18D-6 are closed.
+**Phase 19A = CLOSED / PASS.** 7-locale SEO gates, content-gated sitemap/hreflang, pagination, admin 7-locale plumbing, canonical fix and the 404/fallback matrix are all verified; see §15.
 
-RESUME POINT for a future session:
-1. Read this file top-to-bottom (§1 source of truth) and `git log -1`.
-2. No Phase 18 work remains. A future **Phase 19 is not yet defined** — candidates already parked in §9 DEFER (distributed rate limiting, structured logging, HTML sanitizer, ISR/CDN strategy, `middleware`→`proxy` rename, CORS) require an explicit new scope decision before any work.
-3. Temp servers are closed (ports 3000/3100 free); restart the temp API copy from `%TEMP%\opencode\marble-api-copy` if a build-time data source is needed.
+RESUME POINT for a future session (Phase 19B):
+1. Read this file top-to-bottom (§1 source of truth, §15 for 19A) and `git log -1`.
+2. **Phase 19B is not yet defined.** Candidates parked in §9 DEFER (distributed rate limiting, structured logging, HTML sanitizer, ISR/CDN strategy, `middleware`→`proxy` rename, CORS) plus Playwright MCP (§ TOOLING NOTE) need an explicit scope decision before work starts.
+3. Build-time data source: restart the temp API copy from `%TEMP%\opencode\marble-api-copy` on `:3000` before `npm run build`, and set `NEXT_PUBLIC_SITE_URL` + a non-placeholder `NEXTAUTH_SECRET` (18D-2 fail-fast).
 
 ---
 
