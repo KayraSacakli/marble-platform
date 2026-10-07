@@ -1,6 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": ["docs/00_PROJECT_RULES.md"],
+  "lsp": true,
+  "formatter": {
+    "prettier": {
+      "extensions": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json", ".css"]
+    }
+  },
   "permission": {
     "edit": {
       "*": "allow",
