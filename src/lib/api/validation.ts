@@ -248,6 +248,22 @@ export type AdminCollectionUpdateInput = z.infer<typeof adminCollectionUpdateSch
 export type AdminApplicationCreateInput = z.infer<typeof adminApplicationCreateSchema>;
 export type AdminApplicationUpdateInput = z.infer<typeof adminApplicationUpdateSchema>;
 
+// Company content (ABOUT / QUARRY / FACTORY) shares the locale variant shape.
+export const COMPANY_CONTENT_KINDS = ['ABOUT', 'QUARRY', 'FACTORY'] as const;
+export const companyContentKindSchema = z.enum(COMPANY_CONTENT_KINDS);
+
+export const adminCompanyContentCreateSchema = z.object({
+  ...createLocaleVariantSchemas,
+});
+
+export const adminCompanyContentUpdateSchema = z.object({
+  ...updateLocaleVariantSchemas,
+});
+
+export type CompanyContentKind = z.infer<typeof companyContentKindSchema>;
+export type AdminCompanyContentCreateInput = z.infer<typeof adminCompanyContentCreateSchema>;
+export type AdminCompanyContentUpdateInput = z.infer<typeof adminCompanyContentUpdateSchema>;
+
 export const adminRelationAttachSchema = z.object({
   productId: z.string().uuid('Invalid product id.'),
 });

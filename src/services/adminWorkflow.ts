@@ -114,7 +114,7 @@ const revisionInclude = {
 
 /** Content types manageable through the admin workflow. */
 export type ManagedContentType =
-  'PRODUCT' | 'COLLECTION' | 'APPLICATION' | 'PROJECT' | 'JOURNAL_ARTICLE';
+  'PRODUCT' | 'COLLECTION' | 'APPLICATION' | 'PROJECT' | 'JOURNAL_ARTICLE' | 'COMPANY_CONTENT';
 
 async function findRevisionOrThrow(id: string, allowedTypes: ManagedContentType[] = ['PRODUCT']) {
   const revision = await prisma.contentRevision.findUnique({

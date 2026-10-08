@@ -1,0 +1,61 @@
+{
+  "mode": "dry-run",
+  "file": "D:\\marble-platform\\content-import\\products.json",
+  "startedAt": "2026-10-08T08:07:51.365Z",
+  "finishedAt": "2026-10-08T08:07:51.374Z",
+  "counts": {
+    "total": 6,
+    "published": 6
+  },
+  "globalErrors": [],
+  "entries": [
+    {
+      "type": "companyContent",
+      "key": "ABOUT",
+      "status": "PUBLISHED",
+      "errors": [],
+      "warnings": [],
+      "steps": []
+    },
+    {
+      "type": "companyContent",
+      "key": "QUARRY",
+      "status": "PUBLISHED",
+      "errors": [],
+      "warnings": [],
+      "steps": []
+    },
+    {
+      "type": "companyContent",
+      "key": "FACTORY",
+      "status": "PUBLISHED",
+      "errors": [],
+      "warnings": [],
+      "steps": []
+    },
+    {
+      "type": "collection",
+      "key": "ornek-koleksiyon",
+      "status": "PUBLISHED",
+      "errors": [],
+      "warnings": [],
+      "steps": []
+    },
+    {
+      "type": "application",
+      "key": "ornek-uygulama",
+      "status": "PUBLISHED",
+      "errors": [],
+      "warnings": [],
+      "steps": []
+    },
+    {
+      "type": "product",
+      "key": "ornek-mermer",
+      "status": "PUBLISHED",
+      "errors": [],
+      "warnings": [],
+      "steps": []
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "_instructions": "Phase 19B import sablonu. KULLANIM: (1) Bu dosyadaki TUM degerler acikca ORNEK/placeholder iceriktir — gercek onayli iceriginizle degistirin. (2) Dry-run (cevrimdisi dogrulama): npm run import:content . (3) Gercek import (calisan `npm run dev` + admin hesabi gerekir): npm run import:content -- --execute . Ortam degiskenleri: IMPORT_ADMIN_EMAIL, IMPORT_ADMIN_PASSWORD, IMPORT_BASE_URL. Medya dosyalari bu dosyanin bulundugu dizine goreli yollardir (orn: media/ornek-gorsel.png); PNG/JPEG/GIF/WebP/AVIF, en fazla 5 MB. Kurallar: her urun icin en az 1 PRIMARY medya + TR ve EN alt metni zorunludur; slug'lar normalize edilir, AYNI dosya icinde slug cakismasi hata verir ve sessizce cozulmez; yayin adimlari mevcut admin workflow'unu (submit → approve → publish) kullanir.",
+  "companyContent": [
+    {
+      "kind": "ABOUT",
+      "tr": {
+        "slug": "ornek-hakkimizda",
+        "name": "Hakkımızda (Örnek)",
+        "description": "Örnek/placeholder kurumsal metin. Yayinlanmadan önce gerçek ve onaylı metninizle değiştirin.",
+        "seoTitle": "Hakkımızda (Örnek)",
+        "seoDescription": "Örnek placeholder açıklama."
+      },
+      "en": {
+        "slug": "sample-about",
+        "name": "About Us (Sample)",
+        "description": "Sample/placeholder company text. Replace with your real, approved copy before publishing.",
+        "seoTitle": "About Us (Sample)",
+        "seoDescription": "Sample placeholder description."
+      }
+    },
+    {
+      "kind": "QUARRY",
+      "tr": {
+        "slug": "ornek-ocak",
+        "name": "Ocağımız (Örnek)",
+        "description": "Örnek/placeholder ocak metni. Yayinlanmadan önce gerçek ve onaylı metninizle değiştirin.",
+        "seoTitle": "Ocağımız (Örnek)",
+        "seoDescription": "Örnek placeholder açıklama."
+      },
+      "en": {
+        "slug": "sample-quarry",
+        "name": "Our Quarry (Sample)",
+        "description": "Sample/placeholder quarry text. Replace with your real, approved copy before publishing.",
+        "seoTitle": "Our Quarry (Sample)",
+        "seoDescription": "Sample placeholder description."
+      }
+    },
+    {
+      "kind": "FACTORY",
+      "tr": {
+        "slug": "ornek-fabrika",
+        "name": "Fabrikamız (Örnek)",
+        "description": "Örnek/placeholder fabrika metni. Yayinlanmadan önce gerçek ve onaylı metninizle değiştirin.",
+        "seoTitle": "Fabrikamız (Örnek)",
+        "seoDescription": "Örnek placeholder açıklama."
+      },
+      "en": {
+        "slug": "sample-factory",
+        "name": "Our Factory (Sample)",
+        "description": "Sample/placeholder factory text. Replace with your real, approved copy before publishing.",
+        "seoTitle": "Our Factory (Sample)",
+        "seoDescription": "Sample placeholder description."
+      }
+    }
+  ],
+  "collections": [
+    {
+      "tr": {
+        "slug": "ornek-koleksiyon",
+        "name": "Örnek Koleksiyon",
+        "description": "Örnek/placeholder koleksiyon metni.",
+        "seoTitle": "Örnek Koleksiyon",
+        "seoDescription": "Örnek placeholder açıklama."
+      },
+      "en": {
+        "slug": "sample-collection",
+        "name": "Sample Collection",
+        "description": "Sample/placeholder collection copy.",
+        "seoTitle": "Sample Collection",
+        "seoDescription": "Sample placeholder description."
+      },
+      "media": [
+        {
+          "file": "media/ornek-gorsel.png",
+          "role": "PRIMARY",
+          "altTr": "Örnek koleksiyon görseli (yer tutucu)",
+          "altEn": "Sample collection image (placeholder)"
+        }
+      ]
+    }
+  ],
+  "applications": [
+    {
+      "tr": {
+        "slug": "ornek-uygulama",
+        "name": "Örnek Uygulama",
+        "description": "Örnek/placeholder uygulama metni.",
+        "seoTitle": "Örnek Uygulama",
+        "seoDescription": "Örnek placeholder açıklama."
+      },
+      "en": {
+        "slug": "sample-application",
+        "name": "Sample Application",
+        "description": "Sample/placeholder application copy.",
+        "seoTitle": "Sample Application",
+        "seoDescription": "Sample placeholder description."
+      },
+      "media": [
+        {
+          "file": "media/ornek-gorsel.png",
+          "role": "PRIMARY",
+          "altTr": "Örnek uygulama görseli (yer tutucu)",
+          "altEn": "Sample application image (placeholder)"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "internalIdentifier": "ORNEK-001",
+      "surfaceFinish": "Örnek yüzey bitişi",
+      "dimensions": "Örnek ölçü",
+      "format": "Örnek format",
+      "origin": "Örnek menşei",
+      "tr": {
+        "slug": "ornek-mermer",
+        "name": "Örnek Mermer",
+        "description": "Örnek/placeholder ürün metni. Yayinlanmadan önce gerçek ve onaylı ürün bilgilerinizle değiştirin.",
+        "tagline": "Örnek etiket",
+        "seoTitle": "Örnek Mermer",
+        "seoDescription": "Örnek placeholder ürün açıklaması.",
+        "seoRobots": "INDEX"
+      },
+      "en": {
+        "slug": "sample-marble",
+        "name": "Sample Marble",
+        "description": "Sample/placeholder product copy. Replace with your real, approved product information before publishing.",
+        "tagline": "Sample tagline",
+        "seoTitle": "Sample Marble",
+        "seoDescription": "Sample placeholder product description.",
+        "seoRobots": "INDEX"
+      },
+      "media": [
+        {
+          "file": "media/ornek-gorsel.png",
+          "role": "PRIMARY",
+          "altTr": "Örnek mermer ürün görseli (yer tutucu)",
+          "altEn": "Sample marble product image (placeholder)"
+        }
+      ],
+      "collections": ["ornek-koleksiyon"],
+      "applications": ["ornek-uygulama"]
+    }
+  ]
+}

@@ -8,6 +8,7 @@ const MANAGED: ManagedContentType[] = [
   'APPLICATION',
   'PROJECT',
   'JOURNAL_ARTICLE',
+  'COMPANY_CONTENT',
 ];
 
 // POST /api/v1/admin/revisions/[revId]/submit — ADMIN, EDITOR
