@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   try {
     const project = await getProject(locale, slug);
-    const title = project.name;
+    const title = project.seo?.title || project.name;
     const description = project.description || project.seo?.metaDescription;
 
     return {

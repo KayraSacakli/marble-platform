@@ -1,0 +1,185 @@
+{
+  "_instructions": "PHASE 19B — Content Owner approved commercial name registry. Her giris bir onay kaydidir: names (tr/en/canonical), istege bagli folder ipucu ve slug bilgisi, zorunlu approvedBy + approvedAt. Klasorden turetilmeyen adlar yalnizca bu registry'de onayliysa kabul edilir; govrsel profili tek basina ticari ad kaniti DEGILDIR. Slug alani bilgi amaclidir — zenginlestirme asla slug degistirmez. Baslangicta bos; girisleri Content Owner ekler. DB'ye yazmaz; npm run enrich:content ile okunur.",
+  "entries": [
+    {
+      "folder": "teos green",
+      "names": {
+        "tr": "Teos Green Mermer",
+        "en": "Teos Green Marble",
+        "canonical": "Teos Green"
+      },
+      "slug": "teos-green",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Role label, not a person's name (Content Owner identity is an OPEN DECISION in 00_PROJECT_RULES.md). Approved in session for the Teos Green featured-product import."
+    },
+    {
+      "folder": "aegean rose",
+      "names": {
+        "tr": "Aegean Rose Mermer",
+        "en": "Aegean Rose Marble",
+        "canonical": "Aegean Rose"
+      },
+      "slug": "aegean-rose",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name approved in full-catalogue import session (2026-10-15)."
+    },
+    {
+      "folder": "bumblebee",
+      "names": { "tr": "Bumblebee Mermer", "en": "Bumblebee Marble", "canonical": "Bumblebee" },
+      "slug": "bumblebee",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name approved in full-catalogue import session (2026-10-15)."
+    },
+    {
+      "folder": "calacatta green",
+      "names": {
+        "tr": "Calacatta Green Mermer",
+        "en": "Calacatta Green Marble",
+        "canonical": "Calacatta Green"
+      },
+      "slug": "calacatta-green",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name. Only an application render exists (no slab photo); PRIMARY is the render."
+    },
+    {
+      "folder": "Cappuccino",
+      "names": { "tr": "Cappuccino Mermer", "en": "Cappuccino Marble", "canonical": "Cappuccino" },
+      "slug": "cappuccino",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name approved in full-catalogue import session (2026-10-15)."
+    },
+    {
+      "folder": "ege kahve",
+      "names": { "tr": "Ege Kahve Mermer", "en": "Ege Kahve Marble", "canonical": "Ege Kahve" },
+      "slug": "ege-kahve",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name. Distinct from existing 'kahve' product (separate folder and slab photo)."
+    },
+    {
+      "folder": "glacier gray",
+      "names": {
+        "tr": "Glacier Gray Mermer",
+        "en": "Glacier Gray Marble",
+        "canonical": "Glacier Gray"
+      },
+      "slug": "glacier-gray",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder name contains Turkish dotless i (glacier gray on disk); commercial name normalized to Glacier Gray."
+    },
+    {
+      "folder": "hermes gray",
+      "names": {
+        "tr": "Hermes Gray Mermer",
+        "en": "Hermes Gray Marble",
+        "canonical": "Hermes Gray"
+      },
+      "slug": "hermes-gray",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Duplicate folder 'hermesgray' exists on disk with identical product slab (same MD5); treated as ONE product. Both renders attached as gallery."
+    },
+    {
+      "folder": "kırmızı traverten",
+      "names": { "tr": "Kırmızı Traverten", "en": "Red Travertine", "canonical": "Red Travertine" },
+      "slug": "kirmizi-traverten",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Travertine (natural stone), not marble — name intentionally omits Mermer/Marble suffix."
+    },
+    {
+      "folder": "lightemparador",
+      "names": {
+        "tr": "Light Emparador Mermer",
+        "en": "Light Emparador Marble",
+        "canonical": "Light Emparador"
+      },
+      "slug": "light-emparador",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name; commercial spelling kept as 'Emparador' per folder (not corrected to Emperador)."
+    },
+    {
+      "folder": "nero ceppo",
+      "names": { "tr": "Nero Ceppo Mermer", "en": "Nero Ceppo Marble", "canonical": "Nero Ceppo" },
+      "slug": "nero-ceppo",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name approved in full-catalogue import session (2026-10-15)."
+    },
+    {
+      "folder": "sunrise montana",
+      "names": {
+        "tr": "Sunrise Montana Mermer",
+        "en": "Sunrise Montana Marble",
+        "canonical": "Sunrise Montana"
+      },
+      "slug": "sunrise-montana",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name approved in full-catalogue import session (2026-10-15)."
+    },
+    {
+      "folder": "titanyum traverten",
+      "names": {
+        "tr": "Titanyum Traverten",
+        "en": "Titanium Travertine",
+        "canonical": "Titanium Travertine"
+      },
+      "slug": "titanyum-traverten",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Travertine (natural stone), not marble — name intentionally omits Mermer/Marble suffix."
+    },
+    {
+      "folder": "vanillabegie",
+      "names": {
+        "tr": "Vanilla Beige Mermer",
+        "en": "Vanilla Beige Marble",
+        "canonical": "Vanilla Beige"
+      },
+      "slug": "vanilla-beige",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder 'vanillabegie' read as Vanilla Beige (soft off-white slab)."
+    },
+    {
+      "folder": "volakas",
+      "names": { "tr": "Volakas Mermer", "en": "Volakas Marble", "canonical": "Volakas" },
+      "slug": "volakas",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name; two renders attached as gallery."
+    },
+    {
+      "folder": "whiteroyal",
+      "names": {
+        "tr": "White Royal Mermer",
+        "en": "White Royal Marble",
+        "canonical": "White Royal"
+      },
+      "slug": "white-royal",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder-derived name approved in full-catalogue import session (2026-10-15)."
+    },
+    {
+      "folder": "yellowıceberg",
+      "names": {
+        "tr": "Yellow Iceberg Mermer",
+        "en": "Yellow Iceberg Marble",
+        "canonical": "Yellow Iceberg"
+      },
+      "slug": "yellow-iceberg",
+      "approvedBy": "Content Owner",
+      "approvedAt": "2026-10-15",
+      "notes": "Folder name contains Turkish dotless i. Only a facade application render exists (no slab photo); PRIMARY is the render. Distinct from existing 'iceberg' product."
+    }
+  ]
+}

@@ -1,7 +1,6 @@
 import type { Locale } from '@/types/locale';
 import type { SEOData } from '@/types/api';
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+import { SITE_NAME, SITE_URL } from '@/lib/seo/constants';
 
 /**
  * Build a self-referencing canonical URL for a locale + path.
@@ -66,7 +65,7 @@ export function buildSEOData(options: {
   alternates?: Array<{ locale: Locale; slug: string }>;
   structuredData?: Record<string, unknown>;
 }): SEOData {
-  const siteName = options.siteName || 'Premium Turkish Marble';
+  const siteName = options.siteName || SITE_NAME;
   const title = options.seoTitle || `${options.name} — ${siteName}`;
   const metaDescription = options.seoDescription || options.description || '';
   const canonical = options.seoCanonical || buildCanonical(options.locale, options.path);
@@ -100,7 +99,7 @@ export function buildListSEO(options: {
   section: string;
   siteName?: string;
 }): SEOData {
-  const siteName = options.siteName || 'Premium Turkish Marble';
+  const siteName = options.siteName || SITE_NAME;
   const title = `${options.section} — ${siteName}`;
   const canonical = buildCanonical(options.locale, `/${options.section}`);
 

@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   try {
     const collection = await getCollection(locale, slug);
-    const title = collection.name;
+    const title = collection.seo?.title || collection.name;
     const description = collection.description || collection.seo?.metaDescription;
 
     return {

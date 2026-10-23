@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_NAME, SITE_URL } from '@/lib/seo/constants';
 
 interface ProductJsonLdProps {
   name: string;
@@ -17,7 +17,7 @@ export function ProductJsonLd({ name, description, image, url }: ProductJsonLdPr
     ...(image ? { image: image.startsWith('http') ? image : `${SITE_URL}${image}` } : {}),
     brand: {
       '@type': 'Organization',
-      name: 'Premium Turkish Marble',
+      name: SITE_NAME,
     },
   };
 

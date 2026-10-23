@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/v1/public/[locale]/journal/route';
 import { GET as GET_DETAIL } from '@/app/api/v1/public/[locale]/journal/[slug]/route';
-import { callHandler, mockJournalSummary, mockJournalDetail } from './helpers';
+import { callHandler, mockMedia, mockJournalSummary, mockJournalDetail } from './helpers';
 import { NotFoundError } from '@/lib/api/errors';
 
 vi.mock('@/services/content', () => ({
@@ -33,6 +33,8 @@ describe('GET /api/v1/public/[locale]/journal', () => {
     expect(json.data.data[0].slug).toBe('test-journal-article');
     expect(json.data.data[0].title).toBe('Test Journal Article');
     expect(json.data.data[0].publicationDate).toBeDefined();
+    expect(json.data.data[0].coverImage).toBeDefined();
+    expect(json.data.data[0].coverImage.src).toBe(mockMedia.src);
   });
 
   it('returns 200 for EN locale', async () => {

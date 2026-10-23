@@ -1,6 +1,6 @@
 # SESSION HANDOFF — marble-platform
 
-Generated: 2026-10-01. Last updated: 2026-10-07 (Phase 19A close). Source of truth: repository + live git/server state at generation time.
+Generated: 2026-10-01. Last updated: 2026-10-23 (Phase 21 close). Source of truth: repository + live git/server state at generation time.
 
 ---
 
@@ -463,6 +463,146 @@ Scope: content-driven locale SEO (index/hreflang/sitemap per locale), list pagin
 
 ---
 
+## 16. 2026-10-15 — ONAYLI İÇERİK TEMİZLİĞİ + DEMO ÜRÜN SİLME (CLOSED / PASS, uncommitted)
+
+Onaylı paketler: Paket 1 (visne→Rosso Levanto + 5 ürün tr/en açıklama/SEO + 2 TR SEO kısaltma + 65 TR alt metni) ve Paket 3 (8 demo ürünün ilişkilerle silinmesi) uygulandı. Paket 2 (taslağa alma) UYGULANMADI — ayrı etki analizi bekleniyor.
+
+### Yapılanlar (hepsi psql, `C:\Users\Kayra\AppData\Local\Temp\opencode\*.sql`)
+
+- **visne → Rosso Levanto**: `ContentVariant.name` tr `Rosso Levanto Mermer` / en `Rosso Levanto Marble`; slug `visne` KORUNDU (URL yaşam döngüsü); 9/10 maddede alt metin adı da `Rosso Levanto …` yapıldı. Açıklama/SEO içerikleri görsel kanıtla (bordo-kırmızı breçia) yeniden yazıldı.
+- **5 ürün tr+en alanları**: `afyonfire`, `visne` (görsel kanıtla yeni metin), `akhisarbej`, `pietragrey`, `alexander-black` (`content-import/enrichment.full.json` + `enrichment.pending.json` metinleriyle; ad alanına DOKUNULMADI — enrichment'ın "Alexander Black Marble" ad önerisi uygulanmadı). **afyonfire/visne enrichment metinleri görselle çeliştiği için kullanılmadı.**
+- **TR SEO kısaltma**: `thunderblack` 165→121, `neuropicasso` 170→129 karakter; neuropicasso zemin/renk ifadesi görselle uyumlu hale getirildi (koyu zemin + altın/krem/beyaz damar).
+- **65 TR alt metni**: `% mermer urun gorseli`→`% ürün görseli` (37) + `% mermer render gorseli`→`% galeri görseli` (28); kalan ASCII desen 0 (EN ve demo alt metinleri etkilenmedi — yan etki 0).
+- **8 demo ürün silindi**: `ContentItem` type=PRODUCT, slug `demo-%` → CASCADE (8 ürün, 16 varyant, 16 ContentMedia, 9 ProductCollection, 13 ProductApplication, 14 RelatedProduct, 6 JournalContentReference, 6 CompanyContentReference, 2 ProjectProduct). **81 MediaAsset ve fiziksel dosyalar KORUNDU.** `QuoteRequestContext=0`, `AuditEvent` SET NULL.
+- **Kalan `demo-%` varyant = 2**: `demo-mimari-projesi` + `demo-architectural-project` (PROJECT) — bilinçli olarak silinmedi (demo proje taslağa alma BEKLETİLDİ).
+- **İkonlar** (`src/lib/site-contact.ts`, `src/components/contact/ContactBar.tsx`, `src/styles/components/contact-bar.css`): ContactBar artık HER ZAMAN görünür; `SITE_CONTACT_PHONE`/`SITE_WHATSAPP_PHONE`/`SITE_INSTAGRAM_URL` yoksa öğeler `<span aria-disabled>` (sahte `tel:`/`wa.me`/profil href'i ASLA üretilmez). `getSiteContact()` artık asla null dönmez; Instagram URL'i yalnız `https://…instagram.com…` kabul.
+
+### Doğrulama (2026-10-15, hepsi PASS)
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | EXIT=0 |
+| `npm run lint` | EXIT=0 (0 hata, 2 eski `_locale` warning) |
+| `npm run test` | **934/934 PASS (68 files)** (+3 yeni ContactBar/site-contact testi) |
+| Yedekler (silme ÖNCESİ) | `backups\marble-20261015-123402.dump` (163.471→163434 B, içerik öncesi) + `marble-20261015-125647.dump` (165.471 B, silme öncesi) |
+| Canlı smoke (:3000 dev) | `/tr` 200 + `contact-bar` görünür + wa.me/instagram/tel href=**0**; `/tr/products/visne` 200 "Rosso Levanto" ✓ / "Visne Mermer" 0; `/tr\|/en/products/demo-*` → **404**; `/sitemap.xml` demo slug **0**, `products/visne` 2 ✓; products API **37 ürün, demo 0** |
+| Alt metin canlı | `/tr/products/afyonfire` HTML'de `Afyon Fire ürün görseli` ✓, eski ASCII desen 0 |
+| Homepage API | `featured_products` bölümü YOK (servis boşken zaten atlıyor — tutarlı davranış) |
+
+### ASKIDA / SONRAKİ ADIMLAR
+
+1. **Featured üçlüsü (1. Rosso Levanto, 2. Teos Green, 3. Afyon Fire) YAPILMADI**: DB'de Teos Green'e ait HİÇBİR kayıt/medya yok (yalnız `C:\Users\Kayra\Desktop\Marble Content\Products\teos green\` altında 2 .jfif, projeye import edilmemiş). `isFeatured=true` ürün şu an 0. Karar kullanıcıya soruldu (Teos bekle / 2'li geç).
+2. **Ertelenen işler ayrı etki analizi bekliyor**: 12 gerçek ürün taslağa alma + ilişkilendirme + iletişim/alan adı bilgileri.
+3. ~~Kapsam dışı bırakılanlar~~ → **§17 ile kapatıldı**: sahte iletişim/`example.com`/`OrganizationJsonLd`/hero poster/demo proje temizlendi.
+
+### Git state
+
+- **Commit YOK, push YOK.** HEAD çalışma oturumu başında `3849732`; working tree'deki 14 modified + 21 untracked KORUNDU (önceki oturum işleri), bu oturumun yeni değişiklikleri: `src/lib/site-contact.ts`, `src/components/contact/ContactBar.tsx`, `src/styles/components/contact-bar.css`, `src/__tests__/components/ContactBar.test.tsx`, `src/__tests__/lib/site-contact.test.ts`, bu docs dosyası + veritabanı değişiklikleri.
+- `next dev` :3000 canlı — DURDURULMADI/YENİDEN BAŞLATILMADI.
+
+### 16.1 — Teos Green import + featured sırası + premium ikon barı (2026-10-15, CLOSED/PASS)
+
+- **Teos Green oluşturuldu** (`slug teos-green`, tr+en): `content-import/name-registry.json`'a `approvedBy: "Content Owner"` (rol etiketi — kimlik OPEN DECISION) + `approvedAt: 2026-10-15` girişi; yeni şablon `content-import/teos-green.json` (yalnız görsel kanıtlı metin; extension alanları/internalIdentifier boş — uydurma yok); `npm run import:content` **dry-run OK → --execute: PUBLISHED** (admin API: medya upload → create → attach → revision submit→approve→publish). Görseller: `product/teos green.jfif` → PRIMARY, `renders/teos green.jfif` → GALLERY (`.jfif` magic-byte ile `image/jpeg` olarak kabul — `sniffImageMime`); orijinal dosyalara dokunulmadı.
+- **Featured sırası**: visne=1, teos-green=2, afyonfire=3 (tr+en, `isFeatured`+`featuredOrder`), admin PATCH + revision publish üzerinden. Homepage `featured_products` bölümü geri geldi: **Rosso Levanto → Teos Green → Afyon Fire**, üç kart gerçek `/api/media/*.jpg` görselleriyle (3×200 image/jpeg).
+- **KÖK NEDEN + ONARIM (önemli operasyon notu)**: `afyonfire` tr/en varyantlarında **8 Ekim'den beri açıkta duran eski DRAFT revision** vardı; featured PATCH'i bu eski draft'a yazıldı; publish eski `materialSnapshot`'ı apply etti → 15 Ekim'de onaylanan açıklama ve name alanları bozuldu (`AFYON MERMERİ`/boş, `AFYON FİRE`/`afyonfire`). Onarım: aynı PATCH+submit→approve→publish akışıyla doğru metin/name geri yüklendi (notes alanına gerekçe yazıldı). **Ders**: published varyant PATCH'i her zaman DRAFT revision açmaz — *açıkta eski draft varsa* ona yazar; publish öncesi workflow'daki `openRevision` yaşını/snapshot'ını kontrol et.
+- **İkon barı premium pill**: `contact-bar.css` — 999px pill, uppercase label, `--shadow-md`, hover `translateY(-1px)`, WhatsApp sadece ikon/label `#128c7e` vurgusu (zemin üçü de aynı nötr), `--pending` soluk (opacity .55) + `cursor: default`; sahte link üretilmiyor (`SITE_CONTACT_PHONE`/`SITE_WHATSAPP_PHONE`/`SITE_INSTAGRAM_URL` yoksa üçü de `<span aria-disabled>`).
+- **Doğrulama (hepsi PASS)**: typecheck 0 · lint 0 hata (2 eski warning) · **934/934 test** (`enrich-content.test.ts` checked-in registry beklentisi 1 girişe güncellendi) · smoke: `/tr` 200 + featured 3 isim + 3 media URL 200; teos/afyonfire/visne detay tr/en 200 + H1 doğru + 2'şer medya; demo ürün 404; sitemap `teos-green`×2, demo 0.
+- Ek yedek: `backups\marble-20261015-141158.dump` (158.718 B, import öncesi).
+- Yeni dosyalar: `content-import/teos-green.json` (+ `.report.json`), registry girişi; onarımda değişen kod YOK (yalnızca içerik/DB).
+
+### 17 — Site geneli sahte/demo/boş içerik temizliği (2026-10-15, CLOSED/PASS)
+
+- **Marka iddiasızlaşturma (menşei claim yasağı, md §2)**: `SITE_NAME` "Premium Turkish Marble" → **"Marble Platform"**, `SITE_NAME_TR` "Premium Türk Mermeri" → **"Mermer Platformu"** (`src/lib/seo/constants.ts`, `services/content.ts` yerel sabiti, `app/layout.tsx` title/description, `lib/api/seo.ts` siteName fallback'leri, `ProductJsonLd`/`ArticleJsonLd` brand/publisher). Header `BrandLogo` zaten "Mermer/Marble" kullanıyordu — tutarlı. Homepage hero: "Premium Doğal Mermer"/"Premium Natural Marble" + iddiasız metaDescription ("Turkish marble" cümleleri kaldırıldı). Test fixture'ları `__tests__/api/v1/public/helpers.ts` eşgüdümlü güncellendi.
+- **Sahte iletişim verisi kaldırıldı**: `contact/page.tsx` sahte e-posta/telefon/adres/çalışma saatleri bloğu → tek "İletişim Kanalı" bölümü (teklif formu yönlendirmesi); `quote/page.tsx` sahte `mailto:info@marbleplatform.com` → form-destek metni. Gerçek değer yoksa ContactBar gibi sahte link ÜRETİLMİYOR.
+- **OrganizationJsonLd**: kırık `logo.png` + `hello@example.invalid` + boş `sameAs` çıkarıldı (name+url kaldı).
+- **`example.com`/placeholder fallback'leri** `constants.ts`+`lib/api/seo.ts`+`robots.ts` → `http://localhost:3000` (production'da `env.ts` fail-fast zaten example.com'u reddediyor); 5 liste sayfası (products/collections/applications/projects/journal) inline fallback → tek `SITE_URL` importu.
+- **Hero**: `/videos/scrollroll2.mp4` GERÇEK (kullanıcı asset'i, korundu); demo poster `/demo/images/demo-hero-poster.svg` → **onaylı yayınlanmış Teos Green GALLERY görseli** `/api/media/18b81507-….jpg` (1200×896, anlamlı alt: "Teos Green mermer yüzeyi"/"Teos Green marble surface").
+- **Demo proje yayından kaldırıldı**: ContentItem `d51c2dc0-4711-4de5-8251-0fb1c413b47a` (demo-mimari-projesi/demo-architectural-project) admin workflow `POST /admin/projects/[id]/unpublish {locale}` ile tr+en **PUBLISHED→UNPUBLISHED** (silinmedi; nav'daki Projeler linki `hasPublishedProjects` ile otomatik gizlendi; sitemap'ten düştü; detay 404).
+- **Koleksiyon/uygulama ilişkilendirmesi (junction=0)**: **uydurulmadı** — mevcut mimari "boş bölümü gizle" (`products.length > 0 &&`, `projectsVisible &&`) ile detay sayfaları hero+açıklama+CTA olarak anlamlı; gerçek ilişki verisi olduğunda CMS'ten bağlanmalı (OPEN: ilişki iş verisi).
+- **Doğrulama (hepsi PASS)**: typecheck 0 · lint 0 hata (2 eski warning) · **934/934 test** · canlı smoke: 26 public sayfa 200 (EN koleksiyon slug'ları farklı dilli: classic-stones/hospitality vb. — 404 değil tasarım), hero/poster/marka/JSON-LD/sitemap/robots/İletişim/quote/empty-collection/demo-404 kontrolleri 22/22.
+- **Kalan gerçek veri eksikleri (uydurma yok, OPEN)**: iletişim kanalları (telefon/WhatsApp/e-posta/adres/sosyal), kurumsal onaylı Company Owner kimliği, koleksiyon↔ürün & uygulama↔ürün ilişkileri, gerçek proje case study'leri, ortam/domain (`NEXT_PUBLIC_SITE_URL`) bilgisi.
+- DB yedeği: öncesi `backups\marble-20261015-153237.dump` (166.444 B). Değişen kod dosyaları: `seo/constants.ts`, `api/seo.ts`, `robots.ts`, `app/layout.tsx`, `services/content.ts`, `seo/{Organization,Product,Article}JsonLd.tsx`, `[locale]/{contact,quote,products,collections,applications,projects,journal}/page.tsx`, `__tests__/api/v1/public/helpers.ts`.
+- **Git: commit/push YOK**; önceki oturum working tree değişiklikleri korundu. `next dev` :3000 canlı — durdurulmadı.
+
+### 18 — Marble Content 16 yeni ürün + gerçek kapaklar (2026-10-15, OPEN/PASS-VERIFY, uncommitted)
+
+**18.1 — 16 yeni ürün import edildi (kapandı, 16/16 PUBLISHED)**
+
+- Taze yedek: `backups\marble-20261015-165228.dump` (166.752 B) — import ÖNCESİ.
+- `Marble Content\Products` = 54 klasör; DB'de 38 ürün vardı → 16 yeni tespit+görüntülendi: aegean-rose, bumblebee, calacatta-green (yalnız render PRIMARY), cappuccino, ege-kahve (`kahve` ile FARKLI — doğrulandı), glacier-gray, hermes-gray (dup klasör `hermesgray` aynı product → TEK ürün, 2 render GALLERY), kirmizi-traverten, light-emparador, nero-ceppo, sunrise-montana, titanyum-traverten, vanilla-beige, volakas (2 render), white-royal, yellow-iceberg (yalnız facade render PRIMARY, `iceberg` ile farklı; `ıceberg` klasörü mevcut iceberg ile aynı → yeni değil).
+- `content-import/name-registry.json` +17 girişi (`approvedBy: "Content Owner"` rol etiketi, `approvedAt: 2026-10-15`); `content-import/new-products.json` yalnız görsel kanıtlı TR/EN metin (menşei/teknik/ölçü YOK; koleksiyon/uygulama ilişkisi YOK; travertenlerde "Mermer/Marble" eki YOK). Dry-run OK → `--execute` **16/16 PUBLISHED**. DB: 54 ürün, 54/54 TR PUBLISHED, açık draft 0.
+
+**18.2 — Demo kapaklar gerçek görsellerle değiştirildi (6 içerik, kod değişikliği YOK)**
+
+- Yöntem: admin API (service-level `attachProductMedia`/`detachProductMedia` — audit yazar, revision'a dokunmaz). Geçici betik `.tmp-swap-covers.ts` (proje kökü, çalıştıktan SİLİNMELİ — shell silme izni yok).
+- **Uygulamalar**: konut/residential → `calacatta green/renders/calacattagreen.jfif` (3 panelli mutfak/şömine/banyo); otel-ve-konaklama/hospitality → `volakas/renders/volakas1.jfif` (kavisli merdiven); ticari/commercial → `yellowıceberg/renders/yellowıceberg.jfif` (dış cephe+havuz). 6 varyant (tr+en) demo SVG detach → yeni asset PRIMARY + dürüst alt metin (tr/en).
+- **Dergi**: ocaktan-bitis-yuzeyine/from-quarry → `volakas/product/volakas.jfif` (plaka); cagdas-mimarlikta/stone-in-contemporary → `sunrise montana/renders/sunrise montana1.jfif` (şömine duvarı); dogal-tas-secimi/understanding-selection → `lightemparador/product/lightemparador.jfif` (depo plakaları). Aynı attach akışı, 6 varyant.
+- Sonuç: 6/6 swap `ALL SWAPS OK`; 12 detay sayfasının tamamı `og:image` = gerçek `/api/media/*.jpg` (demo 0).
+
+**18.3 — Doğrulama (2026-10-15, hepsi PASS)**
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | EXIT=0 |
+| `npm run lint` | EXIT=0 (0 hata, 2 eski `_locale` warning) |
+| `npm run test` | **934/934 PASS (68 files)** |
+| Canlı tarama (80 URL) | hepsi **200 + H1**; applications/journal 12 detay **gerçek og:image**; ürünler/iletişim/teklif/projeler'de demo/example **0** |
+
+**18.4 — Kalan demo/placeholder (ONAY BEKLİYOR — bu oturumda dokunulmadı)**
+
+1. **Koleksiyon kapakları** (6 varyant + koleksiyon listeleri + homepage kartları, `demo-collection-*.svg`): gerçek kategori görseli YOK, tekil ürün seçmek kurasyon uydurmak olur → **korundu (OPEN)**.
+2. **Şirket sayfaları about/factory/quarry** (tr+en): `demo-collection-*`/`demo-journal-quarry` kapakları + "Bu sayfa geliştirme amaçlı oluşturulmuş example … bilgisi içermektedir" placeholder metni. `company-content` için **medya attach/detach rotası CMS'te YOK** — kapaklar admin API ile değiştirilemiyor (SQL detach = audit'siz, md §8'e aykırı → yapılmadı).
+3. **Uygulama açıklamaları** (3×tr+en, list+detail+homepage): "uygulama exampleları"/"application examples" seed kelimesi görünür — minimal düzeltme (tek kelime silme, iddia UYDURULMAZ) teklif edilir, onay beklenir.
+4. **Koleksiyon açıklamaları** (3×tr+en): TR "zamansız tasarım exampleları"; EN "design examples" — aynı minimal düzeltme teklifi.
+5. **Dergi 3 makale ×tr+en**: `authorName="Development Author"`, summary+body "development example makalesi" placeholder. Gerçek editoryal içerik uydurulamaz (md §2) → seçenekler: (a) 3 makaleyi unpublish (onaysız içerik halka kapalı olur, dergi boşalır), (b) Content Owner onaylı gerçek makale beklemek.
+
+**Git: commit/push YOK**; önceki working tree değişiklikleri korundu. `next dev` :3000 canlı — durdurulmadı. Geçici dosyalar (kullanıcı silmeli): proje kökü `.tmp-swap-covers.ts`, `.tmp-discover.ts`, `.tmp-verify.ts`, `.tmp-scan.ts`.
+
+---
+
+## 19. 2026-10-15 — OTURUM DURUM KAYDI (handoff; §18 korunmuştur, bu bölüm yeni)
+
+Bu bölüm, mevcut oturumun güvenli durum kaydıdır. Önceki bölümler (§1–§18) silinmedi/yeniden yazılmadı. Bu oturumda SADECE bu handoff dosyası güncellendi; başka kod veya veritabanı değişikliği YAPILMADI.
+
+### 19.1 Tamamlanan işler
+
+- `Marble Content\Products` altındaki 54 ürün klasörü tarandı (DB başlangıçta 38 ürün).
+- **16 yeni ürün import edildi ve PUBLISHED**: aegean-rose, bumblebee, calacatta-green, cappuccino, ege-kahve, glacier-gray, hermes-gray, kirmizi-traverten, light-emparador, nero-ceppo, sunrise-montana, titanyum-traverten, vanilla-beige, volakas, white-royal, yellow-iceberg.
+- Veritabanında **54/54 ürün TR PUBLISHED**; açık draft revision **0**.
+- `content-import/name-registry.json`'ye **17 onaylı ad girişi** eklendi (`approvedBy: "Content Owner"` rol etiketi, `approvedAt: 2026-10-15`).
+- **Uygulamalar ve dergi sayfalarındaki 6 demo kapak gerçek görsellerle değiştirildi** (3 uygulama + 3 makale, tr+en 6 varyant); **admin API ve audit** kullanıldı (service-level attach/detach, revision'a dokunulmadı): konut→calacatta-green render, otel→volakas merdiven render, ticari→yellow-iceberg cephe render, ocaktan→volakas plaka, çağdaş mimari→sunrise-montana render, taş seçimi→lightemparador plaka. Her birine dürüst tr/en alt metin bağlandı; demo SVG attach'ları detach edildi.
+- **12 detay sayfasının `og:image` alanı gerçek medya görsellerine bağlandı** (applications+journal × tr/en, 12/12 REAL `/api/media/*.jpg`).
+- **Typecheck PASS** (0 hata), **lint 0 hata** (2 eski `_locale` warning), **test 934/934 PASS** (68 dosya).
+- **80 canlı URL kontrol edildi: 200 + H1** (anasayfa, hakkında/fabrika/ocak, 54 ürün detayı, koleksiyon/uygulama/dergi listeleri+detayları, tr/en).
+- Ürün/iletişim/teklif/projeler alanlarında demo/example kontrolü **PASS (0)**.
+- Yedek (import öncesi): **`backups\marble-20261015-165228.dump`** (166.752 B).
+- `next dev` sunucusu `localhost:3000` üzerinde **çalışıyor** (durdurulmadı/yeniden başlatılmadı).
+- **Commit/push yapılmadı**; mevcut working-tree değişiklikleri korunuyor.
+- Önceki handoff bölümü **§18 korunmuştur**.
+
+### 19.2 Karar bekleyen konular — HİÇBİRİ UYGULANMADI
+
+1. **Koleksiyon açıklamalarındaki seed/example ifadeleri** (3×tr+en; TR "zamansız tasarım exampleları", EN "design examples") — minimal düzeltme teklifi (tek kelime/id ifadesi silme, iddia uydurulmaz), ONAY BEKLİYOR.
+2. **Uygulama açıklamalarındaki example ifadeleri** (3×tr+en; "uygulama exampleları"/"application examples") — aynı minimal düzeltme teklifi, ONAY BEKLİYOR.
+3. **Üç dergi makalesi** (tr+en): `authorName="Development Author"`, summary+body "development example makalesi" placeholder. Seçenekler: **(a)** unpublish, **(b)** gerçek içerik onayı bekle, **(c)** mevcut hâliyle bırak. **Karar verilmedi.**
+4. **Hakkında/Fabrika/Ocağı placeholder metinleri ve demo kapakları** (tr+en): Company-content için **audit'li CMS medya akışı bulunmuyor** (medya attach/detach rotası yok); **doğrudan SQL ile değişiklik yapılmadı** (md §8 audit kuralı). Karar: CMS'e medya rotası ekle (kod) mi, bırak mı.
+5. **Koleksiyon kapakları** (6 varyant + liste + homepage kartları, `demo-collection-*.svg`): gerçek kategori görseli bulunmadığından **korunuyor**; karar bekliyor.
+
+### 19.3 Diğer açık işler
+
+- Koleksiyon↔ürün ve uygulama↔ürün ilişkileri için **doğrulanmış eşleştirmeler** (junction=0; uydurulmadı, OPEN).
+- **Gerçek proje case study'leri** (demo proje §17'de unpublish edildi; yeni gerçek proje yok).
+- **Gerçek iletişim bilgileri** (telefon/WhatsApp/e-posta/adres/sosyal — sahte değer üretilmiyor).
+- **Content Owner kimliği** (approvedBy yalnız rol etiketi).
+- **Production domain** (`NEXT_PUBLIC_SITE_URL`).
+- Proje kökündeki geçici dosyalar: `.tmp-swap-covers.ts`, `.tmp-discover.ts`, `.tmp-verify.ts`, `.tmp-scan.ts` — **silme izni verilmediğinden SİLİNMEDİ** (kullanıcı silmeli veya izin vermeli).
+
+### 19.4 Güvenlik notu (bu oturumda uyulan)
+
+Başka kod/DB değişikliği yok; içerik publish/unpublish yok; geçici dosya silme yok; commit/push yok; `git reset/restore/clean` yok; geliştirme sunucusu kapatılmadı; mevcut dosya değişiklikleri korundu.
+
+---
+
 ## NEXT
 
 **Phase 19A = CLOSED / PASS.** 7-locale SEO gates, content-gated sitemap/hreflang, pagination, admin 7-locale plumbing, canonical fix and the 404/fallback matrix are all verified; see §15.
@@ -479,3 +619,169 @@ RESUME POINT for a future session (Phase 19B):
 - `opencode.json` (project root) defines `mcp.playwright` (`npx -y @playwright/mcp`) with **`enabled: false`**. Keep it disabled until seed data is ready.
 - Before enabling, run once: `npx playwright install chromium` (downloads Chromium; not executed yet, deferred by decision).
 - Also pending a decision: adding `"formatter": true` and `"lsp": true` to `opencode.json` after inspecting `opencode debug config` defaults.
+
+---
+
+## CONTINUATION POINT
+
+NEXT: Yeni terminalde SESSION_HANDOFF.md oku; kullanıcıya mevcut durumu ve karar bekleyen 1–5 maddelerini kısa özetle. Hiçbir açık maddeyi kullanıcı kararı olmadan uygulama. Önce talimat bekle.
+
+---
+
+## PHASE 20 — CMS İÇERİK YENİDEN ADLANDIRMA & PLACEHOLDER REWRITE (bu oturum)
+
+Generated: 2026-10-22. Kullanıcı onaylı kapsam:3 koleksiyon adı, ürün adı, uygulama kart metinleri, About/Factory/Quarry placeholder'ları; journal yalnız rapor. **Commit/PUSH YOK** (kullanıcı açıkça istemedi).
+
+### 20.1 Yapılan CMS içerik mutasyonları (admin API + revision flow: PATCH → draft → submit → approve → publish; doğrudan SQL içerik mutasyonu YOK — sadece read-only Prisma sorguları)
+
+- **Koleksiyon adları** (slug'lar KORUNDU):
+  - `klasik-taslar`/`classic-stones` → tr **Mermer** / en **Marble**
+  - `cagdas-taslar`/`contemporary-stones` → tr **Traverten** / en **Travertine**
+  - `mimari-taslar`/`architectural-stones` → tr **Onyx** / en **Onyx**
+  - Koleksiyon kartı + detay hero **görsel alt metinleri** de güncellendi (`PATCH /api/v1/admin/collections/{id}/media`): "Klasik Taşlar"→"Mermer koleksiyonu"/"Marble collection", "Çağdaş Taşlar"→"Traverten koleksiyonu"/"Travertine collection", "Mimari Taşlar"→"Onyx koleksiyonu"/"Onyx collection".
+- **Marble koleksiyonuna 52 ürün attach** (`POST /collections/{id}/products` ×52, 0 hata; 54 üründen 2'si travertine — bkz. 20.4-2).
+- **Ürün `ege-kahve` → "Aegean Coffee"**: tr+en name/seoTitle (slug korundu), media alt'ları "Aegean Coffee ürün görseli" / "Aegean Coffee marble product image" (`PATCH /products/{id}/media`).
+- **Uygulama kart metinleri** (tr+en; konut/konut, otel, ticari): render görselini tarif eden, gerçek proje iddiası İÇERMEYEN açıklamalar + seoTitle/seoDescription. Yeni uygulama veya ProductApplication junction EKLENMEDİ.
+- **Company content** (`company-content` revision akışı ayrı — draft ID'leri read-only Prisma ile bulundu): ABOUT/FACTORY → KASHA marka metni (açıklama HTML `<p>` paragraflar olarak saklanıyor; meta description `htmlToPlainText` ile tag-free), QUARRY → nötr "Ocağımızla ilgili bilgiler hazırlanmaktadır." / "Information about our quarry is being prepared." (uydurma maden/ocak verisi YOK). Hepsi PUBLISHED.
+
+### 20.2 Kod değişiklikleri (working tree'de, UNCOMMITTED)
+
+- `src/lib/seo/text.ts` (yeni, untracked): `htmlToPlainText()` helper.
+- `src/__tests__/seo/text.test.ts` (yeni, untracked): 3 unit test.
+- `src/app/[locale]/about/page.tsx`, `factory/page.tsx`, `quarry/page.tsx`: metadata description `htmlToPlainText(...)`; intro bloğu (`company-page__intro`) yalnızca description HTML içermiyorsa render ediliyor (HTML varsa meta'ya sızmasın diye).
+- Kritik prosedür: kaynak dosyalara PowerShell metin rewrite ile MÜDAHALE YOK (UTF-8 mojibake kazası yaşandı ve `git checkout --` + edit tool ile düzeltildi); payload metinleri UTF-8 JSON dosyalarında, `.ps1` scriptler ASCII.
+
+### 20.3 Doğrulama (üçü PASS)
+
+- `npm run typecheck` ✓ · `npm run lint` 0 hata / 2 uyarı (`repositories/content.ts` `_locale` unused — önceden var, bu oturumun dosyaları değil) · `npm run test` 69 dosya / **937/937 PASS** (yeni text.test.ts dahil).
+- Canlı (`localhost:3000`, 15 URL tr/en + sitemap): hepsi 200 (`/sitemap.xml` locale altı değil — `/tr/sitemap.xml` 404 normal). **70+ içerik kontrolü PASS**: eski koleksiyon adları sayfalarda/alt'larda YOK, detay sayfasında 52 ürün linki, "Aegean Coffee" + eski "Ege Kahve" YOK, uygulama kartları render metinli, about/factory meta tag-free + intro gizli, sitemap 144 `<loc>` eski slug'larla korunmuş.
+
+### 20.4 Açık kararlar / rapor edilenler (onay bekliyor)
+
+1. **Slug–ad uyuşmazlığı**: `klasik-taslar`→Mermer, `classic-stones`→Marble vb. Slug değişimi = SEO URL yaşam döngüsü kararı (301 gerekir; onaysız değiştirilmedi).
+2. **Traverten/Onyx koleksiyonları boş (0 ürün)** — bilinçli olarak dokunulmadı. Ancak DB'de **`kirmizi-traverten` ve `titanyum-traverten` adlı 2 ürün var, her birinde 2 medya mevcut** ("taş yok" öncülüğüyle çelişiyor) ve şu an Marble (52) içindeler — Traverten'e taşınabilir; onay bekliyor.
+3. **`ege-kahve` slug'ı** `aegean-coffee` yapılmadı (redirect kararı gerekli).
+4. **`seoTitle` public sayfalarda KULLANILMIYOR**: `<title>` = `{name} | {site}`, og:title = `{name}` (seoDescription ise meta description'da kullanılıyor). "Mermer Koleksiyonu" title'da görünmüyor. Kod davranışı tespiti — değişiklik kapsam dışı.
+5. **Journal 3 makale** (tr+en, PUBLISHED): `authorName="Development Author"`, açıklamalarda "development example" ibaresi — DOKUNULMADI, raporlandı.
+6. **2 "Demo" proje** (`Demo Mimari Projesi`/`Demo Architectural Project`, PUBLISHED) — kapsam dışı, dokunulmadı.
+7. **ProductApplication junction** (uygulama↔ürün ilişkisi) eklenmedi — onay bekliyor.
+8. Daha fazla **render tabanlı uygulama kategorisi** eklenebilir (onayla).
+9. **Koleksiyon kapak görselleri** `demo-collection-*.svg` olarak kaldı (gerçek görsel yok; §19 açık maddesiyle aynı).
+
+### 20.5 Geçici dosyalar
+
+Bu oturum: `.tmp-admin-run*.ps1`, `.tmp-*-drafts/verify/leftover/summ/live-check*.cjs`, `.tmp-payloads/`, `.tmp-live/`, `.tmp-debug.ps1` — kullanıcı onayıyla SİLİNEBİLİR (silme izni gelmedi, duruyor). Önceki oturumların `.tmp-swap-covers.ts`, `.tmp-discover.ts`, `.tmp-verify.ts`, `.tmp-scan.ts`, `.tmp-snap*`, `.tmp-check-*` dosyaları da duruyor (§19.3).
+
+## PHASE 21 — JOURNAL REWRITE + QUARRY NEUTRAL CONTENT (2026-10-23, CLOSED / PASS, uncommitted)
+
+### 21.1 Kod değişiklikleri (working tree'de, UNCOMMITTED)
+
+- `src/services/content.ts`: journal mapping düzeltmesi — `summary` artık HTML gövdeden `htmlToPlainText()` ile türetiliyor (ilk 320 karakter + `...`); `body` eskisi gibi HTML `description`. Mapping değişikliği 3 yerde: liste özeti (~satır 308), detay özeti (~satır 722), ilgili makale listesi özeti (~satır 761). Yeni helper `journalSummaryText()` + `htmlToPlainText` import'u eklendi. API şekli değişmedi. Sebep: `description` alanı hem özet hem gövde olarak render ediliyordu (iki kat tekrar); HTML gövde yazabilmek için özetin düz metin türetilmesi gerekti.
+
+### 21.2 CMS içerik mutasyonları (admin API + revision flow; doğrudan SQL içerik yazımı YOK)
+
+- **3 journal makalesi** (slug'lar/isimler korundu, `publicationDate` BILINÇLI olarak null bırakıldı → public `<time>` gerçek `createdAt` (2026-01-15) gösteriyor, uydurma tarih YOK):
+  - `a9b12f70-4cf4-40ad-b991-df0a51256902` — dogal-tas-secimi-hakkinda / understanding-natural-stone-selection: yeni TR+EN HTML gövde (renk/damar, yüzey bitişi, kullanım alanı, bakım, numune), tagline, seoTitle/seoDescription.
+  - `cce7b9b4-7c9f-4c3e-b807-2221cb07cf76` — cagdas-mimarlikta-tas-kullanimi / stone-in-contemporary-architecture: zemin/duvar/merdiven/mobilya; konut/otel/ticari öncelikleri; tasarım önerileri.
+  - `09d602b9-0208-47d6-af7a-a82478b7cfb3` — ocaktan-bitis-yuzeyine / from-quarry-block-to-finished-surface: blok çıkarma, blok kesimi, plaka üretimi, yüzey işleme, kalite kontrol, sevkiyat.
+  - `authorName` = **KASHA** (kullanıcı onaylı; uydurma kişi adı YOK). İçeriklerde KASHA'ya ait sahte proje/kapasite/sertifika iddiası YOK. Hepsi PUBLISHED tr+en, açık revision = 0.
+- **QUARRY company content** (`9c6e1b2c-3466-4f0c-ac6a-156266b70a99`): "bilgiler hazırlanmaktadır" placeholder'ı yerine neutral profesyonel TR+EN HTML (kaynak/ocak değerlendirmesi kriterleri, üretim zinciri genel bilgisi, kalite ve izlenebilirlik). KASHA'nın ocak sahibi olduğu iddiası YOK. `name`/`slug`/`seoTitle` ("Ocağımız"/"Our Quarry") korundu; `seoDescription` placeholder'dan gerçek özetle değiştirildi. PUBLISHED tr+en, açık revision = 0. Publish akışı: `PATCH /api/v1/admin/company-content/QUARRY` → draft ID'leri read-only Prisma (`.tmp-company-drafts.cjs`) → universal submit/approve/publish.
+- **Koleksiyonlar/uygulamalar DEĞİŞTİRİLMEDİ** (doğrulama amaçlı sayım): Marble=52, Traverten=2 (`kirmizi-traverten`, `titanyum-traverten`), Onyx=0 — bilinen ve beklenen durum. Demo proje (`d51c2dc0-...`) UNPUBLISHED bırakıldı, her yerde görünmez (detail 404, sitemap'te yok).
+
+### 21.3 Doğrulama (üçü PASS + 96/102 canlı kontrol PASS, 6 FAIL kusurlu test kriteri)
+
+- `npm run typecheck` ✓ (boş çıktı) — `npm run lint` 0 hata / 2 önceden bilinen `_locale` uyarısı (`repositories/content.ts:328,541`) — `npm run test` 69 dosya / **937/937 PASS** (mapping değişikliği testleri bozmadı).
+- Prisma (read-only): 3 makale author=KASHA, publishedAt=null, PUBLISHED tr+en, tagline var, placeholder regex false (journal-3 EN'deki `ph=true` SAHTE POZİTİF — "samples are prepared" ifadesi). QUARRY tr+en placeholder-free. Sayımlar: 52/2/0.
+- Canlı (`localhost:3000`, `.tmp-live-final.cjs`, 102 kontrol / 96 PASS): journal list tr/en (3 kart, KASHA, placeholder yok), 6 detail sayfası (200, KASHA, `<h2>` gövde, noindex yok), quarry tr/en (intro gizli, body `<h2>`, placeholder yok), about/factory tr/en hâlâ temiz, sweep 14 URL tr/en (/, collections, applications, projects, contact, quote, products) placeholder-free, public journal API tr/en (author=KASHA, Development Author/Example yok), sitemap 144 `<loc>` + journal slug'ları yerinde + demo proje yok, demo proje detail 404. 6 FAIL = test kontrolündeki `>6 h2` eşiği kusuru (sayfa kendi başına 4 ek h2 render ediyor); manuel doğrulamada özet düz metin 323 karakter (`journal-article__summary` içinde, HTML'siz) — düzgün.
+- Journal detail meta description (`generateMetadata`) artık kısa özet kullanıyor (eski: tek cümle description).
+
+### 21.4 Kalan gerçek veri boşlukları / engeller
+
+1. Journal'da gerçek yazar adı yok — KASHA marka adı kullanılıyor (kullanıcı onayıyla); gerçek kişi/kurum yazarı eklenmeli.
+2. `publicationDate` (journalArticle) hâlâ null — gerçek yayın tarihi bilgisi eklenmeli (uydurma tarih yazılmadı).
+3. Proje sayfası: tek demo proje UNPUBLISHED — gerçek, onaylı proje içeriği bekleniyor.
+4. Onyx koleksiyonu 0 ürün; gerçek ürün yoksa koleksiyon sayfası boş kalır.
+5. Demo proje + koleksiyon demo kapakları (`demo-collection-*.svg`) hâlâ duruyor — gerçek medya onayı bekliyor.
+6. Slug-ad uyuşmazlıkları (`klasik-taslar`→Mermer vb.), `ege-kahve` slug'ı, seoTitle'ın `<title>`'ta kullanılmaması — Phase 20.4 açık maddeleri aynen geçerli.
+
+### 21.5 Geçici dosyalar (bu oturum)
+
+`.tmp-journal-run.ps1` (login + PATCH/publish akışı), `.tmp-journal-ids.cjs`, `.tmp-final-state.cjs`, `.tmp-quarry-read.cjs`, `.tmp-live-final.cjs`, `.tmp-payloads/journal-1.json`–`journal-3.json`, `quarry.json` — kullanıcı onayıyla silinebilir (§20.5 listesine ek).
+
+## PHASE 22 — FINAL QUALITY & SEO AUDIT (2026-10-23, CLOSED / PASS, uncommitted)
+
+### 22.1 Phase 21'in 6 FAIL kontrolü — tek tek sonuç (6/6 = hatalı test kriteri, gerçek hata YOK)
+
+Eski kriter: `totalH2 > 6` → her journal detail sayfasında FAIL. Kanıt (`.tmp-audit-h2.cjs`): sayfa toplam h2 = gövde editoryal h2 (5-6) + sayfa kromozom h2'leri (CTA + ilgili makale başlığı = 2) = 7-8 → kriter hep yanlış. Doğru kriter (`.tmp-live-final.cjs` düzeltildi): summary ≤323 karakter + HTML'siz (`journal-article__summary` regex `[^<]*`) + body ayrı div'de h2 içeriyor → **6/6 PASS**; tüm set **102/102 PASS**.
+
+### 22.2 seoTitle artık kullanılıyor (5 detail sayfası)
+
+- `src/app/[locale]/{products,collections,applications,projects,journal}/[slug]/page.tsx`: `const title = X.seo?.title || X.name` (OG title aynı `title`'ı kullanır). Eski davranış: `<title>` = `{name} | site` (seoTitle tamamen görmezden geliniyordu; `metadataFromSeoData` sadece alternates+robots döndürür). Doğrulama canlı: koleksiyon → "Mermer Koleksiyonu | Mermer Platformu", journal → seoTitle başlıkları, ürün → "Aegean Coffee - ..." başlıkları. seoTitle null olan içeriklerde `name` fallback — backward-compatible. Company sayfalarına dokunulmadı (seoTitle = name zaten).
+- Apple touch icon: root `src/app/layout.tsx` `icons.apple: '/apple-touch-icon.png'` → dosya YOK → 404 (gerçek bozuk link). Kaldırıldı (`icons.icon: '/favicon.ico'` korundu; `src/app/favicon.ico` var). Üretilmiş ikon kullanılmadı (sahte marka görseli yasak).
+
+### 22.3 Slug kararları (DEĞİŞTİRİLMEDİ — gerekçeli)
+
+- Koleksiyon slug'ları (`klasik-taslar`/`classic-stones` → Mermer/Marble) ve `ege-kahve` slug'ı (ad: Aegean Coffee): URL yaşam döngüsü yönlendirme altyapısı YOK (`next.config.ts` redirects/rewrites yok; middleware sadece locale 308). Yeniden adlandırma = 301 gerektirir; mevcut URL'ler sitemap'te, canonical'lı ve indekslenebilir — SEO faydası yok, kırık URL riski var. **Karar: değiştirme.** Slug–ad uyumsuzluğu URL mimari tercihi, kural ihlali değil.
+
+### 22.4 SEO denetimi (`.tmp-seo-audit.cjs`: 330 PASS / 2 "FAIL" = 1 sahte kriter + 1 gerçek hata düzeltildi)
+
+- Liste + detail tüm TR/EN sayfalar: 200, canonical self-referencing, hreflang tr+en+x-default (React camelCase `hrefLang` formatında basılıyor — küçük-harf regex sahte 0 veriyordu), meta description, og:title, tek h1.
+- **Bilinçli noindex (doğru davranış)**: `/projects` (availability gate: `projects: []` → yayınlanmış proje yok → noindex; içerik gelince otomatik indexlenir) ve `/quote` (sabit form noindex, `page.tsx` satır 35).
+- Sitemap: 144 `<loc>`, 12 spot-check 200, demo proje yok.
+- Beklenen 404'ler doğrulandı (bilinmeyen slug'lar, demo proje, `/tr/sitemap.xml`, geçersiz locale → 308→/tr/xx/... zinciri sonu 404, döngü yok). 5xx: 0.
+- Internal link crawl: 108 benzersiz link → tek kırık `/apple-touch-icon.png` (düzeltildi).
+- img alt: 6 kritik sayfada 0 eksik/boş alt.
+- Public API: 10 endpoint (5 bölüm × tr/en) 200 + geçerli JSON.
+
+### 22.5 İçerik doğrulama (dokunma yok)
+
+Prisma read-only: Marble=52, Traverten=2, Onyx=0 (korunmuş). Journal author=KASHA, publicationDate=null, placeholder-free. QUARRY neutral PUBLISHED. Ürün fotoğrafları/uygulama renderları/koleksiyon kapakları DEĞİŞTİRİLMEDİ. Proje uydurulmadı; bilinmeyen telefon/adres/sertifika/kişi/tarih eklenmedi.
+
+### 22.6 Teknik doğrulama (hepsi PASS)
+
+`npm run typecheck` ✓ · `npm run lint` 0 hata / 2 önceden bilinen `_locale` uyarısı · `npm run test` 69 dosya / **937/937 PASS** · **`npm run build` BAŞARILI** (Next 16.3.5 Turbopack) — `.next-audit` ayrık dizininde (çalışan dev sunucusu `.next` kullanıyor, etkilenmedi); geçici `distDir` env satırı build sonrası `next.config.ts`'ten kaldırıldı (kalan diff yalnızca çift→tek tırnak Prettier normalizasyonu, semantik yok); geçici `$env:` NEXT_PUBLIC_SITE_URL/NEXTAUTH_SECRET sadece build ortamında, `.env`'e yazılmadı. Dev sunucusu tüm süreç boyunca UP.
+
+### 22.7 Bu oturumun dosyaları
+
+Kod: `src/app/[locale]/{products,collections,applications,projects,journal}/[slug]/page.tsx` (seoTitle→title), `src/app/layout.tsx` (apple kaldırıldı), `next.config.ts` (yalnız tırnak normalizasyonu). Geçici: `.tmp-audit-h2.cjs`, `.tmp-seo-audit.cjs`, `.tmp-live-final.cjs` (kriter düzeltmesi). COMMIT/PUSH YOK; çalışma ağacı korundu; sunucu durdurulmadı; SQL içerik mutasyonu YOK.
+
+### 22.8 Kalan gerçek veri boşlukları (değişmedi)
+
+1. Gerçek yazar adı (KASHA marka adı kullanılıyor) 2. `publicationDate` null 3. Gerçek onaylı proje içeriği 4. Onyx ürünleri 5. Koleksiyon demo kapakları (`demo-collection-*.svg`) + demo proje kaydı (UNPUBLISHED) 6. Slug–ad uyuşmazlıkları + `ege-kahve` (karar: değiştirme) 7. `/apple-touch-icon.png` yerine gerçek ikon üretimi (marka görseli onayıyla).
+
+## PHASE 23 — PRODUCTION READINESS AUDIT (2026-10-23, CLOSED, uncommitted)
+
+### 23.1 Ortam & konfigürasyon
+
+- `.env` (değerler gizli): `DATABASE_URL` ✓, `NEXTAUTH_URL` ✓, `NEXTAUTH_SECRET` ✓ (18 karakter — production'da yeniden üretilecek); **`NEXT_PUBLIC_SITE_URL` YOK** → production build/start `validateEnv` ile reddeder (bilinçli fail-fast). `.env.example` eksiksiz (SITE_URL satırı dahil, placeholder host reddi dokümante). Zorunlu production env seti: `DATABASE_URL` (gerçek prod DB), `NEXT_PUBLIC_SITE_URL` (gerçek domain — uydurulamaz), `NEXTAUTH_SECRET` (`openssl rand -hex 32`); opsiyonel: `SITE_CONTACT_PHONE`/`SITE_WHATSAPP_PHONE`/`SITE_INSTAGRAM_URL`, `ADMIN_COOKIE_SECURE`, `MEDIA_*`, `SEED_ADMIN_PASSWORD` (ilk admin provisioning). Commit edilmiş secret yok (`.env*` gitignored).
+
+### 23.2 Veritabanı operasyonları (Phase 18D-3 altyapısı güncel, doğrulandı)
+
+- `scripts/backup.ps1` (`pg_dump -Fc` → `backups\marble-*.dump`, gitignored) + `scripts/restore.ps1` (`-Force` zorunlu guard) + `package.json`: `backup`/`restore`/`migrate:deploy` ✓. `docs/DEPLOY_RUNBOOK.md` mevcut (build → migrate → start → `/api/health` gate → backup/restore/rollback → admin provisioning). `npx prisma migrate status`: **3 migrations, up to date, pending yok**. Canlı `/api/health` 200 + `database: connected`.
+
+### 23.3 Güvenlik (kod + test kanıtlı)
+
+- **Headers** (`security/headers.ts` + `next-config-headers.test.ts`): CSP prod'da `unsafe-eval` yok (dev'de HMR için var — smoke bunu dev'de bekler), HSTS preload, XFO DENY, nosniff, frame-ancestors none, Referrer-Policy, Permissions-Policy. Canlı: hepsi 200 başlığı olarak görüldü.
+- **Admin auth** (`withAdminAuth` + `session.test.ts`/`auth.test.ts`): canlı kanıt — korumasız `GET/POST /api/v1/admin/*` → **401**. Opaque token (random32, SHA-256 hash DB), TTL 12s, server-side rol (DB), inactive user block.
+- **Oturum cookiesi**: HttpOnly + SameSite=Lax + Secure (prod default, `ADMIN_COOKIE_SECURE` override).
+- **Rate limit** (`rate-limit.ts` + 2 test dosyası): login 5/60s, quote 10/60s, bellek 10k bucket cap, x-forwarded-for last-entry (fail-closed, dokümante trust varsayımı).
+- **CSRF**: admin mutasyonlar SameSite=Lax cookie ile korumalı; public quote anonim → rate-limit + zod sunucu tarafı validasyon (canlı: geçersiz/boş payload → **422**, kayıt oluşmaz).
+- **Hata yanıtları** (`createApiHandler` + `errors.test`): AppError/Prisma map, beklenmeyen → `InternalError` (stack sadece console.error; canlı 404 yanıtında stack yok, `requestId` var).
+
+### 23.4 Build & UI kapsam
+
+- **Build: BAŞARILI** (Next 16.3.5 Turbopack, `.next-audit` ayrık dizin; geçici `distDir` satırı sonrası kaldırıldı — `next.config.ts` diff'i yalnız tırnak normalizasyonu). `typecheck` ✓ `lint` 0 hata / 2 önceden bilinen uyarı `test` **937/937**.
+- **Canlı prod-smoke** (`.tmp-prod-smoke.cjs`): **37/37 PASS** — health, güvenlik başlıkları, admin 401 (GET+POST), quote 422 validasyon, stack-sızıntısız 404, TR/EN akışları (ana sayfa, katalog, ürün detay, koleksiyon list+detay, uygulama, journal list+detay, iletişim, teklif), mobil nav markup.
+- **UI kapsamı**: vitest bileşen testleri ana sayfa (Homepage), katalog (Product/Collection/Application), journal, QuoteForm, ContactBar, Forms, MobileMenu, Layout/Shell, Media kapsıyor. Mobil davranış testleri (MobileMenu.test) + breakpoint CSS mevcut; **görsel mobil doğrulama ve gerçek cihaz matrisi otomasyon dışı** (Playwright kurulmadı — Phase 19 kararı ertelenmiş). Phase 22 SEO audit'i (330 PASS) bu oturumda da geçerli.
+
+### 23.5 Eksikler (operatör/gerçek veri — kod tarafı hazır, uydurulmadı)
+
+1. Gerçek production domain (`NEXT_PUBLIC_SITE_URL`) 2. Gerçek `NEXTAUTH_SECRET` + prod DB URL 3. Marka ikonları (favicon var; apple-touch/logo paketi yok) 4. İletişim bilgileri (`SITE_CONTACT_PHONE`/WhatsApp/Instagram unset → bar non-link, bilinçli) 5. Onyx ürünleri (0) 6. Koleksiyon gerçek kapakları (`demo-collection-*.svg`) 7. Gerçek proje içerikleri (proje bölümü noindex) 8. Gerçek yazar + `publicationDate` 9. İlk prod admin (`SEED_ADMIN_PASSWORD` akışı runbook §5).
+
+### 23.6 Düzeltme yapılan yer
+
+Kod düzeltmesi YOK (smoke FAIL'lerinin 4'ü de hatalı test beklentisi: dev'de `unsafe-eval` HMR için bilinçli; ValidationError = 422 tasarım; `/en/applications/otel` → doğru EN slug'ları residential/hospitality/commercial). Geçici dosyalar: `.tmp-prod-smoke.cjs` eklendi; `.next-audit/` build çıktısı duruyor (silinmedi). COMMIT/PUSH YOK; dev sunucusu tüm süreç boyunca UP; SQL içerik mutasyonu YOK.
+
+### 23.7 KARAR: **READY WITH BLOCKERS**
+
+Kod/altyapı production'a hazır (build, güvenlik, SEO, sağlık, yedek/geri yükleme, migration, runbook). Yayına çıkış için operatör tamamlamaları şart: (1) gerçek domain + secret + prod DB env, (2) gerçek işletme verisi (iletişim, ikon, Onyx, kapaklar, proje, yazar/tarih), (3) ilk admin provisioning, (4) gerçek cihaz/QA onayı. Engeller ve çözümleri §23.5'te somut adımlarla listelendi.

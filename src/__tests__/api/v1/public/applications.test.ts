@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from '@/app/api/v1/public/[locale]/applications/route';
 import { GET as GET_DETAIL } from '@/app/api/v1/public/[locale]/applications/[slug]/route';
-import { callHandler, mockApplicationSummary, mockApplicationDetail } from './helpers';
+import { callHandler, mockMedia, mockApplicationSummary, mockApplicationDetail } from './helpers';
 import { NotFoundError } from '@/lib/api/errors';
 
 vi.mock('@/services/content', () => ({
@@ -31,6 +31,8 @@ describe('GET /api/v1/public/[locale]/applications', () => {
 
     expect(json.data.data).toHaveLength(1);
     expect(json.data.data[0].slug).toBe('test-application');
+    expect(json.data.data[0].coverImage).toBeDefined();
+    expect(json.data.data[0].coverImage.src).toBe(mockMedia.src);
   });
 
   it('returns 200 for EN locale', async () => {

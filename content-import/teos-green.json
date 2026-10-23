@@ -1,0 +1,43 @@
+{
+  "_instructions": "Teos Green ONAYLI import sablonu (2026-10-15): tek urun, yalnizca klasor + iki gorev/gorsel kanitiyla desteklenen icerik. Uzantilar (surfaceFinish/dimensions/format/origin/applicableStandards) BOS birakildi (mensei/teknik ozellik uydurmak YASAK); internalIdentifier birakildi (opsiyonel, icerik iddiasi uydurmamak icin). Media: product/ gorseli PRIMARY, renders/ gorseli GALLERY (render ASLA ayri urun olusturmaz). featuredOrder=2 (Rosso Levanto=1, Afyon Fire=3 — sirayi ayri admin PATCH ile uygula). Koleksiyon/uygulama iliskisi YOK (kapsam disi). Dry-run: npm run import:content -- --file content-import/teos-green.json. Gercek: ayni komut + --execute (ONAY SONRASI).",
+  "products": [
+    {
+      "tr": {
+        "slug": "teos-green",
+        "name": "Teos Green Mermer",
+        "description": "Teos Green Mermer, koyu ve orta yeşil tonlardaki zemininde açık yeşil, beyaz ve krem kırıklı damarların ağ gibi buluştuğu doğal bir mermerdir. Teos Green'in belirgin kırıklı dokusu geniş yüzeylerde hareketli ve zengin bir desen bütünlüğü oluştururken yakın planda damarların yoğun örgüsü öne çıkar. Zemin ve duvar kaplamalarında, geniş panel uygulamalarında, giriş holü ve bekleme alanlarında kullanılabilir; yeşil tonları nötr renkler ve ahşapla dengeli bir uyum kurar. Teos Green Mermer, canlı yeşil karakteriyle iç mimari düzenlemelerinde güçlü bir odak noktası oluşturan bir tercihtir.",
+        "tagline": "Yeşil zemininde açık yeşil ve beyaz kırıklı damarlarıyla öne çıkan doğal mermer.",
+        "seoTitle": "Teos Green Mermer — Yeşil Zeminli Kırıklı Doğal Mermer",
+        "seoDescription": "Teos Green Mermer, yeşil zemininde açık yeşil ve beyaz kırıklı damarlarıyla öne çıkan, zemin ve duvar kaplamaları için doğal mermer seçeneğidir.",
+        "isFeatured": true,
+        "featuredOrder": 2
+      },
+      "en": {
+        "slug": "teos-green",
+        "name": "Teos Green Marble",
+        "description": "Teos Green Marble is a natural marble whose deep and mid-green background carries light green, white and cream fragmented veining meeting like a web across the surface. The distinct broken pattern of Teos Green creates a lively, rich overall composition on large surfaces, while up close the dense network of veins takes centre stage. It suits floors and walls, large panel applications, entrance halls and reception areas; its green tones pair in balance with neutrals and wood. Teos Green Marble brings a lively green character and becomes a strong focal point in interior design schemes and architectural projects.",
+        "tagline": "A natural marble with a deep green background and light green and white fragmented veining.",
+        "seoTitle": "Teos Green Marble — Green Marble with Fragmented Veining",
+        "seoDescription": "Teos Green marble with a deep green background and light green and white fragmented veining — a natural stone choice for floors and walls.",
+        "isFeatured": true,
+        "featuredOrder": 2
+      },
+      "media": [
+        {
+          "file": "C:/Users/Kayra/Desktop/Marble Content/Products/teos green/product/teos green.jfif",
+          "role": "PRIMARY",
+          "altTr": "Teos Green ürün görseli",
+          "altEn": "Teos Green marble product image"
+        },
+        {
+          "file": "C:/Users/Kayra/Desktop/Marble Content/Products/teos green/renders/teos green.jfif",
+          "role": "GALLERY",
+          "altTr": "Teos Green galeri görseli",
+          "altEn": "Teos Green marble render image"
+        }
+      ],
+      "collections": [],
+      "applications": []
+    }
+  ]
+}

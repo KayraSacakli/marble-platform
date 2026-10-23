@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@/types/locale';
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
-export const SITE_NAME = 'Premium Turkish Marble';
-export const SITE_NAME_TR = 'Premium Türk Mermeri';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+export const SITE_NAME = 'Marble Platform';
+export const SITE_NAME_TR = 'Mermer Platformu';
 
 /**
  * Single authoritative source of the locales advertised in public SEO output:

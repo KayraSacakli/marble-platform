@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   try {
     const article = await getJournalArticle(locale, slug);
-    const title = article.title;
+    const title = article.seo?.title || article.title;
     const description = article.summary || article.seo?.metaDescription;
 
     return {

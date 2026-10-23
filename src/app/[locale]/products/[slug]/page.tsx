@@ -26,7 +26,7 @@ export async function generateMetadata({
 
   try {
     const product = await getProduct(locale, slug);
-    const title = product.name;
+    const title = product.seo?.title || product.name;
     const description = product.tagline || product.seo?.metaDescription;
 
     return {

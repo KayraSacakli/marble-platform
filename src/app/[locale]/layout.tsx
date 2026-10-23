@@ -5,6 +5,8 @@ import { inter, playfairDisplay } from '@/lib/fonts';
 import { SkipNavigation } from '@/components/navigation/SkipNavigation';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
+import { ContactBar } from '@/components/contact/ContactBar';
+import { getSiteContact } from '@/lib/site-contact';
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
 import { SITE_URL, getOGLocale } from '@/lib/seo/constants';
 import { anyContentLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
@@ -82,6 +84,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           {children}
         </main>
         <Footer locale={locale} />
+        <ContactBar locale={locale} contact={getSiteContact()} />
       </body>
     </html>
   );

@@ -1,4 +1,4 @@
-import { SITE_URL } from '@/lib/seo/constants';
+import { SITE_NAME, SITE_URL } from '@/lib/seo/constants';
 
 interface ArticleJsonLdProps {
   headline: string;
@@ -38,7 +38,7 @@ export function ArticleJsonLd({
       : {}),
     publisher: {
       '@type': 'Organization',
-      name: 'Premium Turkish Marble',
+      name: SITE_NAME,
     },
   };
 

@@ -9,6 +9,7 @@ import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
 import { SITE_URL } from '@/lib/seo/constants';
 import { companyLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
+import { htmlToPlainText } from '@/lib/seo/text';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -25,7 +26,7 @@ export async function generateMetadata({
   try {
     const quarry = await getQuarry(locale);
     const title = quarry.name;
-    const description = quarry.description;
+    const description = htmlToPlainText(quarry.description);
 
     return {
       title,
@@ -96,7 +97,9 @@ export default async function QuarryPage({ params }: PageProps) {
             {locale === 'tr' ? 'Doğal Kaynağımız' : 'Our Natural Source'}
           </span>
           <h1 className="text-h1">{quarry.name}</h1>
-          {quarry.description && <p className="company-page__intro">{quarry.description}</p>}
+          {quarry.description && !/<[a-z][^>]*>/i.test(quarry.description) && (
+            <p className="company-page__intro">{quarry.description}</p>
+          )}
         </div>
 
         <div className="company-hero">

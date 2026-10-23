@@ -1,6 +1,6 @@
-import type { NextConfig } from "next";
-import { getSecurityHeaders } from "./src/lib/security/headers";
-import { validateEnv } from "./src/lib/env";
+import type { NextConfig } from 'next';
+import { getSecurityHeaders } from './src/lib/security/headers';
+import { validateEnv } from './src/lib/env';
 
 // Fail fast at build time and server startup when required production
 // environment variables are missing, invalid, or placeholders.
@@ -19,17 +19,17 @@ const securityHeaders = Object.entries(getSecurityHeaders()).map(([key, value]) 
 // Media assets are same-origin local files (public/demo/images/*.svg and
 // /api/media/*). The optimizer refuses SVG unless explicitly allowed; SVGs
 // are then served with a sandboxed CSP instead of executable content.
-function imageRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {
-  const patterns: { protocol: "http" | "https"; hostname: string; port?: string }[] = [
-    { protocol: "http", hostname: "localhost" },
-    { protocol: "http", hostname: "127.0.0.1" },
+function imageRemotePatterns(): NonNullable<NextConfig['images']>['remotePatterns'] {
+  const patterns: { protocol: 'http' | 'https'; hostname: string; port?: string }[] = [
+    { protocol: 'http', hostname: 'localhost' },
+    { protocol: 'http', hostname: '127.0.0.1' },
   ];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (siteUrl) {
     try {
       const url = new URL(siteUrl);
       patterns.push({
-        protocol: url.protocol === "https:" ? "https" : "http",
+        protocol: url.protocol === 'https:' ? 'https' : 'http',
         hostname: url.hostname,
         ...(url.port ? { port: url.port } : {}),
       });
@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: '/(.*)',
         headers: securityHeaders,
       },
     ];

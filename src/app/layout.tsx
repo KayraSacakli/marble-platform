@@ -4,13 +4,12 @@ import { SITE_URL } from '@/lib/seo/constants';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Premium Turkish Marble',
-    template: '%s | Premium Turkish Marble',
+    default: 'Marble Platform',
+    template: '%s | Marble Platform',
   },
-  description: 'Premium Marble Manufacturer & Exporter',
+  description: 'Premium natural marble collection.',
   icons: {
     icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
   },
 };
 

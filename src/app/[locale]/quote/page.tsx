@@ -141,20 +141,8 @@ export default async function QuotePage({ params, searchParams }: PageProps) {
               <span className="quote-aside__label">{locale === 'tr' ? 'Destek' : 'Support'}</span>
               <p className="quote-aside__value">
                 {locale === 'tr'
-                  ? 'Sorularınız için bize ulaşın:'
-                  : 'For questions, reach out to us:'}
-              </p>
-              <p className="quote-aside__value">
-                <a
-                  href="mailto:info@marbleplatform.com"
-                  style={{
-                    color: 'var(--color-accent)',
-                    textDecoration: 'none',
-                    borderBottom: '1px solid var(--color-accent)',
-                  }}
-                >
-                  info@marbleplatform.com
-                </a>
+                  ? 'Sorularınız için bu formu kullanabilirsiniz; ekibimiz talebinizi değerlendirip size dönüş yapar.'
+                  : 'Use this form for your questions; our team reviews your request and follows up with you.'}
               </p>
             </div>
 

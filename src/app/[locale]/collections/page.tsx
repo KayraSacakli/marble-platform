@@ -9,6 +9,7 @@ import { DEFAULT_PAGE_SIZE } from '@/types/api';
 import { Breadcrumb } from '@/components/product/Breadcrumb';
 import { Container } from '@/components/ui/Container';
 import { gatedMetadata, getSeoAvailability, sectionLocales } from '@/lib/seo/gates';
+import { SITE_URL } from '@/lib/seo/constants';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -35,7 +36,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/${locale}/collections`,
+      url: `${SITE_URL}/${locale}/collections`,
       type: 'website',
     },
     twitter: { card: 'summary_large_image', title, description },

@@ -13,12 +13,19 @@ import type {
   HomepageSection,
 } from '@/types/api';
 import { NotFoundError } from '@/lib/api/errors';
+import { htmlToPlainText } from '@/lib/seo/text';
 import { buildSEOData, buildCanonical } from '@/lib/api/seo';
 import type { PaginationInput } from '@/lib/api/validation';
 import type { SeoAvailability } from '@/types/seo';
 import { DEFAULT_PAGE_SIZE } from '@/types/api';
 
-const SITE_NAME = 'Premium Turkish Marble';
+const SITE_NAME = 'Marble Platform';
+
+/** Plain-text, length-capped journal summary derived from the HTML body. */
+function journalSummaryText(description?: string | null): string {
+  const text = htmlToPlainText(description ?? '');
+  return text.length > 320 ? `${text.slice(0, 320).trimEnd()}...` : text;
+}
 
 /** Default list pagination when a caller does not specify one. */
 const DEFAULT_PAGINATION: PaginationInput = { page: 1, pageSize: DEFAULT_PAGE_SIZE };
@@ -305,7 +312,7 @@ function toJournalSummary(v: {
     id: v.id,
     title: v.name ?? '',
     slug: v.slug,
-    summary: v.description ?? '',
+    summary: journalSummaryText(v.description),
     coverImage:
       findMediaByRole(v.mediaPresentations ?? [], 'PRIMARY') ??
       findMediaByRole(v.mediaPresentations ?? [], 'HERO'),
@@ -358,7 +365,7 @@ class ContentService {
         .map((v) => {
           const cv = findPublishedVariant(v.contentItem, locale);
           if (!cv) return null;
-          return toProductSummary(cv);
+          return toProductSummary(v);
         })
         .filter(Boolean),
       meta: result.meta,
@@ -452,7 +459,7 @@ class ContentService {
         .map((v) => {
           const cv = findPublishedVariant(v.contentItem, locale);
           if (!cv) return null;
-          return toCollectionSummary(cv);
+          return toCollectionSummary(v);
         })
         .filter(Boolean),
       meta: result.meta,
@@ -516,7 +523,7 @@ class ContentService {
         .map((v) => {
           const cv = findPublishedVariant(v.contentItem, locale);
           if (!cv) return null;
-          return toApplicationSummary(cv);
+          return toApplicationSummary(v);
         })
         .filter(Boolean),
       meta: result.meta,
@@ -592,7 +599,7 @@ class ContentService {
         .map((v) => {
           const cv = findPublishedVariant(v.contentItem, locale);
           if (!cv) return null;
-          return toProjectSummary(cv);
+          return toProjectSummary(v);
         })
         .filter(Boolean),
       meta: result.meta,
@@ -669,6 +676,7 @@ class ContentService {
           if (!cv) return null;
           return toJournalSummary({
             ...cv,
+            mediaPresentations: v.mediaPresentations,
             createdAt: v.createdAt,
             journalArticle: v.contentItem.journalArticle,
           });
@@ -718,7 +726,7 @@ class ContentService {
       id: variant.contentItemId,
       title: cv.name ?? '',
       slug: variant.slug,
-      summary: cv.description ?? '',
+      summary: journalSummaryText(cv.description),
       body: cv.description ?? '',
       coverImage,
       publicationDate:
@@ -750,7 +758,7 @@ class ContentService {
                 id: ja.contentItemId,
                 name: jv.name ?? '',
                 slug: jv.slug,
-                summary: jv.description ?? '',
+                summary: journalSummaryText(jv.description),
               }
             : null;
         })
@@ -893,24 +901,36 @@ class ContentService {
     });
     sectionOrder.push('final_cta');
 
-    const heroHeading = locale === 'tr' ? 'Premium Türk Mermeri' : 'Premium Turkish Marble';
+    const heroHeading = locale === 'tr' ? 'Premium Doğal Mermer' : 'Premium Natural Marble';
     const hero = {
       heading: heroHeading,
       subheading:
         locale === 'tr'
           ? 'Doğanın Zarafeti, Ustalığın Gücü'
           : 'Elegance of Nature, Power of Craftsmanship',
-      // Demo hero poster — served as static fallback image until a real
-      // homepage video (and its DB-driven media) is available. HeroScrollStage
-      // renders this via HeroPoster; no video means poster-only mode.
-      fallbackImage: {
-        id: 'demo-hero-poster',
-        mediaType: 'image',
-        src: '/demo/images/demo-hero-poster.svg',
-        width: 1920,
-        height: 1080,
-        aspectRatio: '16/9',
+      // Scroll-driven hero video (static public asset; silent, H.264). The
+      // poster fallback below keeps reduced-motion / no-video / error cases
+      // on an approved published product image — it is never presented as
+      // real footage.
+      media: {
+        id: 'scrollroll-hero-video',
+        mediaType: 'video',
+        src: '/videos/scrollroll2.mp4',
+        poster: '/api/media/18b81507-56ad-4f71-a8d6-c18511835443.jpg',
+        width: 1028,
+        height: 768,
+        aspectRatio: '1028/768',
         alt: heroHeading,
+        loading: 'eager',
+      } satisfies MediaPresentation,
+      fallbackImage: {
+        id: 'teos-green-hero-poster',
+        mediaType: 'image',
+        src: '/api/media/18b81507-56ad-4f71-a8d6-c18511835443.jpg',
+        width: 1200,
+        height: 896,
+        aspectRatio: '1200/896',
+        alt: locale === 'tr' ? 'Teos Green mermer yüzeyi' : 'Teos Green marble surface',
         loading: 'eager',
       } satisfies MediaPresentation,
       primaryCTA: {
@@ -925,11 +945,11 @@ class ContentService {
 
     const canonical = buildCanonical(locale, `/${locale}`);
     const seo: SEOData = {
-      title: `${SITE_NAME} — ${locale === 'tr' ? 'Premium Türk Mermeri' : 'Premium Turkish Marble'}`,
+      title: `${SITE_NAME} — ${heroHeading}`,
       metaDescription:
         locale === 'tr'
-          ? 'Doğanın zarafeti ve ustalığın gücünü birleştiren premium Türk mermeri koleksiyonumuzu keşfedin.'
-          : 'Discover our premium Turkish marble collection, combining the elegance of nature with the power of craftsmanship.',
+          ? 'Doğanın zarafeti ve ustalığın gücünü birleştiren premium doğal mermer koleksiyonumuzu keşfedin.'
+          : 'Discover our premium natural marble collection, combining the elegance of nature with the power of craftsmanship.',
       canonical,
       robots: 'index',
       hreflang: [

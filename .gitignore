@@ -49,3 +49,7 @@ storage/
 
 # database backups (phase 18D-3, never commit dumps)
 /backups/
+
+# session audit temporaries (phase 24, never commit)
+.tmp-*
+/.next-audit/

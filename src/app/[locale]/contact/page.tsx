@@ -77,36 +77,13 @@ export default async function ContactPage({ params }: PageProps) {
         <div className="contact-layout">
           <div className="contact-info">
             <div className="contact-info__section">
-              <span className="contact-info__label">{locale === 'tr' ? 'E-posta' : 'Email'}</span>
-              <p className="contact-info__value">
-                <a href="mailto:info@marbleplatform.com">info@marbleplatform.com</a>
-              </p>
-            </div>
-
-            <div className="contact-info__section">
-              <span className="contact-info__label">{locale === 'tr' ? 'Telefon' : 'Phone'}</span>
-              <p className="contact-info__value">
-                <a href="tel:+902120000000">+90 (212) 000 00 00</a>
-              </p>
-            </div>
-
-            <div className="contact-info__section">
-              <span className="contact-info__label">{locale === 'tr' ? 'Adres' : 'Address'}</span>
-              <p className="contact-info__value">
-                {locale === 'tr'
-                  ? 'Mermer Platformu\nİstanbul, Türkiye'
-                  : 'Marble Platform\nIstanbul, Turkey'}
-              </p>
-            </div>
-
-            <div className="contact-info__section">
               <span className="contact-info__label">
-                {locale === 'tr' ? 'Çalışma Saatleri' : 'Working Hours'}
+                {locale === 'tr' ? 'İletişim Kanalı' : 'Contact Channel'}
               </span>
               <p className="contact-info__value">
                 {locale === 'tr'
-                  ? 'Pazartesi – Cuma: 09:00 – 18:00'
-                  : 'Monday – Friday: 09:00 – 18:00'}
+                  ? 'Tüm soru ve teklif talepleriniz için teklif formumuzu kullanabilirsiniz.'
+                  : 'Use our quote form for all enquiries and quote requests.'}
               </p>
             </div>
           </div>

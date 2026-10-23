@@ -40,7 +40,13 @@ export function ProductGallery({ primaryImage, gallery, productName }: ProductGa
   return (
     <div className="product-hero__gallery">
       <div className="product-hero__primary-image">
-        <Media src={activeImage.src} alt={activeImage.alt} priority />
+        <Media
+          src={activeImage.src}
+          alt={activeImage.alt}
+          fit="contain"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+          priority
+        />
       </div>
       {allImages.length > 1 && (
         <div className="product-hero__thumbnails" role="tablist" aria-label="Product images">

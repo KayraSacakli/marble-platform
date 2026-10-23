@@ -368,6 +368,17 @@ describe('ProductGallery', () => {
       expect(thumb.getAttribute('sizes')).toBe('4rem');
     }
   });
+
+  it('shows the primary image uncropped with gallery-aware sizes', () => {
+    const { container } = render(
+      <ProductGallery primaryImage={primaryImage} gallery={gallery} productName="Test" />,
+    );
+    const primary = container.querySelector('img');
+    expect(primary?.style.objectFit).toBe('contain');
+    expect(primary?.getAttribute('sizes')).toBe(
+      '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw',
+    );
+  });
 });
 
 // ============================================================

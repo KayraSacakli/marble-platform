@@ -25,7 +25,7 @@ export async function generateMetadata({
 
   try {
     const application = await getApplication(locale, slug);
-    const title = application.name;
+    const title = application.seo?.title || application.name;
     const description = application.description || application.seo?.metaDescription;
 
     return {

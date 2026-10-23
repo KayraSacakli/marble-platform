@@ -82,7 +82,7 @@ export const mockJournalSummary = {
 };
 
 export const mockSEO = {
-  title: 'Test — Premium Turkish Marble',
+  title: 'Test — Marble Platform',
   metaDescription: 'Test description',
   canonical: 'https://example.com/tr/products/test',
   robots: 'index' as const,
@@ -175,7 +175,7 @@ export const mockJournalDetail = {
 
 export const mockHomepage = {
   hero: {
-    heading: 'Premium Turkish Marble',
+    heading: 'Premium Natural Marble',
     subheading: 'Elegance of Nature, Power of Craftsmanship',
     primaryCTA: { label: 'Explore Marbles', href: '/en/products' },
     secondaryCTA: { label: 'Request Quote', href: '/en/quote' },
@@ -232,7 +232,7 @@ export const mockFooter = {
     { label: 'Türkçe', href: '/tr', active: false, available: true },
     { label: 'English', href: '/en', active: true, available: true },
   ],
-  copyright: '2026 Premium Turkish Marble. All rights reserved.',
+  copyright: '2026 Marble Platform. All rights reserved.',
 };
 
 export const mockQuoteRequestResponse = {

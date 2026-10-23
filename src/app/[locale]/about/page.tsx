@@ -9,6 +9,7 @@ import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
 import { SITE_URL } from '@/lib/seo/constants';
 import { companyLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
+import { htmlToPlainText } from '@/lib/seo/text';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -25,7 +26,7 @@ export async function generateMetadata({
   try {
     const about = await getAbout(locale);
     const title = about.name;
-    const description = about.description;
+    const description = htmlToPlainText(about.description);
 
     return {
       title,
@@ -96,7 +97,9 @@ export default async function AboutPage({ params }: PageProps) {
             {locale === 'tr' ? 'Şirketimiz' : 'Our Company'}
           </span>
           <h1 className="text-h1">{about.name}</h1>
-          {about.description && <p className="company-page__intro">{about.description}</p>}
+          {about.description && !/<[a-z][^>]*>/i.test(about.description) && (
+            <p className="company-page__intro">{about.description}</p>
+          )}
         </div>
 
         <div className="company-hero">

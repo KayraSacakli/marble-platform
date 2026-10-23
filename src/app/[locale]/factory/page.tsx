@@ -9,6 +9,7 @@ import { Container } from '@/components/ui/Container';
 import { BreadcrumbJsonLd } from '@/components/seo';
 import { SITE_URL } from '@/lib/seo/constants';
 import { companyLocales, gatedMetadata, getSeoAvailability } from '@/lib/seo/gates';
+import { htmlToPlainText } from '@/lib/seo/text';
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -25,7 +26,7 @@ export async function generateMetadata({
   try {
     const factory = await getFactory(locale);
     const title = factory.name;
-    const description = factory.description;
+    const description = htmlToPlainText(factory.description);
 
     return {
       title,
@@ -96,7 +97,9 @@ export default async function FactoryPage({ params }: PageProps) {
             {locale === 'tr' ? 'Üretim Tesisimiz' : 'Our Production Facility'}
           </span>
           <h1 className="text-h1">{factory.name}</h1>
-          {factory.description && <p className="company-page__intro">{factory.description}</p>}
+          {factory.description && !/<[a-z][^>]*>/i.test(factory.description) && (
+            <p className="company-page__intro">{factory.description}</p>
+          )}
         </div>
 
         <div className="company-hero">
