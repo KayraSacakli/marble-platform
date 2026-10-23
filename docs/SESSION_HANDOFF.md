@@ -785,3 +785,51 @@ Kod düzeltmesi YOK (smoke FAIL'lerinin 4'ü de hatalı test beklentisi: dev'de 
 ### 23.7 KARAR: **READY WITH BLOCKERS**
 
 Kod/altyapı production'a hazır (build, güvenlik, SEO, sağlık, yedek/geri yükleme, migration, runbook). Yayına çıkış için operatör tamamlamaları şart: (1) gerçek domain + secret + prod DB env, (2) gerçek işletme verisi (iletişim, ikon, Onyx, kapaklar, proje, yazar/tarih), (3) ilk admin provisioning, (4) gerçek cihaz/QA onayı. Engeller ve çözümleri §23.5'te somut adımlarla listelendi.
+
+## PHASE 24 — FINALIZE, DOCUMENT & PUSH (2026-10-23, CLOSED, PUSHED)
+
+### 24.1 Yapılan işlemler
+
+1. Durum doğrulama: HEAD `3849732`, branch `master`, origin `https://github.com/KayraSacakli/marble-platform.git`; worktree40 modified + ~70 untracked (Phase 18-22 artıkları) sınıflandırıldı.
+2. `.gitignore` güncellendi: `.tmp-*` ve `/.next-audit/` kalıpları eklendi (session audit geçici dosyaları — commit dışı, çalışma ağacında silinmedi).
+3. **Kalite kapısı (güncel kod üzerinde, hepsi PASS)**: `typecheck` ✓ · `lint` 0 hata / 2 önceden bilinen uyarı (`repositories/content.ts:328,541`) · `test` **937/937** (69 dosya) · **build BAŞARILI** (Next 16.3.5 Turbopack, `.next-audit` ayrık dizin; geçici `distDir` satırı sonra kaldırıldı) · canlı prod-smoke **37/37 PASS** (`.tmp-prod-smoke.cjs`) · `/api/health` 200.
+4. Staging: **55 dosya** — Phase 18-22 modified kodu (SEO, locale sayfaları, journal, JsonLd, ProductGallery, useScrollVideo, contact-bar/site-contact/seo-text yeni modülleri + testleri), `scripts/enrich-content.ts`, `content-import/name-registry.json` (onay kayıtları) + `teos-green.json` (onaylı içerik kaynağı), `public/videos/scrollroll2.mp4` (kullanılan hero asset, 2,52 MB), docs (SESSION_HANDOFF, HANDOFF_CURRENT, SESSION_HANDOFF_2026-10-10), `.gitignore`.
+5. **Secret taraması: temiz** (staged diff'te DB credential/private key/token/API key deseni 0; `.env` staged değil; `.env*` gitignored).
+
+### 24.2 Commit & push
+
+- **Commit: `26f7511` — `chore: finalize project state and deployment handoff`** (55 dosya, +2981/−151).
+- `git fetch origin` → remote'ta localde olmayan commit **yok** (fast-forward güvenli) → `git push origin master` → **`3849732..26f7511 master -> master`**.
+- Doğrulama: `master...origin/master` eşit (ahead/behind0), `origin/master` = `26f7511`. **PUSH BAŞARILI.**
+
+### 24.3 Commit dışı bırakılanlar (çalışma ağacında duruyor, silinmedi)
+
+| Dosya/lar | Neden |
+|---|---|
+| `.tmp-*` (40+ audit script/çıktı) | Geçici denetim dosyaları; `.gitignore`'a eklendi |
+| `.next-audit/` | Ayrık build çıktısı (dev `.next`'ü korumak için); gitignore'landı |
+| `content-import/` enrichment/import/pilot/new-products `*.json` + `*.report.json` (14 dosya, ~610 KB) | Import/zenginleştirme çalışma çıktıları (yeniden üretilebilir); Phase 19B'de bilinçli olarak commit edilmemişti |
+| `public/videos/scrollroll.mp4` (2,85 MB) | Kullanılmayan eski asset (kodda yalnız `scrollroll2.mp4` referanslı) |
+| `backups/`, `storage/`, `.env` | Zaten gitignored (dump/medya/secret) |
+
+### 24.4 Doküman durumu
+
+- `docs/SESSION_HANDOFF.md`: Phase 19B→24 tümü mevcut (bu bölüm eklendi). UTF-8 dosyada eski bölümlerin bir kısmı terminalde bozuk görünüyor (Phase 20-22 yazımlarının escape karakterleri) — GitHub'daki render doğru; dosya yeniden yazılmadı (içerik kaybı riski yok, git diff'inde temiz).
+- `docs/DEPLOY_RUNBOOK.md`: güncel (Phase 18D-3) — Phase 24'te değişen operasyon yok; çoğaltma yapılmadı.
+
+### 24.5 Dev sunucusu & kapanış
+
+- `localhost:3000` **tüm oturum boyunca UP** (health 200); durdurulmadı. Bilgisayar kapatılınca süreç doğal sonlanır — yeni oturumda `npm run dev` yeniden başlatılır.
+- Geçici dosyalar (`.tmp-*`, `.next-audit/`, content-import çıktıları, `scrollroll.mp4`) çalışma ağacında bırakıldı — bilerek silinmedi.
+
+### 24.6 Production engelleri (Phase 23.5 — sahibi: operatör/Content Owner)
+
+1. Gerçek domain → `NEXT_PUBLIC_SITE_URL` (build öncesi; runbook §1) 2. Prod `DATABASE_URL` + güçlü `NEXTAUTH_SECRET` 3. `SITE_CONTACT_PHONE`/`SITE_WHATSAPP_PHONE`/`SITE_INSTAGRAM_URL` 4. Marka ikonları 5. Onyx ürünleri + gerçek koleksiyon kapakları 6. Onaylı proje/yazar/`publicationDate` 7. İlk admin (`SEED_ADMIN_PASSWORD` ≥12, runbook §5). Bunların hiçbiri depoya yazılmadı/yazılmayacak.
+
+### 24.7 Kapanış öncesi (bilgisayar kapatılmadan)
+
+1. Bu oturumdaki opencode/terminal oturumları kapatılabilir; commit `26f7511` GitHub'da ✓. 2. Dev sunucusu süreç olarak ölebilir — sorun değil. 3. `.tmp-*` / `.next-audit/` / content-import çıktıları silmek istenirse elle; disk alanı ~7 MB + ~610 KB.
+
+### 24.8 CONTINUATION POINT (yeni terminalde)
+
+Depo `origin/master` = `26f7511`, temiz başlangıç noktası. Dev sunucusu yoksa: `npm run dev` (sonra `node .tmp-prod-smoke.cjs` ile37 kontrol). Sıradaki işler için hazır backlog: (a) production engel kapatma (§24.6 değerleri geldiğinde: `.env` + runbook §1-§5 adımları), (b) gerçek cihaz/QA matrisi (Playwright kurulumu — Phase 19 ertelenmiş kararı), (c) gerçek içerik enrichment'i (content-import çıktıları `scripts/enrich-content.ts` ile). İlk komut: `git pull origin master && npm install && npm run dev`.
